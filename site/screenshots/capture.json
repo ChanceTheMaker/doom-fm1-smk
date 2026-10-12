@@ -1,0 +1,35 @@
+{
+  "source": "Native-art 240x240 host harness; not a photograph of hardware",
+  "engine_sha256": "167838c630d9e019a863548f8c6c0dfe21b5ca24b985da620a7ed7f672d8df47",
+  "wad_sha256": "41f2c9c8227180c25e57d9f8e55a655ac7e8139b46f59dad8767d46681d51bf9",
+  "files": {
+    "splash.png": {
+      "level": 1,
+      "frames": 1,
+      "mode": "idle",
+      "splash": true,
+      "sha256": "0bffa1cf965ac19363c37c86da5d7ba493d7cfce772651c44eca01028f02014a"
+    },
+    "outpost.png": {
+      "level": 1,
+      "frames": 140,
+      "mode": "idle",
+      "splash": false,
+      "sha256": "66b3607a7ae721650ff63c3236430e643fbafe7e8280c873cc140995fc1575fb"
+    },
+    "combat.png": {
+      "level": 2,
+      "frames": 110,
+      "mode": "play",
+      "splash": false,
+      "sha256": "3799d24722f3f935185f23dfb7d8da36ecc2e66e7a6a8f64dfaba6cf3d2eb4c6"
+    },
+    "reactor.png": {
+      "level": 3,
+      "frames": 200,
+      "mode": "idle",
+      "splash": false,
+      "sha256": "677949beb46a78533029b7022061bb1fd02c7c7702d0406ee74b71dfcb2fbfa8"
+    }
+  }
+}

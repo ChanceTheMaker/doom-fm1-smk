@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {Package,logicalImage,sha256hex} from './vendor/fm1pkg.js?v=test07';
-import {buildSmkPublicPackage} from './vendor/smk37-package.js?v=test07';
-import {STOCK_SOURCES} from './vendor/smk37-stock.js?v=test07';
-import {Updater} from './vendor/fm1ota.js?v=test07';
+import {Package,logicalImage,sha256hex} from './vendor/fm1pkg.js?v=test08';
+import {buildSmkPublicPackage} from './vendor/smk37-package.js?v=test08';
+import {STOCK_SOURCES} from './vendor/smk37-stock.js?v=test08';
+import {Updater} from './vendor/fm1ota.js?v=test08';
 export const FM1_BASE='https://raw.githubusercontent.com/ChanceTheMaker/Felucca/ab9e880890eeda57a1772b2d1250f107a3e199c6/firmware/felucca-0.9-salt14.fwsc';
 const BASE_SHA='efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28';
 export async function download(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error(`Download failed (${r.status}). Try again or provide the matching original firmware file.`);return new Uint8Array(await r.arrayBuffer());}
 export async function buildFirmware(release,app,base){
  if(!release?.public||app.length!==release.bytes||await sha256hex(app)!==release.sha256||app.length%4||app[0]!==4||app[1]!==129||app[2]!==128||app[3]!==0)throw Error('Application identity, size or checksum failed. Nothing can be installed.');
  if(release.id!=='fm1')return buildSmkPublicPackage(base,app,release);
- if(release.board!=='FM-1'||!['FM-1_995','FM-1_996'].includes(release.product)||await sha256hex(base)!==BASE_SHA)throw Error('Wrong FM-1 base or release.');
+ if(release.board!=='FM-1'||!['FM-1_995','FM-1_996','FM-1_997'].includes(release.product)||await sha256hex(base)!==BASE_SHA)throw Error('Wrong FM-1 base or release.');
  const pkg=new Package(base);
  if(pkg.appBase!==0x4000||pkg.appOff!==0x4120||pkg.app.size!==0x8dfbc||pkg.flashSize!==0x93000||pkg.chipKey!==0x980f)throw Error('Unsupported FM-1 layout.');
  const before=pkg.flash.slice();pkg.setApp(app);pkg.setProduct(release.product);
@@ -45,6 +45,6 @@ export async function installFm1(access,pkg,log,{confirmGeneric}={}){
   log('Installing Doom application. Do not disconnect power or USB.');
   const r=await up.write(dev,pkg.image,(step,n)=>{if(step==='write'&&n%64===0)log('Transfer request '+n);});link=null;
   if(!r.finished)throw Error('Transfer interrupted. Keep power connected and save the log.');
-  log('Loader transfer complete. Check the physical game screen. '+(pkg.product==='FM-1_995'?'Test06 has no USB updater after boot.':'Test07 is expected to restart with USB updating enabled.'));
+  log('Loader transfer complete. Check the physical game screen. '+(pkg.product==='FM-1_995'?'Test06 has no USB updater after boot.':'Test08 is expected to restart with USB updating enabled.'));
  }finally{await link?.close();}
 }

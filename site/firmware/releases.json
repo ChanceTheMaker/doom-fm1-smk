@@ -3,33 +3,33 @@
     "id": "fm1",
     "board": "FM-1",
     "public": true,
-    "version": "DOOM FM1 TEST07",
-    "product": "FM-1_996",
-    "app": "doom-fm1-test07.bin",
-    "bytes": 533464,
-    "sha256": "09e60ec6643f2e1c5608ab8f26dd38311c7bc7913032e3ad08942cf07e952e3e",
-    "hardware": "Test07: offline tests passed; physical USB update testing pending"
+    "version": "DOOM FM1 TEST08",
+    "product": "FM-1_997",
+    "app": "doom-fm1-test08.bin",
+    "bytes": 533496,
+    "sha256": "b5fdb9373f9423367c3b497f9602d9c10406a2d14d36ea1893ec8304876864ef",
+    "hardware": "Hardware tested"
   },
   {
     "id": "smk37-pro",
     "board": "SMK-37 Pro",
     "public": true,
-    "version": "DOOM SMK TEST07",
-    "product": "SMK-37_996",
-    "app": "doom-smk37-pro-test07.bin",
-    "bytes": 533624,
-    "sha256": "b9d37c032d6b81d230f6e262f74ac7a2177d92213b93c2d11896a1cf095fcf7d",
-    "hardware": "Test07: offline tests passed; physical USB update testing pending"
+    "version": "DOOM SMK TEST08",
+    "product": "SMK-37_997",
+    "app": "doom-smk37-pro-test08.bin",
+    "bytes": 533640,
+    "sha256": "2ccaac71c1fe85203720d504d29b3f78dd08c0cd4911794bacf505d0c985f8e9",
+    "hardware": "Experimental \u00b7 hardware testing pending"
   },
   {
     "id": "smk37-elite",
     "board": "SMK-37 Elite",
     "public": true,
-    "version": "DOOM SMK TEST07",
-    "product": "SMK-37_996",
-    "app": "doom-smk37-elite-test07.bin",
-    "bytes": 533624,
-    "sha256": "0c8640832f6841a6d5a8e5fc27bd3db705dd13357d267d72827449bad779abdf",
-    "hardware": "Test07: offline tests passed; physical USB update testing pending"
+    "version": "DOOM SMK TEST08",
+    "product": "SMK-37_997",
+    "app": "doom-smk37-elite-test08.bin",
+    "bytes": 533640,
+    "sha256": "e846581f54a8cc07495ac04f149bc9487e383573f28744258c067eb99dc96e02",
+    "hardware": "Experimental \u00b7 hardware testing pending"
   }
 ]

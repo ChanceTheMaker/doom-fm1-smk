@@ -10,13 +10,22 @@
 extern struct color colors[256];
 static uint16_t palette[256];
 int dp_native_hud(const unsigned short *,dp_row_sink,void *);
+#ifdef DP_NATIVE_ART
+/* The face HUD owns rows 210..239. Do not send the legacy campaign status
+ * bar there first: the LCD displays writes immediately, exposing both bars. */
+static int scene_row(void *ctx,unsigned y,const uint16_t *row,unsigned width){
+    return y>=210?1:dp_lcd_row(ctx,y,row,width);
+}
+#else
+#define scene_row dp_lcd_row
+#endif
 void DG_Init(void){}
 void DG_DrawFrame(void){
     for(unsigned i=0;i<256;i++)palette[i]=(uint16_t)(((colors[i].r>>3)<<11)|((colors[i].g>>2)<<5)|(colors[i].b>>3));
     dp_menu_view menu;
 #ifdef DP_CAMPAIGN
     int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
-    int ok=active?dp_menu_present(&menu,dp_lcd_row,0):dp_campaign_present(I_VideoBuffer,palette,dp_lcd_row,0);
+    int ok=active?dp_menu_present(&menu,dp_lcd_row,0):dp_campaign_present(I_VideoBuffer,palette,scene_row,0);
 #ifdef DP_NATIVE_ART
     if(ok&&!active)ok=dp_native_hud(palette,dp_lcd_row,0);
 #endif

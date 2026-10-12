@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def build(tc,out,board):
     src=ROOT/'src/native';ldr=src/'update';gen=out/'update';gen.mkdir(exist_ok=True)
-    product=('Doom-FM-1' if board=='fm1' else 'Doom-SMK-37')+'_007'
+    product=('Doom-FM-1' if board=='fm1' else 'Doom-SMK-37')+'_008'
     (gen/'doom_update_config.h').write_text('#define DP_UPDATE_PRODUCT "'+product+'"\n')
     (gen/'smk37_unit.h').write_text('#define SMK37_PUBLIC_BUILD 1\n#define SMK37_UNIT_HEAD_CRC 0x3a04ad23u\n#define SMK37_UNIT_TRIM_CRC 0u\n')
     cc=tc/'pi32v2/bin/clang';ld=tc/'pi32v2/bin/ld';obj=tc/'common/bin/objcopy';dump=tc/'common/bin/objdump'

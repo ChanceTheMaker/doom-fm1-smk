@@ -13,3 +13,8 @@ __pycache__/
 !site/firmware/doom-fm1-test07.bin
 !site/firmware/doom-smk37-pro-test07.bin
 !site/firmware/doom-smk37-elite-test07.bin
+
+# Test08 has distinct immutable app filenames.
+!site/firmware/doom-fm1-test08.bin
+!site/firmware/doom-smk37-pro-test08.bin
+!site/firmware/doom-smk37-elite-test08.bin

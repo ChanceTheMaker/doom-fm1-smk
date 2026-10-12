@@ -26,7 +26,7 @@
 - [x] Stage a separate FM-1 package and run the FM-1 loader host test.
 - [ ] Validate FM-1 installation/boot on hardware, then package Elite separately.
 
-Current release task: publish Test06, with public browser builders for all three models. Device flashing is performed only for the connected model and authorized test.
+Current release task: Test08 HUD correction. FM-1 normal-USB update, runtime identity, steady HUD, gameplay and audio passed. Pro and Elite Test08 hardware validation remains pending. Device flashing is performed only for the connected model and authorized test.
 
 - [x] Reproduce and fix the Test01 lump-directory OOM; store fixed metadata in XIP.
 - [x] Add a 32-bit host gameplay check with the native 24 KiB allocator and revised 256 KiB zone.
@@ -52,3 +52,12 @@ Current release task: publish Test06, with public browser builders for all three
 - [x] Prepare public repository, website and Pages workflow.
 - [ ] Physically test Doom on Pro and Elite, including audio and recovery.
 - [ ] Add runtime USB updater, then assess music and persistent saves.
+
+## Test08 and follow-up
+
+- [x] Eliminate duplicate bottom-HUD LCD transfers without another framebuffer.
+- [x] Pass real dispatcher regression and package/loader/identity checks.
+- [x] Verify FM-1 Test08 via normal USB and owner gameplay/audio/HUD test.
+- [ ] Verify Pro and Elite Test08 on hardware.
+- [ ] Add an original Doom-style music loop as a separate revision and test its audio load.
+- [ ] Reconcile and integrate the preserved browser FM-1 simulator/artwork checkout.

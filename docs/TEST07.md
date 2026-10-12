@@ -1,6 +1,6 @@
 # Test07 experimental release: USB updates and native artwork
 
-Test07 is built locally for FM-1, SMK-37 Pro and SMK-37 Elite. It is staged as an experimental USB-updater release after withdrawal of Test06. Hardware validation is still pending. No device was flashed during this work.
+Test07 is published for FM-1, SMK-37 Pro and SMK-37 Elite as an experimental USB-updater release after withdrawal of Test06. The owner's SMK-37 Pro has booted and completed a reported normal-USB reinstall. FM-1 and Elite Test07 hardware validation remains pending.
 
 ## USB path
 
@@ -82,7 +82,58 @@ not stage a release, start an installer, or access MIDI hardware.
 
 ## Hardware acceptance still required
 
-1. Install the matching Test07 application through the existing recovery path,
+### SMK-37 Pro initial test, 2026-10-12
+
+The published Pro application (`b9d37c032d6b81d230f6e262f74ac7a2177d92213b93c2d11896a1cf095fcf7d`)
+was installed through the SMK recovery adapter after two matching fresh 1 MiB
+backups and comparison against this device's stock boot header and calibration.
+All 142 changed application sectors and the complete final image verified.
+Bootloader and all bytes outside `0x4000..0x9d000` remained unchanged.
+The owner reports that the game works after restarting. On direct USB, Windows
+exposed MIDI ports named `Doom`. A read-only identity query returned
+`Doom-SMK-37_007` with a valid reply checksum. Windows PnP initially retained
+the older `Felucca` display name; the MIDI API and firmware reply identify Doom.
+Earlier checks found no instrument ports before it appeared, so those checks
+alone do not establish a firmware enumeration defect. The owner subsequently
+reported that the normal-USB reinstall worked. Reconnect scenarios remain to be
+tested; none of this establishes FM-1 or Elite operation.
+
+### Local HUD correction after the Pro test
+
+The owner reported a flashing bottom player HUD. The native frame dispatcher
+sent the legacy campaign status rows 210..239 to the LCD and then overwrote
+them with the face HUD every frame. The correction suppresses those legacy
+bottom-row transfers, leaving exactly one ordered LCD write per row. Menus and
+campaign overlays retain the full screen. No extra framebuffer is allocated.
+
+The build remains single-core (`MELODEE_DUAL_CORE=0`, `MELODEE_CACHE_RAM=0`).
+The host regression test `tests/native_frame_test.c` exercises the real native
+frame dispatcher, checking gameplay, menus, overlays and LCD failure handling.
+The correction was tested locally as **Test07 HUD1**, retaining runtime identity
+`Doom-FM-1_007` while using a distinct candidate filename and application SHA-256
+`9e233e18f7920b9902475727290b92a746e6372595f90ef6ac495ae69813f42b`.
+The published Test07 images have not been replaced with these same-version bytes.
+
+### FM-1 HUD1 acceptance, 2026-10-12
+
+The owner switched testing from Pro to FM-1. Two new complete flash reads matched
+each other and the previously verified Test06 installation. The candidate was
+built from those fresh bytes; 137 changed application sectors were written
+within `0x4000..0x93000`, with per-sector and full 1 MiB readback verification.
+The bootloader and all device data outside the application range were unchanged.
+Backups and journals remain private under ignored `build/try-fm1/`.
+
+After disconnecting the adapter and restarting, the owner reported: "doom boots
+and no more flickering on the UI sound and gameplay work". Direct normal USB then
+returned `Doom-FM-1_007` with a verified identity checksum. This establishes the
+HUD correction on FM-1, not Pro or Elite, and is separate from a USB reinstall.
+
+The exact tested application/package is retained locally under
+`build/local-test07-hud1-fm1/`. The next public revision is **Test08**, with new
+`test08` filenames and `_008` runtime/loader identities. Its validation and release
+state are tracked in [TEST08.md](TEST08.md).
+
+1. For a device still running Test06 or earlier, install the matching application through the recovery path,
    preserving and verifying all bytes outside that model's application range.
 2. Boot the game normally; check sound, new splash/HUD, movement and full turns.
 3. Connect normal USB and confirm the expected Doom identity. Test reconnect
