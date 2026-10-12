@@ -2,7 +2,7 @@
 
 The installer links to `restore-stock/`, a separate explicit restore flow. No
 operation runs on page load. SMK Pro/Elite use the pinned official 016 files;
-FM-1 uses the exact official V15 file selected locally. Full SHA-256 and layout
+FM-1 automatically loads the bundled official V15 file. Full SHA-256 and layout
 validation happen before any device command. The selected physical model is
 confirmed because custom SMK USB identities do not distinguish Pro from Elite.
 
@@ -26,7 +26,12 @@ loader restored all 153 application sectors in host tests while retaining the
 head, calibration and tail. The owner restored the physical Pro from Sloop
 2.6.0-b8-dc1 to official Pro 016 successfully. Elite and FM-1 physical restore
 were not repeated in this round. FM-1 V15 mock-flow checks passed with the actual
-699,956-byte official fixture. No vendor firmware is committed or hosted here.
+699,956-byte official fixture. At the owner's request, the exact official FM-1
+V15 file is now included for automatic restore, with SHA-256
+`db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a`.
+It matches the previously pinned official fixture; it is not a device backup.
+All other `.fwsc` files, recovery dumps and calibration remain excluded from
+deployment. This changes file preparation only; no restore ran on a device.
 
 Run the restore tests with Node: `node site/restore-stock/test_restore.mjs`.
 PRO_STOCK_FILE and ELITE_STOCK_FILE can point at local official files; otherwise

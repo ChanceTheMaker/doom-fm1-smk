@@ -59,8 +59,8 @@ for(const [model,stock] of fixtures){
   await flow(pkg,'wrong return not success',{source:id('SMK-37',937),wrongReturn:true},[0xf0000000],/Stock boot was not confirmed/);
   pkg.bytes[HEADER]^=1;await assert.rejects(restoreStock({},pkg),/changed/);
 }
-if(process.env.FM1_STOCK_FILE){
- const pkg=await prepareStock(new Uint8Array(await fs.readFile(process.env.FM1_STOCK_FILE)),'FM-1');
+{
+ const pkg=await prepareStock(new Uint8Array(await fs.readFile(process.env.FM1_STOCK_FILE||new URL('./FM-1-v15.fwsc',import.meta.url))),'FM-1');
  await flow(pkg,'running synth staging',{source:id('FM-1',914)},[0xe0000000,0xf0000000]);
  await flow(pkg,'Doom handoff',{source:id('Doom-FM-1',8)},[0xf0000000]);
  await flow(pkg,'Doom active loader',{source:id('ota-Doom-FM-1',8)},[0xf0000000]);

@@ -15,9 +15,11 @@ for r in releases+archived:
     assert r['version'].endswith(version) and r['product'].endswith(product),p
     suffix="10" if r in releases else version.lower()
     assert r['app']==f"doom-{r['id']}-{suffix}.bin",p
+stock=root/'restore-stock/FM-1-v15.fwsc'
+assert stock.stat().st_size==699956 and hashlib.sha256(stock.read_bytes()).hexdigest()=='db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a'
 for p in root.rglob('*'):
     if not p.is_file():continue
-    assert p.suffix.lower() not in {'.fwsc','.smkupdate','.wad','.elf','.map'},p
+    assert p==stock or p.suffix.lower() not in {'.fwsc','.smkupdate','.wad','.elf','.map'},p
     assert p.suffix!='.bin' or p in apps,p
     if p.suffix=='.html':
         for link in re.findall(r'(?:href|src)="([^"]+)"',p.read_text(encoding='utf-8')):

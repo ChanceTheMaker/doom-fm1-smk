@@ -98,7 +98,7 @@ python3 tools/check_site.py
 
 Node 22 or newer is recommended. Optional original-firmware fixtures stay outside Git. Tests validate actual packages, protected data, corruption rejection, wrong-model refusal, loader failure paths and exact-model runtime identity confirmation after transfer. Tests use simulated transport and never open MIDI hardware.
 
-GitHub Pages publishes only `site/` on pushes to `main`. Compiled apps are checksum-verified in CI; vendor packages, complete device dumps, calibration, build output and private backups are excluded. The browser downloads base files from pinned public sources and assembles packages on the user's computer.
+GitHub Pages publishes only `site/` on pushes to `main`. Compiled apps are checksum-verified in CI; complete device dumps, calibration, build output and private backups are excluded. The exact official FM-1 V15 restore package is bundled and checksum-pinned; other vendor packages are fetched from pinned public sources. The browser downloads base files from pinned public sources and assembles packages on the user's computer.
 
 ## Analytics
 

@@ -2,7 +2,7 @@
 import {prepareStock,restoreStock} from './core.js';
 import {MODELS,SITE_NAME,BACK_URL} from './site.js';
 const base='https://raw.githubusercontent.com/jonathaslacerda/smk-37-pro-docs/ab85d7340163ba9e171dc9396e31c034829bbc02/firmware/';
-const sources={'SMK-37 Pro':base+'smk37pro/SMK-37_Pro_016.fwsc','SMK-37 Elite':base+'smk37elite/SMK-37_Elite_016.fwsc'};
+const sources={'FM-1':'./FM-1-v15.fwsc','SMK-37 Pro':base+'smk37pro/SMK-37_Pro_016.fwsc','SMK-37 Elite':base+'smk37elite/SMK-37_Elite_016.fwsc'};
 const $=id=>document.getElementById(id);let busy=false,pkg=null;
 $('back').textContent='Back to '+SITE_NAME;$('back').href=BACK_URL;
 for(const model of MODELS){const o=document.createElement('option');o.value=o.textContent=model;$('model').append(o);}
@@ -16,8 +16,8 @@ $('prepare').onclick=async()=>{
     const model=$('model').value,file=$('file').files[0];let bytes;
     if(file)bytes=new Uint8Array(await file.arrayBuffer());
     else{
-      if(!sources[model])throw Error('Select the unmodified official FM-1 V15 file, FM-1.fwsc, from M-VAVE. It stays in this browser.');
-      $('status').textContent='Downloading and checking official '+model+' 016...';
+      if(!sources[model])throw Error('Choose a supported physical model.');
+      $('status').textContent='Loading and checking official '+model+' firmware...';
       const r=await fetch(sources[model],{cache:'no-store',signal:AbortSignal.timeout(45000)});
       if(!r.ok)throw Error('Official download unavailable. Select the matching official .fwsc file below.');
       bytes=new Uint8Array(await r.arrayBuffer());

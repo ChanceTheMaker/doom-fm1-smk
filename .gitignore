@@ -9,7 +9,7 @@ __pycache__/
 *.elf
 *.map
 
-# Reviewed app-only releases; never publish vendor packages or device dumps.
+# Reviewed app-only releases; device dumps remain excluded.
 !site/firmware/doom-fm1-test07.bin
 !site/firmware/doom-smk37-pro-test07.bin
 !site/firmware/doom-smk37-elite-test07.bin
@@ -23,3 +23,6 @@ __pycache__/
 !site/firmware/doom-fm1-10.bin
 !site/firmware/doom-smk37-pro-10.bin
 !site/firmware/doom-smk37-elite-10.bin
+
+# Owner-requested official V15 restore package; exact hash enforced by CI.
+!site/restore-stock/FM-1-v15.fwsc
