@@ -30,6 +30,14 @@ def prepare(out):
     for part in ('ceilingclip','floorclip'):
         old='\tmemcpy (lastopening, '+part+'+start, 2*(rw_stopx-start));'
         change('r_segs.c',old,'\tDP_CheckOpenings(rw_stopx-start);\n'+old)
+    # A display-only snapshot lets the physical 240px LCD render readable menus.
+    with (out/'m_menu.c').open('a') as f:
+        f.write('\n'+(ROOT/'src/common/menu_engine.inc').read_text())
+    change('m_menu.c', '    if (messageToPrint)\n    {\n\tif (messageNeedsInput)',
+           '    if (messageToPrint)\n    {\n        if (key == KEY_ENTER) key = key_menu_confirm;\n\tif (messageNeedsInput)')
+    for function in ('M_LoadGame', 'M_SaveGame'):
+        change('m_menu.c','void '+function+' (int choice)\n{',
+               'void '+function+' (int choice)\n{\n    M_StartMessage("Saves are not available in this test build.", NULL, false);\n    return;')
     return out
 if __name__=='__main__':
     import sys

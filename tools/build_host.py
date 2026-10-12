@@ -17,8 +17,10 @@ p.add_argument('--mapped-wad', action='store_true')
 p.add_argument('--small-room', action='store_true')
 p.add_argument('--static-wad', action='store_true')
 p.add_argument('--bounded-heap', action='store_true')
+p.add_argument('--reference-textures', action='store_true', help='Keep vanilla runtime composites for comparison')
 p.add_argument('--abi32', action='store_true', help='32-bit host ABI for native memory-budget checks')
 a = p.parse_args()
+if a.reference_textures and not a.static_wad:p.error('--reference-textures needs --static-wad')
 if a.static_wad and not (a.small_room and a.mapped_wad): p.error('--static-wad needs --small-room --mapped-wad')
 profile = json.loads((ROOT / 'targets' / (a.board + '.json')).read_text())
 engine = ROOT / 'third_party/doomgeneric/doomgeneric'
@@ -30,7 +32,7 @@ if not line:
     p.error('Pinned upstream source list missing.')
 sources = [engine / (name[:-2] + '.c') for name in line[1].split() if name != 'doomgeneric_xlib.o']
 
-out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else '') + ('-static' if a.static_wad else '') + ('-heap24' if a.bounded_heap else '') + ('-abi32' if a.abi32 else ''))
+out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else '') + ('-static' if a.static_wad else '') + ('-heap24' if a.bounded_heap else '') + ('-abi32' if a.abi32 else '') + ('-reference' if a.reference_textures else ''))
 out.mkdir(parents=True, exist_ok=True)
 if a.small_room:
     from prepare_engine import prepare
@@ -38,7 +40,10 @@ if a.small_room:
     sources=[engine/s.name for s in sources]
 if a.static_wad:
     from static_wad import freeze
-    freeze(engine,ROOT/'build/fixtures/miniwad-room.wad')
+    freeze(engine,ROOT/'build/fixtures/miniwad-room.wad',static_textures=not a.reference_textures)
+if a.static_wad:
+    with (engine/'r_data.c').open('a') as f:
+        f.write('\n'+(ROOT/'src/host/texture_probe.inc').read_text())
 # Keep upstream pinned and clean; append introspection only in a generated copy.
 zone=out/'z_zone_probe.c'
 zone.write_text((engine/'z_zone.c').read_text()+'\n'+(ROOT/'src/host/zone_probe.inc').read_text())
@@ -48,6 +53,9 @@ flags=['-I'+str(ROOT/'src/host'), '-I'+str(ROOT/'src/common'),
 if a.display=='strip':
     sources=[ROOT/'src/common/doomgeneric_create.c' if s.name=='doomgeneric.c' else s for s in sources]
     sources.append(ROOT/'src/common/lcd_frame.c')
+    flags+=['-DDP_TEXTURE_PROBE'] if a.static_wad else []
+    if a.small_room:
+        sources.append(ROOT/'src/common/menu_view.c');flags+=['-DDP_READABLE_MENU']
     flags+=['-DCMAP256','-DDP_STRIP','-Wl,--wrap=I_FinishUpdate']
 if a.mapped_wad:
     sources=[ROOT/'src/host/w_file_mmap.c' if s.name=='w_file_stdc.c' else s for s in sources]
@@ -75,6 +83,6 @@ if a.bounded_heap:
 else:
     subprocess.run(command, check=True, cwd=out)
 (out / 'target.json').write_text(json.dumps({'build_kind': 'host-only', 'profile': profile,
-    'abi32': a.abi32, 'bounded_heap': a.bounded_heap, 'static_wad': a.static_wad, 'small_room': a.small_room, 'mapped_wad': a.mapped_wad, 'display': a.display, 'no_wipe': a.no_wipe, 'output_framebuffer_bytes': 320 * 200 * 4 if a.display=='rgba' else 0, 'native_firmware': False}, indent=2) + '\n')
+    'reference_textures':a.reference_textures,'abi32': a.abi32, 'bounded_heap': a.bounded_heap, 'static_wad': a.static_wad, 'small_room': a.small_room, 'mapped_wad': a.mapped_wad, 'display': a.display, 'no_wipe': a.no_wipe, 'output_framebuffer_bytes': 320 * 200 * 4 if a.display=='rgba' else 0, 'native_firmware': False}, indent=2) + '\n')
 print('Built host baseline for', profile['name'], 'at', out / 'doom-host')
 print('This is NOT flashable firmware.')

@@ -188,7 +188,7 @@ void dp_cstart(const uint32_t *parameters){
     input_ready=1;
     fm1_irq_enable_all();
     dp_clear_display();
-    dp_message("DOOM TEST 02");
+    dp_message("DOOM TEST 04");
 #if DP_SMK
     dp_message("SMK37 - SILENT ROOM");
 #else

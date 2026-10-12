@@ -1,16 +1,16 @@
-# FM-1 Test02
+# FM-1 Test04
 
-Test01 reached the FM-1 display but stopped with `Couldn't realloc lumpinfo`. Test02 fixes that startup allocation; it is not yet hardware-validated. It contains the real Doom engine and an open-content Miniwad room, without sound or USB updating.
+Test04 adds a full-resolution text menu over the existing game display. The user reports Test03 runs on FM-1, including the previously failing turn; its original menu lettering was hard to read. Test04 is built and host-tested, but not yet physically checked.
 
 Open the local FM-1 installer at `http://127.0.0.1:8785/`. Connect the FM-1 directly by normal USB while running firmware with the standard FM-1 MIDI updater. Close other MIDI applications. Have the FM-1 XIAO recovery adapter ready, but leave it disconnected during normal USB installation. The installer rejects SMK identities and never starts automatically.
 
-The package is derived from the pinned Felucca Salt14 FM-1 release (package SHA-256 `efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28`). It retains its loader byte-for-byte (`2c9f43bf7dff81a953c07f3c82cedf5f5899aac14e5b62c2cb23ba7f560ce7db`). Only application bytes, their CRC fields, and the enclosing package metadata change. Package identity is `FM-1_991`; that identity is for installation only because Doom has no MIDI stack.
+The package is derived from the pinned Felucca Salt14 FM-1 release (package SHA-256 `efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28`). It retains its loader byte-for-byte (`2c9f43bf7dff81a953c07f3c82cedf5f5899aac14e5b62c2cb23ba7f560ce7db`). Only application bytes, their CRC fields, and the enclosing package metadata change. Package identity is `FM-1_993`; that identity is for installation only because Doom has no MIDI stack.
 
 The inherited loader writes application sectors `0x4000..0x93000`, validates the chip key, and verifies sectors. It preserves the bootloader. The running synth stages the loader and the loader clears its update records outside that range, so this is not a promise that no update-metadata flash is touched. Back up synth projects using that synth before installing.
 
 ## First check
 
-Expected: `DOOM TEST 02`, then the room. Count white touch keys from the left: turn left, forward, turn right, back, fire, use, menu, enter, run, strafe left, strafe right. Test movement and release. No sound is expected. Photograph any `DOOM STOPPED` message; report a black screen rather than repeatedly reinstalling.
+Expected: `DOOM TEST 04`, then the room. Count white touch keys from the left: turn left, forward, turn right, back, fire, use, menu, enter, run, strafe left, strafe right. Test movement and release. No sound is expected. Photograph any `DOOM STOPPED` message; report a black screen rather than repeatedly reinstalling.
 
 ## Return to synth firmware
 
@@ -27,7 +27,7 @@ python tools/stage_fm1_test.py --base ../Felucca/Felucca-site-publish/firmware/f
 python -m http.server 8785 --bind 127.0.0.1 --directory build/try-fm1/site
 ```
 
-Native app details and limitations are in `docs/NATIVE_TEST01.md`. Both native runtime tests and package checks run without hardware. Hardware boot, LCD, controls, runtime memory headroom and restore remain to be tested.
+Native app details and limitations are in `docs/NATIVE_TEST01.md`. Both native runtime tests and package checks run without hardware. Test02 booted and accepted movement input on FM-1. The adapter replacement of Test01 was fully read back and verified. Test03 gameplay and recovery shortcut remain to be tested on hardware.
 
 ## Test02 memory regression checks
 
@@ -45,3 +45,31 @@ python3 tools/check_play.py build/fm1/strip-no-wipe-mapped-small-static-heap24-a
 This requires GCC multilib. It verifies startup, movement, turning, firing and release with an identical reference frame. It still does not emulate the JieLi processor or scanner. The error display now clears stale loader pixels and explicitly labels the OCT recovery shortcut.
 
 Final Test02 validation: the 32-bit host completed four 120-frame runs with a 262,144-byte zone (peak 248,612 bytes) and the native C allocator (peak 312 bytes, no failures). FM-1 binary: 539,900 bytes; data+BSS: 434,624 bytes including the zone. The linker places all 58,716 directory bytes in XIP at `0x02034e44`. Firmware SHA-256: `5bd39672416887b69415fec7d13702eef0d6cb9742751f3f868215f8f710a35b`.
+
+## Test03 turning regression
+
+The Test02 host checks covered only 120 frames and a short turn. A longer right turn reproduces the exact hardware error: the 16,384-byte DLEVSIGN composite plus the 24-byte zone header cannot be allocated. Idle and menu tests do not reproduce it. This is a rendering allocation failure, not a damaged installation.
+
+`tools/static_textures.py` builds all six composite textures reachable in the embedded room, including both switch states, into immutable column data. Deduplication needs 2,688 pixel bytes plus 960 index bytes in XIP. The renderer returns those columns directly rather than allocating composites during play. Non-room textures retain the original path. The WAD and RAM/stack layout are unchanged.
+
+The regression first reproduces the old failure, then compares five 10,500-frame scenarios (right/left turns, movement/fire/use, strafe/back, and repeated menus) against the original compositor with a larger host zone. Every composite column and each final frame match byte-for-byte. The fixed build uses the device's 256 KiB zone and 24 KiB C heap, with no C-heap allocation failures. These are accelerated host tests, not real-time hardware endurance tests.
+
+```sh
+python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32
+python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32 --reference-textures
+python3 tools/check_navigation.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32/doom-host build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-reference/doom-host
+```
+
+FM-1 Test03 application: 543,784 bytes, SHA-256 `a924d3fe640389d8140e510f8db23d010e6c2b1e4a39729ddbd6f9c91a07c86a`. Data+BSS remains 434,624 bytes. Test01 and Test02 are withdrawn; do not repeat their installation.
+
+## Test04 readable menus
+
+The original Miniwad menu artwork is tiny and loses letter strokes in the 320x200-to-240x180 nearest-neighbor conversion. Test04 displays menus directly at 240x240, using 14-pixel-high text with complete 2x2 strokes, a solid selection highlight, titles, and option values. Gameplay scaling is unchanged. The display snapshots the engine's current menu and selected item; the original menu navigation remains in charge.
+
+White keys from the left: **2 up, 4 down, 1/3 adjust, 8 select, 7 close/cancel**. Select also confirms yes/no prompts. Save/load selections show an unavailable notice because this build has no save storage; they do not attempt filesystem writes. Sound remains disabled.
+
+Twelve host cases cover main/options/difficulty/sound pages, changed values, confirmations, cancel, and save/load notices. An ASan/UBSan renderer test checks full-size glyph strokes, longest message rows, bounds and output failure. The original gameplay frame hashes and five extended navigation scenarios still pass. Native FM-1 application: 546,792 bytes; SHA-256 `6ef85fcee41f5fa72d9736dadf0c5d8889520397f0599118526bf8b69c313789`. Data+BSS remains 434,624 bytes; menu state uses bounded stack storage, not dynamic allocation.
+
+```sh
+python3 tools/check_menu.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32/doom-host
+```

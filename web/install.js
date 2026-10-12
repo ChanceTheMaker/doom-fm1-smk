@@ -9,10 +9,10 @@ ack.onchange=sync;
 try{
   if(!['localhost','127.0.0.1','[::1]'].includes(location.hostname))throw Error('This private installer runs on localhost only.');
   const response=await fetch('./candidate.json',{cache:'no-store'});if(!response.ok)throw Error('Stage the private candidate first.');
-  const m=await response.json();if(m.board!=='SMK-37 Pro'||m.private!==true||m.package!=='doom-test02.smkupdate')throw Error('Unexpected candidate metadata.');
+  const m=await response.json();if(m.withdrawn)throw Error(m.reason||"Candidate withdrawn.");if(m.board!=='SMK-37 Pro'||m.private!==true||m.package!=='doom-test04.smkupdate')throw Error('Unexpected candidate metadata.');
   const bytes=new Uint8Array(await (await fetch('./'+m.package,{cache:'no-store'})).arrayBuffer());
   pkg=await parsePackage(bytes,m.sha256);
-  if(pkg.product!=='SMK-37_991'||pkg.version!=='DOOM SMK TEST02'||pkg.format!==1)throw Error('Unexpected Doom package identity.');
+  if(pkg.product!=='SMK-37_993'||pkg.version!=='DOOM SMK TEST04'||pkg.format!==1)throw Error('Unexpected Doom package identity.');
   logEl.textContent='Package verified. '+m.version+' is ready for your SMK-37 Pro.';
 }catch(e){pkg=null;log(e.message);}sync();
 window.addEventListener('beforeunload',e=>{if(busy){e.preventDefault();e.returnValue='';}});
@@ -35,6 +35,6 @@ button.onclick=async()=>{
     const result=await up.serve(link,pkg.bytes,0xf0000000,30000,n=>{if(n%64===0)log('Transfer request '+n);});
     if(!result.finished)throw Error('Transfer did not finish. Keep power on and save this log. Do not retry blindly.');
     link.close();link=null;
-    log('Loader reported transfer completion. Doom does not return a MIDI identity. Check the physical screen for DOOM TEST02 and the room; boot success is not confirmed by this page.');
+    log('Loader reported transfer completion. Doom does not return a MIDI identity. Check the physical screen for DOOM TEST04 and the room; boot success is not confirmed by this page.');
   }catch(e){log(e.message);}finally{link?.close();busy=false;pkg=null;sync();}
 };

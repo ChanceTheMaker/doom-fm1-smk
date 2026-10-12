@@ -2,13 +2,16 @@
 #include "doomgeneric.h"
 #include "i_video.h"
 #include "lcd_frame.h"
+#include "menu_view.h"
 #include "platform.h"
 extern struct color colors[256];
 static uint16_t palette[256];
 void DG_Init(void){}
 void DG_DrawFrame(void){
     for(unsigned i=0;i<256;i++)palette[i]=(uint16_t)(((colors[i].r>>3)<<11)|((colors[i].g>>2)<<5)|(colors[i].b>>3));
-    if(!dp_lcd_present(I_VideoBuffer,palette,dp_lcd_row,0))dp_panic("LCD TRANSFER FAILED");
+    dp_menu_view menu;
+    int ok=dp_menu_snapshot(&menu)?dp_menu_present(&menu,dp_lcd_row,0):dp_lcd_present(I_VideoBuffer,palette,dp_lcd_row,0);
+    if(!ok)dp_panic("LCD TRANSFER FAILED");
     dp_frame_done();
     dp_service();
 }

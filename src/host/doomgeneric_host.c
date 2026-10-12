@@ -11,6 +11,9 @@
 #ifdef DP_STRIP
 #include "i_video.h"
 #include "lcd_frame.h"
+#ifdef DP_READABLE_MENU
+#include "menu_view.h"
+#endif
 extern struct color colors[256];
 static uint16_t palette565[256];
 #endif
@@ -53,6 +56,10 @@ static int write_row(void *ctx,unsigned y,const uint16_t *row,unsigned width) {
 void __wrap_I_FinishUpdate(void) { DG_DrawFrame(); }
 #endif
 void DG_DrawFrame(void) {
+#ifdef DP_TEXTURE_PROBE
+    extern void DP_ExportTextureColumns(void);
+    if(!frames)DP_ExportTextureColumns();
+#endif
     dp_input_observe(frames+1>=limit);
     if (++frames < limit) return;
     FILE *f = fopen(output, "wb");
@@ -60,7 +67,15 @@ void DG_DrawFrame(void) {
 #ifdef DP_STRIP
     if (fprintf(f,"P6\n240 240\n255\n")<0)exit(2);
     for(unsigned i=0;i<256;++i)palette565[i]=(uint16_t)(((colors[i].r>>3)<<11)|((colors[i].g>>2)<<5)|(colors[i].b>>3));
-    if(!dp_lcd_present(I_VideoBuffer,palette565,write_row,f)){fclose(f);exit(2);}
+#ifdef DP_READABLE_MENU
+    dp_menu_view menu;
+    int ok=dp_menu_snapshot(&menu)?dp_menu_present(&menu,write_row,f):dp_lcd_present(I_VideoBuffer,palette565,write_row,f);
+    const char *menu_report=getenv("DOOM_MENU_REPORT");
+    if(menu_report){FILE *report=fopen(menu_report,"w");if(!report)exit(2);fprintf(report,"%s\n%d\n",menu.title,menu.selected);for(int i=0;i<menu.count;i++)fprintf(report,"%s\n",menu.rows[i]);fclose(report);}
+#else
+    int ok=dp_lcd_present(I_VideoBuffer,palette565,write_row,f);
+#endif
+    if(!ok){fclose(f);exit(2);}
 #else
     if (fprintf(f, "P6\n%d %d\n255\n", DOOMGENERIC_RESX, DOOMGENERIC_RESY) < 0) exit(2);
     for (unsigned i = 0; i < DOOMGENERIC_RESX * DOOMGENERIC_RESY; ++i) {

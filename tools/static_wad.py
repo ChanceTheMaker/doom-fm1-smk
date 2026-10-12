@@ -2,7 +2,7 @@
 """Freeze the pinned mapped WAD's directory in read-only program storage."""
 import hashlib,struct
 EXPECTED='5382808534297f82d29873d9132410dcb20f314e01f58f1ec4c653f7f0ddf98d'
-def freeze(engine,wad):
+def freeze(engine,wad,static_textures=True):
     data=wad.read_bytes()
     if hashlib.sha256(data).hexdigest()!=EXPECTED: raise ValueError('Unexpected static WAD')
     _,count,directory=struct.unpack_from('<4sII',data)
@@ -48,4 +48,7 @@ def freeze(engine,wad):
     function('void W_GenerateHashTable(void)', '    /* One immutable WAD: use the bounded linear lookup, no RAM hash chains. */')
     s=s.replace('    lumpinfo_t *lump_p;', '    const lumpinfo_t *lump_p;').replace('    lumpinfo_t *l;', '    const lumpinfo_t *l;')
     p.write_text(s)
+    if static_textures:
+        from static_textures import freeze_textures
+        freeze_textures(engine,data)
     return count

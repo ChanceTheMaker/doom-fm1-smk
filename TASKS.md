@@ -30,4 +30,10 @@ No current task requires publishing or flashing a device automatically.
 
 - [x] Reproduce and fix the Test01 lump-directory OOM; store fixed metadata in XIP.
 - [x] Add a 32-bit host gameplay check with the native 24 KiB allocator and revised 256 KiB zone.
-- [ ] Recover FM-1 through the adapter and physically test Test02.
+- [x] Recover FM-1 through the adapter and physically test Test02 (boots/plays, then turning OOM).
+- [x] Reproduce the 16,408-byte turning allocation failure and eliminate room composite allocations.
+- [x] Compare all room composite columns and five 10,500-frame play scenarios against the reference engine.
+- [x] Install Test03 on FM-1; user reports it runs after turning-crash fix.
+- [x] Diagnose tiny menu artwork; add full-resolution text menus and tested Select-key confirmations.
+- [ ] Install Test04 and physically check menu readability/navigation; longer hardware gameplay remains.
+- [ ] Refresh the private SMK candidate after the FM-1 check.

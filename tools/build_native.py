@@ -27,7 +27,7 @@ sources=[engine/(name[:-2]+'.c') for name in line[1].split() if name!='doomgener
 replace={'i_system.c':native/'system.c','w_file_stdc.c':native/'w_file_flash.c',
          'doomgeneric.c':common/'doomgeneric_create.c','f_wipe.c':common/'wipe_disabled.c'}
 sources=[replace.get(s.name,s) for s in sources]
-sources += [common/'lcd_frame.c',common/'wad_view.c',native/'doomgeneric_native.c',native/'libc_support.c',ROOT/'third_party/printf/printf.c',
+sources += [common/'lcd_frame.c',common/'menu_view.c',common/'wad_view.c',native/'doomgeneric_native.c',native/'libc_support.c',ROOT/'third_party/printf/printf.c',
             native/'syscalls.c',native/'board.c',native/'crt0.S',native/'hal/fm1_vec.S',asset]
 flags=['-target','pi32v2','-mcpu=r3','-mfprev1','-Os','-ffunction-sections','-fdata-sections',
        '-isystem',str(tc/'pi32v2/include'),
@@ -44,7 +44,7 @@ with ThreadPoolExecutor(4) as pool:compiled=list(pool.map(compile_one,sources))
 errors=[str(o)+':\n'+err for o,code,err in compiled if code]
 if errors:raise SystemExit('\n'.join(errors))
 objects=[o for o,_,_ in compiled]
-elf=out/'doom-test02.elf'
+elf=out/'doom-test04.elf'
 libs=tc/'pi32v2/lib/r3'
 cmd=[str(ld),'--gc-sections','-T',str(native/'app.ld'),*[str(o) for o in objects],
      '-L'+str(libs),'--start-group','-lc','-lm','-lcompiler_rt','--end-group','-o',str(elf)]
@@ -63,8 +63,8 @@ for section,address in [('.text',0x02000120),('.data',sym('_data_load'))]:
     image.extend(b'\xff'*(offset-len(image)));image.extend(blob)
 image.extend(b'\xff'*(-len(image)%4))
 if sym('_start')!=0x02000120 or len(image)>0x8dfbc or sym('_bss_end')>0x01c74000:raise SystemExit('Native application bounds failed')
-path=out/('doom-'+a.board+'-test02.bin');path.write_bytes(image)
-report={'board':a.board,'kind':'native-application-only','hardware_tested':False,'version':'test02',
+path=out/('doom-'+a.board+'-test04.bin');path.write_bytes(image)
+report={'board':a.board,'kind':'native-application-only','hardware_tested':False,'version':'test04',
         'image':path.name,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),
         'entry':hex(sym('_start')),'bss_end':hex(sym('_bss_end')),'ram_data_bss':sym('_bss_end')-sym('_data_start'),
         'static_lump_count':lump_count,'directory_storage':'XIP','zone_bytes':256*1024,'libc_heap_bytes':24*1024,'audio':False,'flash_writes':False,

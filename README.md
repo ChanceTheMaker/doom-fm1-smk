@@ -5,13 +5,13 @@ Created by Chance Roth (@ChanceTheMaker).
 
 ## Current status
 
-**FM-1 Test02 is staged after fixing Test01's startup allocation failure. Test01 reached the FM-1 display but did not enter the game. Test01 is withdrawn on both families; a corrected private SMK Pro Test02 package is also staged.** This repository has no publication remote or deployment workflow.
+**FM-1 Test04 adds readable full-resolution menus. Test03 is running on the user's FM-1 after fixing the turning crash; the user could open menus, but the scaled test-WAD lettering was barely readable. Test04 adds crisp text, selection highlights, visible option values, Select-key confirmations, and explicit notices for unavailable saves. Host checks pass; physical Test04 validation is pending. Test01 and Test02 remain withdrawn, including the old SMK candidate.** This repository has no publication remote or deployment workflow.
 
 The build embeds a small open-content Miniwad room in application flash. It uses the real Doom engine, a 240x180 RGB565 view on the 240x240 LCD, piano-key movement/fire controls, and separate FM-1/SMK startup and scanner drivers. It has **no sound, saves, USB MIDI, or USB updater**.
 
-For the first FM-1 test, use [FM-1 Test02 instructions](docs/FM1_TEST01.md) and the local installer on port 8785. [SMK Test01 instructions](docs/NATIVE_TEST01.md) cover the private Pro package on port 8784. The private Pro package is tied to the owner's verified backup. Elite currently has an application binary only; do not install an SMK package on FM-1.
+For the first FM-1 test, use [FM-1 Test04 instructions](docs/FM1_TEST01.md) and the local installer on port 8785. [Historical SMK instructions](docs/NATIVE_TEST01.md) describe the private Pro workflow; its old candidate on port 8784 is withdrawn pending the FM-1 menu check. The private Pro package is tied to the owner's verified backup. Elite currently has an application binary only; do not install an SMK package on FM-1.
 
-Test02 stores its fixed lump directory in flash and uses a 256 KiB Doom zone plus a separate 24 KiB C heap. A 32-bit host gameplay test now exercises those limits. See the generated native manifest for section sizes. Linker bounds and runtime allocator tests pass. Actual heap/stack high-water, LCD orientation, controls and frame rate still need a device test.
+Test03 stores its fixed lump directory and room composite texture columns in flash and uses a 256 KiB Doom zone plus a separate 24 KiB C heap. A 32-bit host gameplay test now exercises those limits. See the generated native manifest for section sizes. Linker bounds and runtime allocator tests pass. Actual heap/stack high-water, LCD orientation, controls and frame rate still need a device test.
 
 ## Build and exercise the host
 
