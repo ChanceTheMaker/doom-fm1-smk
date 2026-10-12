@@ -51,3 +51,7 @@ The loader host check was compiled from local Felucca review revision `587436296
 `site/vendor/fm1pkg.js`, `smk37-package.js` and `smk37-stock.js` derive from ChanceTheMaker/sloop-smk revision `090588d112a4a6230fe71d2f3263bdcca2203820`. `fm1ota.js` and `smk37-update.js` derive from ChanceTheMaker/felucca-smk revision `35ddfbda6bfee349b7623504677587f26a1a31a2`. Retained GPL notices apply. Doom adaptations enforce selected-model packaging, explicit generic-loader confirmation and successful completion without expecting a synth MIDI identity. See `site/vendor/PROVENANCE.json`.
 
 Published app binaries embed the modified Miniwad campaign. The source generator and Miniwad/Freedoom license are included; complete WAD files remain excluded. Original pixel art and procedural sound code are part of this GPL port. Browser base packages are downloaded separately from pinned public URLs and verified before use.
+
+## Hardware hero illustrations
+
+The FM-1 SVG geometry comes from ChanceTheMaker/Felucca `ab9e880890eeda57a1772b2d1250f107a3e199c6`, `webapp/installer/index.html`; SMK geometry comes from ChanceTheMaker/sloop-smk `090588d112a4a6230fe71d2f3263bdcca2203820`, `web/index.html`. Adapted under the existing GPL terms: synth display replaced with captured Doom output, original finish palettes retained, and a new alternating screen-zoom presentation.

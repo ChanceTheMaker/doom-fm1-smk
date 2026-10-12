@@ -16,6 +16,7 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 - Original synthesized shotgun, reload, growl, impact, death, pickup and switch sounds.
 - A new boot splash, readable LCD menus and white-key controls.
 - Separate FM-1, SMK-37 Pro and SMK-37 Elite builds, all available in the website builder.
+- Animated hardware hero: alternating FM-1/SMK screen zooms, seven FM-1 finishes and six SMK finishes, with pause and reduced-motion support.
 
 | Model | Test06 application | Physical status |
 | --- | ---: | --- |
