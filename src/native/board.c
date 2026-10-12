@@ -24,6 +24,7 @@ static int data(const void *p,uint32_t n){return smk37_lcd_data(p,n,4000000);}
 static const smk37_panel_io_t panel={cmd,data,fm1_delay_ms};
 #else
 #include "fm1_audio.h"
+#include "fm1_adc.h"
 #include "fm1_input.h"
 #include "fm1_lcd_hw.h"
 #include "smk37_panel.h" /* window protocol only; FM-1 uses its own init sequence */
@@ -31,6 +32,38 @@ static int cmd(uint8_t c){uint32_t before=fm1_lcd_timeouts;fm1_lcd_send_cmd(c);f
 static int data(const void *p,uint32_t n){uint32_t before=fm1_lcd_timeouts;fm1_lcd_send_data(p,n);fm1_lcd_wait();fm1_lcd_deselect();return before==fm1_lcd_timeouts;}
 static const smk37_panel_io_t panel={cmd,data,fm1_delay_ms};
 #endif
+#ifdef DP_CAMPAIGN
+#include "sfx.h"
+#include "splash.h"
+#define AUDIO_FRAMES 128u
+static int32_t audio_buffer[4*AUDIO_FRAMES] __attribute__((aligned(4)));
+extern void dp_audio_isr(void);
+void dp_audio_irq(void){
+#if DP_SMK
+ unsigned p=smk37_audio_pending();smk37_audio_ack_aux(p);
+ if(p&SMK37_AUDIO_HALF){dp_sfx_render(audio_buffer+smk37_audio_free_half()*2*AUDIO_FRAMES,AUDIO_FRAMES);smk37_audio_ack_half();}
+#else
+ unsigned p=fm1_audio_pending();fm1_audio_ack_aux(p);
+ if(p&FM1_AUDIO_HALF){dp_sfx_render(audio_buffer+fm1_audio_free_half()*2*AUDIO_FRAMES,AUDIO_FRAMES);fm1_audio_ack_half();}
+#endif
+}
+static void audio_start(void){
+#if DP_SMK
+ const smk37_audio_hooks_t hooks={fm1_delay_ms,fm1_irq_attach};
+ if(!smk37_audio_init(audio_buffer,2*AUDIO_FRAMES,dp_audio_isr,3,&hooks))dp_panic("AUDIO INIT FAILED");
+#else
+ fm1_adc_init();int vol=fm1_adc_read(FM1_ADC_MASTER);dp_sfx_master(vol<0?256:vol);
+ fm1_audio_init(audio_buffer,2*AUDIO_FRAMES,dp_audio_isr,3);
+#endif
+}
+#endif
+static void audio_stop(void){
+#if DP_SMK
+ smk37_audio_stop();
+#else
+ fm1_audio_stop();
+#endif
+}
 static uint8_t display_ready,input_ready;
 static uint32_t millis,last_tick,remainder,scan_at,buttons,returned;
 static uint16_t wire_row[240] __attribute__((aligned(4)));
@@ -77,7 +110,12 @@ void dp_service(void){
     }
     uint64_t held=notes;
 #else
-    fm1_input_scan();uint32_t held=fm1_in.notes;buttons=fm1_in.buttons;
+    fm1_input_scan();
+#ifdef DP_CAMPAIGN
+    static uint32_t volume_at;
+    if(now-volume_at>=30){volume_at=now;int vol=fm1_adc_read(FM1_ADC_MASTER);if(vol>=0)dp_sfx_master((unsigned)vol);}
+#endif
+    uint32_t held=fm1_in.notes;buttons=fm1_in.buttons;
 #endif
     actions=0;
     for(unsigned i=0;i<sizeof(note_keys);i++)if(held&((uint64_t)1<<note_keys[i]))actions|=1u<<i;
@@ -89,7 +127,7 @@ void dp_service(void){
     const uint32_t recovery=3;
 #endif
     static uint32_t recovery_since;
-    if((buttons&recovery)==recovery){if(!recovery_since)recovery_since=now?now:1;if(now-recovery_since>2000){dp_boot.pending=0;fm1_enter_uboot();}}
+    if((buttons&recovery)==recovery){if(!recovery_since)recovery_since=now?now:1;if(now-recovery_since>2000){dp_boot.pending=0;audio_stop();fm1_enter_uboot();}}
     else recovery_since=0;
 }
 int dp_key(int *down,unsigned char *key){
@@ -146,6 +184,7 @@ static void dp_clear_display(void){
     diagnostic_row=30;
 }
 void dp_panic(const char *text){
+    audio_stop();
     dp_clear_display();
     dp_message("DOOM STOPPED");dp_message(text);
     dp_message("HOLD BOTH OCT FOR RECOVERY");
@@ -186,10 +225,13 @@ void dp_cstart(const uint32_t *parameters){
     display_ready=!fm1_lcd_timeouts;fm1_input_init();
 #endif
     input_ready=1;
+#ifdef DP_CAMPAIGN
+    audio_start();
+#endif
     fm1_irq_enable_all();
     dp_clear_display();
     #ifdef DP_CAMPAIGN
-    dp_message("DOOM TEST 05");
+    dp_message("DOOM TEST 06");
     #else
     dp_message("DOOM TEST 04");
     #endif
@@ -199,6 +241,10 @@ void dp_cstart(const uint32_t *parameters){
     dp_message("FM1 - DOOM");
 #endif
     char *args[]={"doom","-iwad","miniwad.wad","-nosound","-warp","1","-skill","2"};
+#ifdef DP_CAMPAIGN
+    if(!dp_splash_present(DP_SMK?(DP_ELITE?2:1):0,dp_lcd_row,0))dp_panic("SPLASH DISPLAY FAILED");
+    uint32_t splash_start=dp_millis();while(dp_millis()-splash_start<1600)dp_service();
+#endif
     doomgeneric_Create(8,args);
     for(;;){doomgeneric_Tick();dp_service();}
 }

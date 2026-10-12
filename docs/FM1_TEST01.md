@@ -1,3 +1,7 @@
+# Historical FM-1 recovery and staging notes
+
+**Current release: [Test06](TEST06.md). Use the [public installer](https://chancethemaker.github.io/doom-fm1-smk/).** The Test05 details below are retained as development history; Test06 adds confirmed graphics and sound, uses product `FM-1_995`, and still requires the adapter when already running Doom.
+
 # FM-1 Test05
 
 Test05 adds three connected-room levels, 18 enemies, a shotgun with original pixel art, pickups and readable score/health/ammo indicators. Guards award 100 points; imps 200. Face the wall switch in the final room and press Use to exit. Fire/Use continues at the level results screen; Use retries after death. After the third level, continue starts a fresh campaign. No sound or persistent saves.

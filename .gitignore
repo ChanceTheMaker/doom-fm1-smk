@@ -8,3 +8,8 @@ __pycache__/
 *.bin
 *.elf
 *.map
+
+# Reviewed app-only releases; never publish vendor packages or device dumps.
+!site/firmware/doom-fm1-test06.bin
+!site/firmware/doom-smk37-pro-test06.bin
+!site/firmware/doom-smk37-elite-test06.bin

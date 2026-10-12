@@ -39,6 +39,8 @@ def prepare(out,campaign=False):
         change('m_menu.c','void '+function+' (int choice)\n{',
                'void '+function+' (int choice)\n{\n    M_StartMessage("Saves are not available in this test build.", NULL, false);\n    return;')
     if campaign:
+        path=out/'s_sound.c';path.write_text('void dp_game_sound(void *,int,int);\n'+path.read_text())
+        change('s_sound.c','void S_StartSound(void *origin_p, int sfx_id)\n{', 'void S_StartSound(void *origin_p, int sfx_id)\n{\n    dp_game_sound(origin_p,sfx_id,snd_SfxVolume); return;')
         for file in ('p_inter.c','g_game.c'):
             path=out/file;path.write_text('#include "campaign.h"\n'+path.read_text())
         change('p_inter.c','    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);',

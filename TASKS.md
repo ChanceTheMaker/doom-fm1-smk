@@ -26,7 +26,7 @@
 - [x] Stage a separate FM-1 package and run the FM-1 loader host test.
 - [ ] Validate FM-1 installation/boot on hardware, then package Elite separately.
 
-No current task requires publishing or flashing a device automatically.
+Current release task: publish Test06, with public browser builders for all three models. Device flashing is performed only for the connected model and authorized test.
 
 - [x] Reproduce and fix the Test01 lump-directory OOM; store fixed metadata in XIP.
 - [x] Add a 32-bit host gameplay check with the native 24 KiB allocator and revised 256 KiB zone.
@@ -41,3 +41,14 @@ No current task requires publishing or flashing a device automatically.
 - [x] Install Test05 on FM-1; verify each changed sector and the complete 1 MiB flash image.
 - [ ] Check Test05 combat, pickups, exits and frame rate on the physical FM-1.
 - [ ] Refresh the private SMK candidate after the FM-1 check.
+
+## Test06
+
+- [x] Add synthesized sound effects and directional shaded enemy sprites.
+- [x] Add and capture a new splash screen and campaign screenshots.
+- [x] Build separate FM-1, SMK Pro and Elite applications.
+- [x] Install Test06 with full readback; owner confirms graphics and sound on FM-1.
+- [x] Validate three public browser builders and model-specific installer routing.
+- [x] Prepare public repository, website and Pages workflow.
+- [ ] Physically test Doom on Pro and Elite, including audio and recovery.
+- [ ] Add runtime USB updater, then assess music and persistent saves.

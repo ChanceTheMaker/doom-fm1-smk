@@ -24,5 +24,12 @@
     "fm1_led_pwm.h": "571f6426ddd637d978e5f0d8ca7fb88f960cc97166e27e0b82d8753c69b18623",
     "fm1_sys.h": "fd7b7b8c1cc4136a4a4313057afaef4c6c331992e2435d0a80a8477282b20d76"
   },
-  "note": "Exact local source hashes recorded; original per-file notices retained."
+  "note": "Exact local source hashes recorded; original per-file notices retained.",
+  "additional_files": {
+    "fm1_adc.h": {
+      "source": "E:\\AI_Apps\\Felucca\\Felucca-review\\firmware\\hal\\fm1_adc.h",
+      "sha256": "980b221d9de19389961087335d6ed5c757967cf85c508d73e23a822e345af42f",
+      "note": "FM-1 master-volume ADC; original GPL notice retained."
+    }
+  }
 }

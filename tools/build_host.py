@@ -65,7 +65,7 @@ if a.mapped_wad:
 if a.no_wipe:
     sources=[ROOT/'src/common/wipe_disabled.c' if s.name=='f_wipe.c' else s for s in sources]
 if a.campaign:
-    sources.extend([ROOT/'src/common/campaign.c',ROOT/'src/host/campaign_bot.c']);flags+=['-DDP_CAMPAIGN']
+    sources.extend([ROOT/'src/common/campaign.c',ROOT/'src/host/campaign_bot.c',ROOT/'src/common/sfx.c',ROOT/'src/common/game_sound.c',ROOT/'src/common/splash.c',ROOT/'src/host/audio_capture.c']);flags+=['-DDP_CAMPAIGN']
 sources += [ROOT/'src/host/doomgeneric_host.c',ROOT/'src/host/memory_probe.c',ROOT/'src/host/input_smoke.c']
 abi=['-m32'] if a.abi32 else []
 command = [a.cc, *abi, '-std=c11', '-O2', '-D_DEFAULT_SOURCE', '-D_FILE_OFFSET_BITS=64', '-DNORMALUNIX', '-DLINUX',

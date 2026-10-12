@@ -22,7 +22,7 @@ Existing hardware adapter files carry GPL-3.0-only notices. Retain their exact n
 
 ## Test assets
 
-[Miniwad](https://github.com/fragglet/miniwad) is derived from Freedoom and carries the retained BSD-style notice in [licenses/miniwad.txt](licenses/miniwad.txt). Copyright 2001–2018, Contributors to the Freedoom project. License source: https://raw.githubusercontent.com/fragglet/miniwad/trunk/COPYING.adoc
+[Miniwad](https://github.com/fragglet/miniwad) is derived from Freedoom and carries the retained BSD-style notice in [licenses/miniwad.txt](licenses/miniwad.txt). Copyright 2001â€“2018, Contributors to the Freedoom project. License source: https://raw.githubusercontent.com/fragglet/miniwad/trunk/COPYING.adoc
 
 `tools/fetch_test_wad.py` explicitly downloads https://soulsphere.org/random/miniwad.zip into ignored build output. Archive SHA-256: `b4c9804343be34e485fddab802c18ecf836168d733c2f03441d8a9dff80b2393`. WAD SHA-256: `daed5e9dc341a9ff4b9c6901cb8467a630bd31b87f3ecb58a93a8b2bc186fbfb`.
 
@@ -45,3 +45,9 @@ The FM-1 staging tool accepts only the pinned Felucca Salt14 package in local `F
 The inherited package also contains JieLi SDK `uboot.boot`, `cfg_tool.bin` and `eq_cfg_hw.bin`, covered by [Apache 2.0](licenses/Apache-2.0.txt). The local staging tool copies that license beside the candidate. The FM-1 loader writes the application region and update metadata; its package boot header is not flashed.
 
 The loader host check was compiled from local Felucca review revision `5874362969e021b3e16e63697a9de926972b848f`, `tests/ldr_test.c`, which exercises `firmware/loader/ldr_core.c` and `firmware/src/ota.c`. This is a source-level simulated-flash test, not execution of the packaged native loader on hardware.
+
+## Test06 browser release
+
+`site/vendor/fm1pkg.js`, `smk37-package.js` and `smk37-stock.js` derive from ChanceTheMaker/sloop-smk revision `090588d112a4a6230fe71d2f3263bdcca2203820`. `fm1ota.js` and `smk37-update.js` derive from ChanceTheMaker/felucca-smk revision `35ddfbda6bfee349b7623504677587f26a1a31a2`. Retained GPL notices apply. Doom adaptations enforce selected-model packaging, explicit generic-loader confirmation and successful completion without expecting a synth MIDI identity. See `site/vendor/PROVENANCE.json`.
+
+Published app binaries embed the modified Miniwad campaign. The source generator and Miniwad/Freedoom license are included; complete WAD files remain excluded. Original pixel art and procedural sound code are part of this GPL port. Browser base packages are downloaded separately from pinned public URLs and verified before use.

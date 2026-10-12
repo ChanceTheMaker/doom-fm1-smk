@@ -47,18 +47,18 @@ def main():
     _,files=unpack(raw)
     if set(files)!={'flash.bin','ota.bin'} or sha(files['ota.bin'])!=LOADER_SHA: p.error('Unexpected loader')
     native=ROOT/'build/native/fm1';m=json.loads((native/'manifest.json').read_text());app=(native/m['image']).read_bytes()
-    if m['board']!='fm1' or m['version']!='test05' or sha(app)!=m['sha256'] or not m.get('campaign') or m['flash_writes']: p.error('Unexpected application')
-    flash=replace_app(files['flash.bin'],app);package=ufw(flash,files['ota.bin'],'FM-1_994')
+    if m['board']!='fm1' or m['version']!='test06' or sha(app)!=m['sha256'] or not m.get('campaign') or m['flash_writes']: p.error('Unexpected application')
+    flash=replace_app(files['flash.bin'],app);package=ufw(flash,files['ota.bin'],'FM-1_995')
     checked,back=unpack(package)
-    if checked['product']!='FM-1_994' or back!={'flash.bin':flash,'ota.bin':files['ota.bin']}: p.error('Package round trip failed')
+    if checked['product']!='FM-1_995' or back!={'flash.bin':flash,'ota.bin':files['ota.bin']}: p.error('Package round trip failed')
     kit=ROOT/'build/try-fm1';site=kit/'site';site.mkdir(parents=True,exist_ok=True)
     shutil.copytree(ROOT/'web/fm1',site,dirs_exist_ok=True)
     (site/'vendor').mkdir(exist_ok=True);shutil.copyfile(ROOT/'web/vendor/fm1ota.js',site/'vendor/fm1ota.js')
-    (site/'doom-fm1-test05.fwsc').write_bytes(package)
+    (site/'doom-fm1-test06.fwsc').write_bytes(package)
     (kit/'doom-application-region.bin').write_bytes(flash[0x4000:0x93000])
     (kit/'felucca-salt14-restore.fwsc').write_bytes(raw)
     (kit/'felucca-restore-application-region.bin').write_bytes(files['flash.bin'][0x4000:0x93000])
-    manifest={'board':'FM-1','version':'Doom FM-1 Test05','product':'FM-1_994','package':'doom-fm1-test05.fwsc',
+    manifest={'board':'FM-1','version':'Doom FM-1 Test06','product':'FM-1_995','package':'doom-fm1-test06.fwsc',
               'sha256':sha(package),'app_sha256':sha(app),'bytes':len(package),'hardware_tested':False,
               'usb_updater':False,'base_sha256':BASE_SHA,'loader_sha256':LOADER_SHA,
               'application_write_start':'0x4000','application_write_end':'0x93000'}

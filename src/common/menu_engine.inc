@@ -18,7 +18,7 @@ static void dp_menu_line(dp_menu_view *v,const char *s) {
 int dp_menu_snapshot(dp_menu_view *v) {
     memset(v,0,sizeof(*v));v->selected=-1;
     if(!menuactive&&!messageToPrint)return 0;
-    snprintf(v->footer,sizeof(v->footer),"1 / 3 ADJUST     SILENT TEST BUILD");
+    snprintf(v->footer,sizeof(v->footer),"1 / 3 ADJUST     EXPERIMENTAL BUILD");
     if(messageToPrint) {
         v->message=1;snprintf(v->title,sizeof(v->title),"%s",messageNeedsInput?"CONFIRM":"NOTICE");
         const char *s=messageString;

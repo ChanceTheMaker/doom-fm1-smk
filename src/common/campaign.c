@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "campaign.h"
+#include "sfx.h"
 #include "doomstat.h"
 #include "d_items.h"
 #include <stdio.h>
@@ -9,7 +10,7 @@ static unsigned entry_score;
 static int entered_map;
 void dp_campaign_kill(unsigned points){if(dp_score<999000)dp_score+=points;}
 void dp_campaign_reset(void){dp_score=entry_score=0;entered_map=0;}
-void dp_campaign_load(void){if(entered_map==gamemap)dp_score=entry_score;else{entered_map=gamemap;entry_score=dp_score;}}
+void dp_campaign_load(void){dp_sfx_reset();if(entered_map==gamemap)dp_score=entry_score;else{entered_map=gamemap;entry_score=dp_score;}}
 int dp_campaign_overlay(dp_menu_view *v){
  if(gamestate!=GS_INTERMISSION && (gamestate!=GS_LEVEL||players[consoleplayer].playerstate!=PST_DEAD))return 0;
  memset(v,0,sizeof(*v));v->selected=-1;v->message=1;

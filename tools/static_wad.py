@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """Freeze the pinned mapped WAD's directory in read-only program storage."""
 import hashlib,struct
-CAMPAIGN_SHA='c6474d4196278e1e790cd09529ccb483a9a0a2122fe97db0c28298d058aa2ce6'
+CAMPAIGN_SHA='00c26fa84d199c5800edb471edf5b079e8f752463fa34bcd6e94a1f13f617d8c'
 EXPECTED='5382808534297f82d29873d9132410dcb20f314e01f58f1ec4c653f7f0ddf98d'
 def freeze(engine,wad,static_textures=True,campaign=False):
     data=wad.read_bytes()

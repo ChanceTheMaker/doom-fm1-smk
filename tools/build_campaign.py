@@ -41,28 +41,9 @@ def patch(a,left,top):
   struct.pack_into('<I',out,8+x*4,columns[key])
  return bytes(out)
 
-def monster(kind,frame):
- w,h=(32,48) if kind=='POSS' else (40,56);a=canvas(w,h);cx=w//2
- death=frame>='H' if kind=='POSS' else frame>='I'
- if death:
-  rect(a,2,h-12,w-4,10,'dark');rect(a,5,h-13,w-12,7,'green' if kind=='POSS' else 'skin');rect(a,w-12,h-14,8,7,'metal' if kind=='POSS' else 'orange')
-  rect(a,4,h-4,w-8,3,'black');return patch(a,cx,h)
- shift=1 if frame in 'BD' else -1
- rect(a,cx-10,h-20,8,18+shift,'dark');rect(a,cx+2,h-20,8,18-shift,'dark')
- rect(a,cx-12,h-4+shift,11,4,'black');rect(a,cx+1,h-4-shift,11,4,'black')
- body='green' if kind=='POSS' else 'skin';edge='armor' if kind=='POSS' else 'orange'
- rect(a,cx-12,17,w-8,h-31,body);rect(a,cx-10,18,7,h-33,edge);rect(a,cx+7,18,4,h-31,'brown')
- rect(a,cx-15,19,6,20,body);rect(a,cx+10,19,6,20,body)
- rect(a,cx-8,3,16,16,'dark');rect(a,cx-6,4,12,12,'metal' if kind=='POSS' else 'skin')
- rect(a,cx-5,9,10,3,'black');rect(a,cx-4,9,3,2,'red');rect(a,cx+2,9,3,2,'red');rect(a,cx-3,14,6,2,'white')
- if kind=='TROO':
-  rect(a,cx-10,0,4,10,'white');rect(a,cx+6,0,4,10,'white')
-  rect(a,cx-15,35,5,5,'orange');rect(a,cx+11,35,5,5,'orange')
- else:
-  rect(a,cx-11,27,24,5,'black');rect(a,cx-8,27,22,2,'metal');rect(a,cx+8,25,4,8,'dark')
- if frame in ('EF' if kind=='POSS' else 'EFG'):
-  rect(a,cx+11,22,5,8,'yellow');rect(a,cx+9,25,9,3,'white')
- return patch(a,cx,h)
+from enemy_art import draw as draw_enemy
+def monster(kind,frame,rotation):return draw_enemy(kind,frame,rotation,colors,patch)
+
 def gun(frame,flash=False):
  a=canvas(96,100 if flash else 72);h=len(a)
  if flash:
@@ -76,11 +57,18 @@ def gun(frame,flash=False):
  rect(a,27,42+shift,42,12,'brown');rect(a,28,43+shift,40,2,'orange')
  for x in range(30,68,6):rect(a,x,46+shift,2,7,'dark')
  rect(a,43,59,10,6,'black');return patch(a,-112,-96)
-replaced=[];new=[];skip=0
+pnames=lumps['PNAMES'];texture_patches={pnames[4+i*8:12+i*8].rstrip(b'\0').decode() for i in range(struct.unpack_from('<I',pnames)[0])}
+replaced=[];new=[];skip=0;in_sprites=False
+# Keep the sprite families reachable in this fixed campaign, including player,
+# all carried weapons and effects. The unmodified engine accepts absent families.
+keep_sprites={'PLAY','POSS','TROO','SHTG','SHTF','PISG','PISF','PUNG','BAL1','PUFF','BLUD','AMMO','CLIP','SHEL','MEDI','STIM','SHOT','SBOX','IFOG','TFOG'}
 for name,b in entries:
+ if name=='S_START':in_sprites=True
+ elif name=='S_END':in_sprites=False
+ elif in_sprites and name[:4] not in keep_sprites and name[:4] not in {n[:4] for n in texture_patches}:continue
  if name=='MAP01':skip=11
  if skip:skip-=1;continue
- if name.startswith(('POSS','TROO')) and len(name)>=6:b=monster(name[:4],name[4]);replaced.append(name)
+ if name.startswith(('POSS','TROO')) and len(name)>=6:b=monster(name[:4],name[4],int(name[5]));replaced.append(name)
  elif name.startswith('SHTG') and len(name)>=6:b=gun(name[4]);replaced.append(name)
  elif name.startswith('SHTF') and len(name)>=6:b=gun(name[4],True);replaced.append(name)
  new.append((name,b))

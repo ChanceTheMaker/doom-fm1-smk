@@ -1,0 +1,27 @@
+{
+  "fm1pkg.js": {
+    "source": "https://github.com/ChanceTheMaker/sloop-smk/blob/090588d112a4a6230fe71d2f3263bdcca2203820/web/fm1pkg.js",
+    "sha256": "f365bc393e424caa31669f68de941881648eb4553bfbae64522274f827ed79c6",
+    "changes": "Relative import normalization; model validation and Doom completion behavior where applicable."
+  },
+  "smk37-package.js": {
+    "source": "https://github.com/ChanceTheMaker/sloop-smk/blob/090588d112a4a6230fe71d2f3263bdcca2203820/web/smk37-package.js",
+    "sha256": "0ae1c6e2d1b086c8208382d25a0a2150631186fe5dd45e026325f1c2fd1e32e2",
+    "changes": "Relative import normalization; model validation and Doom completion behavior where applicable."
+  },
+  "smk37-stock.js": {
+    "source": "https://github.com/ChanceTheMaker/sloop-smk/blob/090588d112a4a6230fe71d2f3263bdcca2203820/web/smk37-stock.js",
+    "sha256": "8f5bf099136c5e297bef75199cb70e2300fc63878cca265aedf0bc5e46312130",
+    "changes": "Relative import normalization; model validation and Doom completion behavior where applicable."
+  },
+  "fm1ota.js": {
+    "source": "https://github.com/ChanceTheMaker/felucca-smk/blob/35ddfbda6bfee349b7623504677587f26a1a31a2/web/fm1ota.js",
+    "sha256": "ff673b277ba8d32227fcc9674ccd6ffe576a2400ea82bbd42c2d88ff247c5611",
+    "changes": "Relative import normalization; model validation and Doom completion behavior where applicable."
+  },
+  "smk37-update.js": {
+    "source": "https://github.com/ChanceTheMaker/felucca-smk/blob/35ddfbda6bfee349b7623504677587f26a1a31a2/web/smk37-update.js",
+    "sha256": "0ed598cad4f07760491941f5d039612338638a93e69b5238d081aee45b1eabf4",
+    "changes": "Relative import normalization; model validation and Doom completion behavior where applicable."
+  }
+}

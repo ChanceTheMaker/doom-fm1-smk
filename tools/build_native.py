@@ -8,14 +8,14 @@ from prepare_engine import prepare,ROOT,UPSTREAM
 from static_wad import freeze
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--board',required=True,choices=['fm1','smk37-pro','smk37-elite'])
-p.add_argument('--campaign',action='store_true',help='Build Test05 three-level combat campaign')
+p.add_argument('--campaign',action='store_true',help='Build Test06 three-level combat campaign')
 p.add_argument('--toolchain',type=Path,default=os.environ.get('JIELI_TOOLCHAIN'))
 a=p.parse_args()
 if not a.toolchain:p.error('Set JIELI_TOOLCHAIN or pass --toolchain')
 tc=Path(a.toolchain).resolve();cc=tc/'pi32v2/bin/clang';ld=tc/'pi32v2/bin/ld';objcopy=tc/'common/bin/objcopy';objdump=tc/'common/bin/objdump'
 if not cc.exists():p.error('Native compiler not found')
 out=ROOT/'build/native'/a.board;out.mkdir(parents=True,exist_ok=True)
-version='test05' if a.campaign else 'test04'
+version='test06' if a.campaign else 'test04'
 engine=prepare(out/'engine',campaign=a.campaign);native=ROOT/'src/native';common=ROOT/'src/common'
 # The native display frontend consumes the indexed framebuffer directly.
 path=engine/'i_video.c';text=path.read_text();start=text.index('void I_FinishUpdate (void)');end=text.index('\n}',start)+2
@@ -38,7 +38,7 @@ flags=['-target','pi32v2','-mcpu=r3','-mfprev1','-Os','-ffunction-sections','-fd
        '-DDP_SMK='+('0' if a.board=='fm1' else '1'),'-I'+str(engine),'-I'+str(common),
        '-I'+str(native),'-I'+str(native/'hal')]
 if a.campaign:
-    sources.append(common/'campaign.c');flags+=['-DDP_CAMPAIGN']
+    sources.extend([common/'campaign.c',common/'sfx.c',common/'game_sound.c',common/'splash.c',native/'audio_isr.S']);flags+=['-DDP_CAMPAIGN','-DDP_NATIVE_AUDIO','-DDP_ELITE='+('1' if a.board=='smk37-elite' else '0')]
 
 def compile_one(src):
     obj=out/(src.stem+'.o')
@@ -72,6 +72,6 @@ path=out/('doom-'+a.board+'-'+version+'.bin');path.write_bytes(image)
 report={'board':a.board,'kind':'native-application-only','hardware_tested':False,'version':version,
         'image':path.name,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),
         'entry':hex(sym('_start')),'bss_end':hex(sym('_bss_end')),'ram_data_bss':sym('_bss_end')-sym('_data_start'),
-        'static_lump_count':lump_count,'directory_storage':'XIP','zone_bytes':256*1024,'libc_heap_bytes':24*1024,'audio':False,'flash_writes':False,
+        'static_lump_count':lump_count,'directory_storage':'XIP','zone_bytes':256*1024,'libc_heap_bytes':24*1024,'audio':a.campaign,'flash_writes':False,
         'usb_updater':False,'assets':'Original three-level campaign over Miniwad' if a.campaign else 'Miniwad MAP01 trimmed','campaign':a.campaign,'wad_sha256':hashlib.sha256(wad.read_bytes()).hexdigest(),'install_package':False}
 (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))

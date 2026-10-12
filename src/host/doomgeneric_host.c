@@ -15,7 +15,9 @@
 #include "menu_view.h"
 #ifdef DP_CAMPAIGN
 #include "campaign.h"
+#include "splash.h"
 void dp_bot_observe(int final);
+void dp_audio_capture(int final);
 int dp_bot_key(int *pressed,unsigned char *key);
 #endif
 #endif
@@ -68,6 +70,7 @@ void DG_DrawFrame(void) {
     dp_input_observe(frames+1>=limit);
 #ifdef DP_CAMPAIGN
     dp_bot_observe(frames+1>=limit);
+    dp_audio_capture(frames+1>=limit);
 #endif
     if (++frames < limit) return;
     FILE *f = fopen(output, "wb");
@@ -79,7 +82,7 @@ void DG_DrawFrame(void) {
     dp_menu_view menu;
 #ifdef DP_CAMPAIGN
     int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
-    int ok=active?dp_menu_present(&menu,write_row,f):dp_campaign_present(I_VideoBuffer,palette565,write_row,f);
+    int ok=getenv("DOOM_SPLASH")?dp_splash_present(atoi(getenv("DOOM_SPLASH")),write_row,f):active?dp_menu_present(&menu,write_row,f):dp_campaign_present(I_VideoBuffer,palette565,write_row,f);
 #else
     int ok=dp_menu_snapshot(&menu)?dp_menu_present(&menu,write_row,f):dp_lcd_present(I_VideoBuffer,palette565,write_row,f);
 #endif
