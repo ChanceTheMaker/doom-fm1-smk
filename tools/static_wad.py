@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """Freeze the pinned mapped WAD's directory in read-only program storage."""
 import hashlib,struct
+CAMPAIGN_SHA='c6474d4196278e1e790cd09529ccb483a9a0a2122fe97db0c28298d058aa2ce6'
 EXPECTED='5382808534297f82d29873d9132410dcb20f314e01f58f1ec4c653f7f0ddf98d'
-def freeze(engine,wad,static_textures=True):
+def freeze(engine,wad,static_textures=True,campaign=False):
     data=wad.read_bytes()
-    if hashlib.sha256(data).hexdigest()!=EXPECTED: raise ValueError('Unexpected static WAD')
+    if hashlib.sha256(data).hexdigest()!=(CAMPAIGN_SHA if campaign else EXPECTED): raise ValueError('Unexpected static WAD')
     _,count,directory=struct.unpack_from('<4sII',data)
     def change(file,old,new):
         p=engine/file;s=p.read_text()

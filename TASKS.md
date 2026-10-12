@@ -35,5 +35,9 @@ No current task requires publishing or flashing a device automatically.
 - [x] Compare all room composite columns and five 10,500-frame play scenarios against the reference engine.
 - [x] Install Test03 on FM-1; user reports it runs after turning-crash fix.
 - [x] Diagnose tiny menu artwork; add full-resolution text menus and tested Select-key confirmations.
-- [ ] Install Test04 and physically check menu readability/navigation; longer hardware gameplay remains.
+- [x] Install Test04 with verified full-flash readback; user confirms readable menus.
+- [x] Build Test05 with three levels, enemies, shotgun, pickups and score/HUD.
+- [x] Verify campaign progression, replay, combat and death/retry with native memory limits on host.
+- [x] Install Test05 on FM-1; verify each changed sector and the complete 1 MiB flash image.
+- [ ] Check Test05 combat, pickups, exits and frame rate on the physical FM-1.
 - [ ] Refresh the private SMK candidate after the FM-1 check.

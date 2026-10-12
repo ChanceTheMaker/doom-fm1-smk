@@ -14,12 +14,14 @@ p.add_argument('--cc', default='cc')
 p.add_argument('--display', choices=['rgba','strip'], default='strip')
 p.add_argument('--no-wipe', action='store_true')
 p.add_argument('--mapped-wad', action='store_true')
+p.add_argument('--campaign',action='store_true')
 p.add_argument('--small-room', action='store_true')
 p.add_argument('--static-wad', action='store_true')
 p.add_argument('--bounded-heap', action='store_true')
 p.add_argument('--reference-textures', action='store_true', help='Keep vanilla runtime composites for comparison')
 p.add_argument('--abi32', action='store_true', help='32-bit host ABI for native memory-budget checks')
 a = p.parse_args()
+if a.campaign and not (a.small_room and a.static_wad):p.error('--campaign needs --small-room --static-wad')
 if a.reference_textures and not a.static_wad:p.error('--reference-textures needs --static-wad')
 if a.static_wad and not (a.small_room and a.mapped_wad): p.error('--static-wad needs --small-room --mapped-wad')
 profile = json.loads((ROOT / 'targets' / (a.board + '.json')).read_text())
@@ -32,15 +34,15 @@ if not line:
     p.error('Pinned upstream source list missing.')
 sources = [engine / (name[:-2] + '.c') for name in line[1].split() if name != 'doomgeneric_xlib.o']
 
-out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else '') + ('-static' if a.static_wad else '') + ('-heap24' if a.bounded_heap else '') + ('-abi32' if a.abi32 else '') + ('-reference' if a.reference_textures else ''))
+out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else '') + ('-static' if a.static_wad else '') + ('-heap24' if a.bounded_heap else '') + ('-abi32' if a.abi32 else '') + ('-reference' if a.reference_textures else '')+('-campaign' if a.campaign else ''))
 out.mkdir(parents=True, exist_ok=True)
 if a.small_room:
     from prepare_engine import prepare
-    engine=prepare(out/'engine')
+    engine=prepare(out/'engine',campaign=a.campaign)
     sources=[engine/s.name for s in sources]
 if a.static_wad:
     from static_wad import freeze
-    freeze(engine,ROOT/'build/fixtures/miniwad-room.wad',static_textures=not a.reference_textures)
+    freeze(engine,ROOT/'build/fixtures'/('campaign.wad' if a.campaign else 'miniwad-room.wad'),static_textures=not a.reference_textures,campaign=a.campaign)
 if a.static_wad:
     with (engine/'r_data.c').open('a') as f:
         f.write('\n'+(ROOT/'src/host/texture_probe.inc').read_text())
@@ -62,6 +64,8 @@ if a.mapped_wad:
     sources.append(ROOT/'src/common/wad_view.c')
 if a.no_wipe:
     sources=[ROOT/'src/common/wipe_disabled.c' if s.name=='f_wipe.c' else s for s in sources]
+if a.campaign:
+    sources.extend([ROOT/'src/common/campaign.c',ROOT/'src/host/campaign_bot.c']);flags+=['-DDP_CAMPAIGN']
 sources += [ROOT/'src/host/doomgeneric_host.c',ROOT/'src/host/memory_probe.c',ROOT/'src/host/input_smoke.c']
 abi=['-m32'] if a.abi32 else []
 command = [a.cc, *abi, '-std=c11', '-O2', '-D_DEFAULT_SOURCE', '-D_FILE_OFFSET_BITS=64', '-DNORMALUNIX', '-DLINUX',

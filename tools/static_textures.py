@@ -6,13 +6,14 @@ import json, re, struct
 
 def freeze_textures(engine, data):
     _, n, directory=struct.unpack_from('<4sII',data)
-    lumps={}
+    lumps={};all_sides=[]
     for i in range(n):
         off,size,name=struct.unpack_from('<II8s',data,directory+16*i)
-        lumps[name.rstrip(b'\0').decode('ascii')]=data[off:off+size]
+        key=name.rstrip(b'\0').decode('ascii');lumps[key]=data[off:off+size]
+        if key=='SIDEDEFS':all_sides.append(data[off:off+size])
     pn=lumps['PNAMES']
     names=[pn[4+i*8:12+i*8].rstrip(b'\0').decode('ascii') for i in range(struct.unpack_from('<I',pn)[0])]
-    sides=lumps['SIDEDEFS']
+    sides=b''.join(all_sides)
     needed={sides[i+j:i+j+8].rstrip(b'\0').decode('ascii') for i in range(0,len(sides),30) for j in (4,12,20)}
     needed.update(('SKY1','SKY2','SKY3'))
     switches=re.findall(r'\{\s*"(SW[12][A-Z0-9]+)"\s*,\s*"(SW[12][A-Z0-9]+)"',(engine/'p_switch.c').read_text())

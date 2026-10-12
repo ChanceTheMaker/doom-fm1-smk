@@ -4,7 +4,7 @@
 import argparse,json,os,subprocess,tempfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('executable',type=Path);a=p.parse_args();exe=a.executable.resolve()
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('executable',type=Path);p.add_argument('--campaign',action='store_true');a=p.parse_args();exe=a.executable.resolve()
 # Key taps: 7/menu=escape, 2/up, 4/down, 8/select=enter, 3/right.
 cases=[
  ('main',[27],'DOOM',0,'NEW GAME'),
@@ -27,7 +27,7 @@ for name,keys,title,selected,line in cases:
  (d/'events.txt').write_text(''.join(f'{t} {down} {key}\n' for t,down,key in events))
  env=dict(os.environ,DOOM_ZONE_KIB='256',DOOM_FRAME_LIMIT=str(30+8*len(keys)),DOOM_FIXED_TICS='1',DOOM_INPUT_SCRIPT=str(d/'events.txt'),DOOM_MENU_REPORT='menu.txt',DOOM_MEMORY_REPORT='memory.json')
  with (d/'run.log').open('w') as f:
-  subprocess.run([str(exe),'-iwad',str(ROOT/'build/fixtures/miniwad-room.wad'),'-nosound','-warp','1','-skill','2'],cwd=d,env=env,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=30)
+  subprocess.run([str(exe),'-iwad',str(ROOT/'build/fixtures'/('campaign.wad' if a.campaign else 'miniwad-room.wad')),'-nosound','-warp','1','-skill','2'],cwd=d,env=env,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=30)
  report=(d/'menu.txt').read_text().splitlines()
  assert report[0]==title and report[1]==str(selected),(name,report)
  if line:assert line in report[2:],(name,report)

@@ -9,7 +9,7 @@ try{
   if(!['localhost','127.0.0.1','[::1]'].includes(location.hostname))throw Error('Local test installer only.');
   const r=await fetch('./candidate.json',{cache:'no-store'});if(!r.ok)throw Error('No FM-1 candidate staged.');
   const m=await r.json();
-  if(m.board!=='FM-1'||m.product!=='FM-1_993'||m.package!=='doom-fm1-test04.fwsc')throw Error('Wrong candidate identity.');
+  if(m.board!=='FM-1'||m.product!=='FM-1_994'||m.package!=='doom-fm1-test05.fwsc')throw Error('Wrong candidate identity.');
   const response=await fetch('./'+m.package,{cache:'no-store'});if(!response.ok)throw Error('Package unavailable.');
   const b=new Uint8Array(await response.arrayBuffer());
   const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',b))].map(v=>v.toString(16).padStart(2,'0')).join('');
@@ -19,7 +19,7 @@ try{
   image=new Uint8Array(b.length-20);
   for(let i=0;i<20;i++)image.set(b.subarray(i*48,i*48+47),i*47);
   image.set(b.subarray(960),940);
-  output.textContent='Package verified. Doom FM-1 Test04 is ready.';
+  output.textContent='Package verified. Doom FM-1 Test05 is ready.';
 }catch(e){image=null;log(e.message);}sync();
 window.addEventListener('beforeunload',e=>{if(busy){e.preventDefault();e.returnValue='';}});
 button.onclick=async()=>{

@@ -1,16 +1,20 @@
-# FM-1 Test04
+# FM-1 Test05
 
-Test04 adds a full-resolution text menu over the existing game display. The user reports Test03 runs on FM-1, including the previously failing turn; its original menu lettering was hard to read. Test04 is built and host-tested, but not yet physically checked.
+Test05 adds three connected-room levels, 18 enemies, a shotgun with original pixel art, pickups and readable score/health/ammo indicators. Guards award 100 points; imps 200. Face the wall switch in the final room and press Use to exit. Fire/Use continues at the level results screen; Use retries after death. After the third level, continue starts a fresh campaign. No sound or persistent saves.
+
+Test04 was installed through the adapter with matching full-flash readback, and the user confirmed readable menus. Test05 passes host combat/progression/death checks. It has now been installed through the adapter; all 140 changed application sectors and the final 1 MiB readback match. Bootloader and device data are unchanged. Physical combat feedback is pending.
+
+**Already running Doom:** use the XIAO adapter update procedure; Doom has no USB updater. The normal-USB page cannot detect the running game.
 
 Open the local FM-1 installer at `http://127.0.0.1:8785/`. Connect the FM-1 directly by normal USB while running firmware with the standard FM-1 MIDI updater. Close other MIDI applications. Have the FM-1 XIAO recovery adapter ready, but leave it disconnected during normal USB installation. The installer rejects SMK identities and never starts automatically.
 
-The package is derived from the pinned Felucca Salt14 FM-1 release (package SHA-256 `efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28`). It retains its loader byte-for-byte (`2c9f43bf7dff81a953c07f3c82cedf5f5899aac14e5b62c2cb23ba7f560ce7db`). Only application bytes, their CRC fields, and the enclosing package metadata change. Package identity is `FM-1_993`; that identity is for installation only because Doom has no MIDI stack.
+The package is derived from the pinned Felucca Salt14 FM-1 release (package SHA-256 `efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28`). It retains its loader byte-for-byte (`2c9f43bf7dff81a953c07f3c82cedf5f5899aac14e5b62c2cb23ba7f560ce7db`). Only application bytes, their CRC fields, and the enclosing package metadata change. Package identity is `FM-1_994`; that identity is for installation only because Doom has no MIDI stack.
 
 The inherited loader writes application sectors `0x4000..0x93000`, validates the chip key, and verifies sectors. It preserves the bootloader. The running synth stages the loader and the loader clears its update records outside that range, so this is not a promise that no update-metadata flash is touched. Back up synth projects using that synth before installing.
 
 ## First check
 
-Expected: `DOOM TEST 04`, then the room. Count white touch keys from the left: turn left, forward, turn right, back, fire, use, menu, enter, run, strafe left, strafe right. Test movement and release. No sound is expected. Photograph any `DOOM STOPPED` message; report a black screen rather than repeatedly reinstalling.
+Expected: `DOOM TEST 05`, then The Outpost with a shotgun and a guard ahead. Count white touch keys from the left: turn left, forward, turn right, back, fire, use, menu, enter, run, strafe left, strafe right. Test movement and release. No sound is expected. Photograph any `DOOM STOPPED` message; report a black screen rather than repeatedly reinstalling.
 
 ## Return to synth firmware
 
@@ -73,3 +77,11 @@ Twelve host cases cover main/options/difficulty/sound pages, changed values, con
 ```sh
 python3 tools/check_menu.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32/doom-host
 ```
+
+## Test05 campaign verification
+
+The deterministic host driver uses normal movement, aiming, fire and use key events. It never teleports the player, gives health or kills enemies directly. Three 8,000-frame runs cover the campaign in high/low detail and a harder difficulty; each clears all levels repeatedly, scores the expected 2,600 points in a clean run, and stays inside the 256 KiB zone and 24 KiB C heap. A separate idle run exercises enemy damage, death and retry. Three previews check direct level startup. These accelerated checks do not measure physical frame rate.
+
+Application: 570,904 bytes; SHA-256 `07d48f0761c2aaaac0997c4bc1218b3ab5235f668389069598413f9047607ab7`. Data+BSS: 434,640 bytes. Campaign assets: 226,024 bytes, SHA-256 `c6474d4196278e1e790cd09529ccb483a9a0a2122fe97db0c28298d058aa2ce6`. Original authored map/sprite/wall source is `tools/build_campaign.py`; its Miniwad base retains the existing asset notices.
+
+Test05 installation readback SHA-256: `4551cbb56f49bdad0763aad2f9b55961e0102c775a311b825a345d673f39e2f2`. Private recovery backups and the per-sector journal are retained under the ignored `build/try-fm1/` directory.

@@ -188,11 +188,15 @@ void dp_cstart(const uint32_t *parameters){
     input_ready=1;
     fm1_irq_enable_all();
     dp_clear_display();
+    #ifdef DP_CAMPAIGN
+    dp_message("DOOM TEST 05");
+    #else
     dp_message("DOOM TEST 04");
+    #endif
 #if DP_SMK
-    dp_message("SMK37 - SILENT ROOM");
+    dp_message("SMK37 - DOOM");
 #else
-    dp_message("FM1 - SILENT ROOM");
+    dp_message("FM1 - DOOM");
 #endif
     char *args[]={"doom","-iwad","miniwad.wad","-nosound","-warp","1","-skill","2"};
     doomgeneric_Create(8,args);

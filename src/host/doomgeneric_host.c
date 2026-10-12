@@ -13,6 +13,11 @@
 #include "lcd_frame.h"
 #ifdef DP_READABLE_MENU
 #include "menu_view.h"
+#ifdef DP_CAMPAIGN
+#include "campaign.h"
+void dp_bot_observe(int final);
+int dp_bot_key(int *pressed,unsigned char *key);
+#endif
 #endif
 extern struct color colors[256];
 static uint16_t palette565[256];
@@ -61,6 +66,9 @@ void DG_DrawFrame(void) {
     if(!frames)DP_ExportTextureColumns();
 #endif
     dp_input_observe(frames+1>=limit);
+#ifdef DP_CAMPAIGN
+    dp_bot_observe(frames+1>=limit);
+#endif
     if (++frames < limit) return;
     FILE *f = fopen(output, "wb");
     if (!f) { perror(output); exit(2); }
@@ -69,7 +77,12 @@ void DG_DrawFrame(void) {
     for(unsigned i=0;i<256;++i)palette565[i]=(uint16_t)(((colors[i].r>>3)<<11)|((colors[i].g>>2)<<5)|(colors[i].b>>3));
 #ifdef DP_READABLE_MENU
     dp_menu_view menu;
+#ifdef DP_CAMPAIGN
+    int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
+    int ok=active?dp_menu_present(&menu,write_row,f):dp_campaign_present(I_VideoBuffer,palette565,write_row,f);
+#else
     int ok=dp_menu_snapshot(&menu)?dp_menu_present(&menu,write_row,f):dp_lcd_present(I_VideoBuffer,palette565,write_row,f);
+#endif
     const char *menu_report=getenv("DOOM_MENU_REPORT");
     if(menu_report){FILE *report=fopen(menu_report,"w");if(!report)exit(2);fprintf(report,"%s\n%d\n",menu.title,menu.selected);for(int i=0;i<menu.count;i++)fprintf(report,"%s\n",menu.rows[i]);fclose(report);}
 #else
@@ -99,7 +112,12 @@ uint32_t DG_GetTicksMs(void) {
     int64_t ns = (int64_t)(now.tv_sec - start.tv_sec) * 1000000000LL + now.tv_nsec - start.tv_nsec;
     return (uint32_t)(ns / 1000000LL);
 }
-int DG_GetKey(int *pressed, unsigned char *key) { return dp_input_next(pressed,key); }
+int DG_GetKey(int *pressed, unsigned char *key) {
+#ifdef DP_CAMPAIGN
+ if(getenv("DOOM_CAMPAIGN_BOT"))return dp_bot_key(pressed,key);
+#endif
+ return dp_input_next(pressed,key);
+}
 void DG_SetWindowTitle(const char *title) { printf("%s\n", title); }
 int main(int argc, char **argv) {
     doomgeneric_Create(argc, argv);

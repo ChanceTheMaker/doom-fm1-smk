@@ -5,13 +5,29 @@ Created by Chance Roth (@ChanceTheMaker).
 
 ## Current status
 
-**FM-1 Test04 adds readable full-resolution menus. Test03 is running on the user's FM-1 after fixing the turning crash; the user could open menus, but the scaled test-WAD lettering was barely readable. Test04 adds crisp text, selection highlights, visible option values, Select-key confirmations, and explicit notices for unavailable saves. Host checks pass; physical Test04 validation is pending. Test01 and Test02 remain withdrawn, including the old SMK candidate.** This repository has no publication remote or deployment workflow.
+**FM-1 Test05 adds a three-level combat campaign.** Test04 is installed and its readable menus are confirmed on the FM-1. Test05 adds 18 enemies, a shotgun with new pixel art, health and ammo pickups, kill scoring and readable health/ammo/level indicators. Host combat, level transitions, campaign replay and death/retry pass under the native memory limits; Test05 is installed with matching full-flash readback; physical combat feedback is next. This repository is local-only, with no publication remote or deployment workflow.
 
-The build embeds a small open-content Miniwad room in application flash. It uses the real Doom engine, a 240x180 RGB565 view on the 240x240 LCD, piano-key movement/fire controls, and separate FM-1/SMK startup and scanner drivers. It has **no sound, saves, USB MIDI, or USB updater**.
+The real Doom engine renders a 240x180 game view on the 240x240 LCD. Menus and the new HUD render at LCD resolution. There is **no sound, persistent saving, USB MIDI or USB updater**. Installing another build from Doom requires the XIAO adapter; the local normal-USB installer only works when the device is running synth firmware with a compatible updater.
 
-For the first FM-1 test, use [FM-1 Test04 instructions](docs/FM1_TEST01.md) and the local installer on port 8785. [Historical SMK instructions](docs/NATIVE_TEST01.md) describe the private Pro workflow; its old candidate on port 8784 is withdrawn pending the FM-1 menu check. The private Pro package is tied to the owner's verified backup. Elite currently has an application binary only; do not install an SMK package on FM-1.
+Use [FM-1 Test05 instructions](docs/FM1_TEST01.md). The local package page is on port 8785. The old SMK candidate is withdrawn; SMK builds need their own hardware validation. Do not install an FM-1 package on an SMK.
 
-Test03 stores its fixed lump directory and room composite texture columns in flash and uses a 256 KiB Doom zone plus a separate 24 KiB C heap. A 32-bit host gameplay test now exercises those limits. See the generated native manifest for section sizes. Linker bounds and runtime allocator tests pass. Actual heap/stack high-water, LCD orientation, controls and frame rate still need a device test.
+The FM-1 Test05 application is 570,904 bytes. Data+BSS uses 434,640 bytes, including a 256 KiB Doom zone; a separate 24 KiB C heap is retained. The campaign playthrough peaks at 238,540 zone bytes. These are host/linker measurements, not measured native frame rate or full stack high-water.
+
+## Build and test the campaign
+
+Use Linux/WSL with GCC multilib, Python 3 and zdbsp 1.19. The asset generator authors three maps and original enemy, shotgun and wall art over checksum-pinned Miniwad assets. No commercial Doom data is included.
+
+```sh
+python3 tools/fetch_test_wad.py
+python3 tools/pack_test_wad.py --trim-textures
+python3 tools/build_campaign.py
+python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32 --campaign
+python3 tools/check_campaign.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign/doom-host
+python3 tools/check_menu.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign/doom-host --campaign
+python3 tools/build_native.py --board fm1 --campaign --toolchain /path/to/jieli/toolchain
+```
+
+The three levels are **The Outpost**, **Iron Halls**, and **Reactor Core**. Guards award 100 points and imps 200. Face the wall switch in the last room and press Use to exit. Fire or Use advances at the results screen. Use retries after death; retry restores the score from level entry. Completing all three levels offers another run with a fresh score.
 
 ## Build and exercise the host
 
@@ -48,9 +64,9 @@ The default host zone is 16 MiB; the 280 KiB result does not apply to arbitrary 
 
 ## Port plan
 
-Next: test native startup, the LCD, movement and fire on the SMK Pro, then validate the FM-1 and Elite separately. Sound and persistence follow only after memory and timing measurements. See [PORTING.md](docs/PORTING.md) and [TASKS.md](TASKS.md).
+Next: physically test Test05 combat on FM-1, then validate the SMK Pro and Elite separately. Sound and persistence follow only after memory and timing measurements. See [PORTING.md](docs/PORTING.md) and [TASKS.md](TASKS.md).
 
-FM-1 and SMK update images must remain separate. Existing Felucca, Sloop and Melodee projects are unchanged. No device has been accessed or flashed by this work.
+FM-1 and SMK update images must remain separate. Existing Felucca, Sloop and Melodee projects are unchanged. FM-1 Test04 has been flashed and tested; SMK Doom validation is still pending.
 
 ## License and assets
 

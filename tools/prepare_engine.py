@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 UPSTREAM=ROOT/'third_party/doomgeneric/doomgeneric'
-def prepare(out):
+def prepare(out,campaign=False):
     out.mkdir(parents=True,exist_ok=True)
     for path in UPSTREAM.iterdir():
         if path.suffix in ('.c','.h'):
@@ -38,6 +38,19 @@ def prepare(out):
     for function in ('M_LoadGame', 'M_SaveGame'):
         change('m_menu.c','void '+function+' (int choice)\n{',
                'void '+function+' (int choice)\n{\n    M_StartMessage("Saves are not available in this test build.", NULL, false);\n    return;')
+    if campaign:
+        for file in ('p_inter.c','g_game.c'):
+            path=out/file;path.write_text('#include "campaign.h"\n'+path.read_text())
+        change('p_inter.c','    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);',
+               '    if(source && source->player && (target->flags & MF_COUNTKILL)) dp_campaign_kill(target->type==MT_TROOP?200:100);\n    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);')
+        change('g_game.c','    p->readyweapon = p->pendingweapon = wp_pistol;',
+               '    p->readyweapon = p->pendingweapon = wp_shotgun;\n    p->weaponowned[wp_shotgun]=true; p->ammo[am_shell]=40;')
+        change('g_game.c','    P_SetupLevel (gameepisode, gamemap, 0, gameskill);',
+               '    dp_campaign_load();\n    P_SetupLevel (gameepisode, gamemap, 0, gameskill);')
+        change('g_game.c','    gamemap = map;', '    gamemap = map;\n    dp_campaign_reset();')
+        change('g_game.c','    gamemap = wminfo.next+1;',
+               '    if (gamemap>=3) { G_DeferedInitNew(gameskill,1,1); return; }\n    gamemap = wminfo.next+1;')
+        change('m_menu.c','int\t\t\tscreenblocks = 10;', 'int\t\t\tscreenblocks = 11;')
     return out
 if __name__=='__main__':
     import sys
