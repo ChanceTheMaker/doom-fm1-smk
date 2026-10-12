@@ -22,7 +22,7 @@ Existing hardware adapter files carry GPL-3.0-only notices. Retain their exact n
 
 ## Test assets
 
-[Miniwad](https://github.com/fragglet/miniwad) is derived from Freedoom and carries the retained BSD-style notice in [licenses/miniwad.txt](licenses/miniwad.txt). Copyright 2001â€“2018, Contributors to the Freedoom project. License source: https://raw.githubusercontent.com/fragglet/miniwad/trunk/COPYING.adoc
+[Miniwad](https://github.com/fragglet/miniwad) is derived from Freedoom and carries the retained BSD-style notice in [licenses/miniwad.txt](licenses/miniwad.txt). Copyright 2001–2018, Contributors to the Freedoom project. License source: https://raw.githubusercontent.com/fragglet/miniwad/trunk/COPYING.adoc
 
 `tools/fetch_test_wad.py` explicitly downloads https://soulsphere.org/random/miniwad.zip into ignored build output. Archive SHA-256: `b4c9804343be34e485fddab802c18ecf836168d733c2f03441d8a9dff80b2393`. WAD SHA-256: `daed5e9dc341a9ff4b9c6901cb8467a630bd31b87f3ecb58a93a8b2bc186fbfb`.
 
