@@ -2,7 +2,9 @@
 
 **Your synth. Their Doom.** A real Doom-engine port for the M-VAVE FM-1 and SMK-37 Pro / Elite, by Chance Roth (@ChanceTheMaker).
 
-**[Build and install Test06 in your browser](https://chancethemaker.github.io/doom-fm1-smk/)**
+**Public installation is paused for FM-1, SMK-37 Pro and Elite following reports of device failures. Do not install previously downloaded Doom packages. [Status and recovery guidance](https://chancethemaker.github.io/doom-fm1-smk/#install).**
+
+Test06 lacks a runtime USB MIDI updater. Test07 remains unreleased pending hardware validation. The build instructions below are development information, not a recommendation to flash a device.
 
 ![Test06 splash](site/screenshots/splash.png) ![The Outpost](site/screenshots/outpost.png) ![Reactor Core](site/screenshots/reactor.png)
 

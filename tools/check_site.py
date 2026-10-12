@@ -4,7 +4,7 @@ import hashlib,json,re
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]/'site'
 releases=json.loads((root/'firmware/releases.json').read_text())
-assert {r['id'] for r in releases}=={'fm1','smk37-pro','smk37-elite'}
+assert releases == [], 'Public releases must remain withdrawn during investigation'
 apps=set()
 for r in releases:
     p=root/'firmware'/r['app'];b=p.read_bytes();apps.add(p)

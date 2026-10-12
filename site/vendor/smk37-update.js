@@ -1,3 +1,4 @@
+import {requireInstallationAvailable} from '../installation-paused.js';
 // SPDX-License-Identifier: GPL-3.0-only
 import {Updater} from './fm1ota.js';
 export const HEADER=1024, LO=0x4000, HI=0x9d000;
@@ -21,6 +22,7 @@ export async function parsePackage(bytes,expectedSha){
 const SMK_PORT=/smk|felucca|sloop|melodee|ota|composite|sinco|usb-midi/i;
 const START=[0xf0,0x22,0x24,0x35,0x7f,0xf7];
 export async function installSmk(access,pkg,log=()=>{},{device}={}){
+ requireInstallationAvailable();
   const up=new Updater(access,log,SMK_PORT);let link;
   try {
     // Exact model filter; the shared transport never sends START to FM-1.
@@ -60,6 +62,7 @@ async function acceptLoader(dev,model,confirmGeneric,log){
   }catch(e){await dev.link.close();throw e;}
 }
 export async function installStockSmk(access,pkg,log=()=>{},{confirmGeneric}={}){
+ requireInstallationAvailable();
   if(!pkg?.image||!['SMK-37 Pro','SMK-37 Elite'].includes(pkg.stockModel)||pkg.format!==2)throw Error('A verified SMK stock-derived package is required.');
   const up=new Updater(access,log,SMK_PORT);let link;
   const loader=id=>id.model==='ota-'+pkg.stockModel||id.model==='ota-FM-1';
