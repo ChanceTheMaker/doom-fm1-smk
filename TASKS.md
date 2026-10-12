@@ -26,7 +26,7 @@
 - [x] Stage a separate FM-1 package and run the FM-1 loader host test.
 - [ ] Validate FM-1 installation/boot on hardware, then package Elite separately.
 
-Current release task: Test08 HUD correction. FM-1 normal-USB update, runtime identity, steady HUD, gameplay and audio passed. Pro and Elite Test08 hardware validation remains pending. Device flashing is performed only for the connected model and authorized test.
+Current release: Release 10 music. FM-1 accepted as-is; SMK-37 Pro normal-USB installation, runtime identity, HUD, music, effects and acceptable gameplay confirmed by the owner. Elite hardware validation remains pending.
 
 - [x] Reproduce and fix the Test01 lump-directory OOM; store fixed metadata in XIP.
 - [x] Add a 32-bit host gameplay check with the native 24 KiB allocator and revised 256 KiB zone.
@@ -59,5 +59,7 @@ Current release task: Test08 HUD correction. FM-1 normal-USB update, runtime ide
 - [x] Pass real dispatcher regression and package/loader/identity checks.
 - [x] Verify FM-1 Test08 via normal USB and owner gameplay/audio/HUD test.
 - [ ] Verify Pro and Elite Test08 on hardware.
-- [ ] Add an original Doom-style music loop as a separate revision and test its audio load.
+- [x] Add original music, reduce synthesis load and verify Release 10 on FM-1 and Pro.
+- [ ] Physically validate Release 10 on Elite.
+- [ ] Expand the campaign from three to six levels as a separate candidate.
 - [ ] Reconcile and integrate the preserved browser FM-1 simulator/artwork checkout.

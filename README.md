@@ -2,9 +2,9 @@
 
 **Your synth. Their Doom.** A real Doom-engine port for the M-VAVE FM-1 and SMK-37 Pro / Elite, by Chance Roth (@ChanceTheMaker).
 
-**[Test08 HUD-fix release](https://chancethemaker.github.io/doom-fm1-smk/)**
+**[Release 10: original background music](https://chancethemaker.github.io/doom-fm1-smk/)**
 
-Test08 fixes bottom-HUD flicker by writing each LCD row once per frame. It remains single-core and adds no framebuffer. FM-1 passed normal-USB installation, exact `Doom-FM-1_008` boot confirmation, and owner checks of the HUD, gameplay and audio. Pro passed the earlier Test07 boot/USB reinstall; Pro and Elite Test08 hardware testing remains pending. Test06 stays withdrawn.
+Release 10 adds “Circuit Breaker,” an original heavy music loop with independent music volume. The steady face HUD and normal-USB updater remain in place. FM-1 and SMK-37 Pro passed normal-USB installation and owner checks; Elite hardware testing remains pending. Music synthesis runs at 11025 Hz and interpolates into the existing 44100 Hz effects mixer, on one core. The FM-1 owner accepted gameplay as-is after an earlier music candidate felt slower; frame-rate parity with Release 08 has not been measured.
 
 Test06 cannot receive this update over normal USB because it has no runtime USB driver. It needs a model-specific recovery installation first. Keep power connected during any active flash transfer; do not repeatedly retry a failed install. Other synth installers must explicitly recognize Doom before they can restore synth firmware over USB.
 
@@ -14,7 +14,7 @@ Test07 also includes Freedoom enemy artwork, an updated splash and face HUD. The
 
 Screenshots are actual engine output from the host harness at the device's 240 x 240 resolution.
 
-## Test06
+## Campaign
 
 - Three connected-room levels: The Outpost, Iron Halls and Reactor Core.
 - 18 enemies, directional guard/imp sprites, attacks and death animations.
@@ -24,13 +24,13 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 - Separate FM-1, SMK-37 Pro and SMK-37 Elite builds, all available in the website builder.
 - Animated hardware hero: alternating FM-1/SMK screen zooms, seven FM-1 finishes and six SMK finishes, with pause and reduced-motion support.
 
-| Model | Test08 application | Physical status |
+| Model | Release 10 application | Physical status |
 | --- | ---: | --- |
-| FM-1 | 533,496 bytes | Test08 normal-USB update, boot, HUD, gameplay and audio passed |
-| SMK-37 Pro | 533,640 bytes | Earlier Test07 boot/USB passed; Test08 hardware testing pending |
-| SMK-37 Elite | 533,640 bytes | Offline checks pass; hardware testing pending |
+| FM-1 | 532,424 bytes | Normal-USB update and owner acceptance; performance accepted as-is |
+| SMK-37 Pro | 532,564 bytes | Normal-USB update, boot, steady HUD, music, effects and gameplay passed |
+| SMK-37 Elite | 532,568 bytes | Offline checks pass; hardware testing pending |
 
-The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. See [release checks](docs/TEST08.md) and [release hashes](site/firmware/releases.json).
+The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. See [release checks](docs/TEST10.md) and [release hashes](site/firmware/releases.json).
 
 ## Install
 
@@ -38,13 +38,13 @@ The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom
 2. Open the installer in desktop Chrome or Edge. Choose **FM-1**, **SMK-37 Pro** or **SMK-37 Elite**.
 3. Click **Build firmware**. The browser downloads the reviewed app and checksum-pinned base, validates the model/layout, preserves protected bytes and prepares the package locally. A local base-file fallback is available; no file upload is needed normally.
 4. Connect only that instrument by normal USB, running Doom Test07 or later, or compatible synth firmware. SMKs support official matching **016** firmware or the portable Felucca/Sloop/Melodee SMK updater (identity version 922 or newer).
-5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer now checks for the Doom Test08 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
+5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer now checks for the Doom release 10 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
 
-**Doom replaces the synth application and has no persistent saves.** Test07 adds normal-USB updating through an embedded RAM loader; Test06 and earlier need the recovery adapter first. Other synth installers must recognize the Doom identity before restoring through USB. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Test08 checks](docs/TEST08.md), [Test07 USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
+**Doom replaces the synth application and has no persistent saves.** Test07 adds normal-USB updating through an embedded RAM loader; Test06 and earlier need the recovery adapter first. Other synth installers must recognize the Doom identity before restoring through USB. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Release 10 checks](docs/TEST10.md), [Test07 USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
 
 The Elite's official RAM loader can identify itself as `ota-FM-1`; the installer explicitly asks you to confirm the connected Elite before programming. It does not treat that generic identity as model proof. Failed handoffs do not automatically repeat writes.
 
-Experimental firmware is provided without warranty. Power loss, an incompatible device or a software defect can require hardware recovery. FM-1 testing does not establish SMK hardware compatibility. No music, USB audio, multiplayer or synth functions are included.
+Experimental firmware is provided without warranty. Power loss, an incompatible device or a software defect can require hardware recovery. FM-1 testing does not establish SMK hardware compatibility. No USB audio, multiplayer or synth functions are included.
 
 ## Controls
 
@@ -60,7 +60,7 @@ Count white keys from the far left (FM-1 starts at F; SMK starts at C).
 | 9 | Run |
 | 10 / 11 | Strafe left / right |
 
-SMK **PATCH** opens the menu; **PARA** selects. Adjust sound under **Options > Sound**; FM-1 **MASTER** also controls output. Guards award 100 points, imps 200. Face the wall switch in the final room and press Use to exit. Fire or Use advances from results. Retry restores the score from level entry; finishing the campaign offers a fresh run.
+SMK **PATCH** opens the menu; **PARA** selects. Adjust effects and music volume under **Options > Sound**; FM-1 **MASTER** also controls output. Guards award 100 points, imps 200. Face the wall switch in the final room and press Use to exit. Fire or Use advances from results. Retry restores the score from level entry; finishing the campaign offers a fresh run.
 
 ## Build from source
 

@@ -44,7 +44,7 @@ int dp_splash_present(unsigned board,dp_row_sink sink,void *ctx){
   dp_text_row(row,y,24,26,"DOOM",8,y<52?0xffb0:0xe9e0);
   dp_text_row(row,y,(240-6*__builtin_strlen(label))/2,215,label,1,0xffff);
 #ifdef DP_NATIVE_ART
-  dp_text_row(row,y,57,229,"TEST08 / USB UPDATE",1,0xfdc0);
+  dp_text_row(row,y,66,229,"TEST10 / MUSIC ON",1,0xfdc0);
 #else
   dp_text_row(row,y,66,229,"TEST06 / SOUND ON",1,0xfdc0);
 #endif

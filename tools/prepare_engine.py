@@ -39,8 +39,15 @@ def prepare(out,campaign=False):
         change('m_menu.c','void '+function+' (int choice)\n{',
                'void '+function+' (int choice)\n{\n    M_StartMessage("Saves are not available in this test build.", NULL, false);\n    return;')
     if campaign:
-        path=out/'s_sound.c';path.write_text('void dp_game_sound(void *,int,int);\n'+path.read_text())
+        path=out/'s_sound.c';path.write_text('#include "music.h"\nvoid dp_game_sound(void *,int,int);\n'+path.read_text())
         change('s_sound.c','void S_StartSound(void *origin_p, int sfx_id)\n{', 'void S_StartSound(void *origin_p, int sfx_id)\n{\n    dp_game_sound(origin_p,sfx_id,snd_SfxVolume); return;')
+        for signature, action in [
+            ('void S_SetMusicVolume(int volume)', 'dp_music_volume(volume < 0 ? 0 : (unsigned)volume);'),
+            ('void S_ChangeMusic(int musicnum, int looping)', 'dp_music_start();'),
+            ('void S_StopMusic(void)', 'dp_music_stop();'),
+            ('void S_PauseSound(void)', 'dp_music_pause(1);'),
+            ('void S_ResumeSound(void)', 'dp_music_pause(0);')]:
+            change('s_sound.c', signature+'\n{', signature+'\n{\n    '+action+' return;')
         for file in ('p_inter.c','g_game.c'):
             path=out/file;path.write_text('#include "campaign.h"\n'+path.read_text())
         change('p_inter.c','    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);',

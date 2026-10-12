@@ -8,14 +8,14 @@ from prepare_engine import prepare,ROOT,UPSTREAM
 from static_wad import freeze
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--board',required=True,choices=['fm1','smk37-pro','smk37-elite'])
-p.add_argument('--campaign',action='store_true',help='Build Test08 three-level combat campaign')
+p.add_argument('--campaign',action='store_true',help='Build Test10 three-level combat campaign')
 p.add_argument('--toolchain',type=Path,default=os.environ.get('JIELI_TOOLCHAIN'))
 a=p.parse_args()
 if not a.toolchain:p.error('Set JIELI_TOOLCHAIN or pass --toolchain')
 tc=Path(a.toolchain).resolve();cc=tc/'pi32v2/bin/clang';ld=tc/'pi32v2/bin/ld';objcopy=tc/'common/bin/objcopy';objdump=tc/'common/bin/objdump'
 if not cc.exists():p.error('Native compiler not found')
 out=ROOT/'build/native'/a.board;out.mkdir(parents=True,exist_ok=True)
-version='test08' if a.campaign else 'test04'
+version='test10' if a.campaign else 'test04'
 engine=prepare(out/'engine',campaign=a.campaign);native=ROOT/'src/native';common=ROOT/'src/common'
 # The native display frontend consumes the indexed framebuffer directly.
 path=engine/'i_video.c';text=path.read_text();start=text.index('void I_FinishUpdate (void)');end=text.index('\n}',start)+2
@@ -38,7 +38,7 @@ flags=['-target','pi32v2','-mcpu=r3','-mfprev1','-Os','-ffunction-sections','-fd
        '-DDP_SMK='+('0' if a.board=='fm1' else '1'),'-I'+str(engine),'-I'+str(common),
        '-I'+str(native),'-I'+str(native/'hal')]
 if a.campaign:
-    sources.extend([common/'campaign.c',common/'sfx.c',common/'game_sound.c',common/'native_hud.c',ROOT/'src/browser/browser_splash.c',native/'audio_isr.S']);flags+=['-DDP_CAMPAIGN','-DDP_NATIVE_ART','-DDP_NATIVE_AUDIO','-DDP_ELITE='+('1' if a.board=='smk37-elite' else '0')]
+    sources.extend([common/'campaign.c',common/'sfx.c',common/'music.c',common/'game_sound.c',common/'native_hud.c',ROOT/'src/browser/browser_splash.c',native/'audio_isr.S']);flags+=['-DDP_CAMPAIGN','-DDP_NATIVE_ART','-DDP_NATIVE_AUDIO','-DDP_ELITE='+('1' if a.board=='smk37-elite' else '0')]
     from build_usb_loader import build as build_loader
     gen,loader_report=build_loader(tc,out,a.board)
     flags+=['-DDP_USB_UPDATE','-I'+str(gen)]

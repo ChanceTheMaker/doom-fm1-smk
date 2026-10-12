@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "sfx.h"
+#include "music.h"
 #define NVOICE 4
 #define QSIZE 16
 typedef struct {unsigned kind,gain,priority;} event;
@@ -22,6 +23,7 @@ int dp_sfx_post(unsigned effect,unsigned volume,unsigned priority){
 void dp_sfx_master(unsigned volume){master=volume>1023?1023:volume;}
 void dp_sfx_reset(void){dp_sfx_post(DP_SFX_COUNT,0,255);}
 void dp_sfx_render(int32_t *out,unsigned frames){
+ dp_music_begin();
  static const unsigned lengths[]={11025,3528,15435,7056,19845,8820,2205,11025,4410};
  static const unsigned hz[]={75,1000,110,175,140,660,880,330,95};
  /* Drain a bounded snapshot. Main cannot preempt this IRQ on the device. */
@@ -34,7 +36,7 @@ void dp_sfx_render(int32_t *out,unsigned frames){
   voices[slot]=(voice){e.kind,lengths[e.kind],lengths[e.kind],0,hz[e.kind]*97392u,0x9e3779b9u+e.kind,e.gain,e.priority,0};
  }
  for(unsigned n=0;n<frames;n++){
-  int mix=0;
+  int mix=dp_music_sample();
   for(unsigned i=0;i<NVOICE;i++){voice *v=&voices[i];if(!v->left)continue;
    unsigned age=v->total-v->left;v->rng^=v->rng<<13;v->rng^=v->rng>>17;v->rng^=v->rng<<5;
    int noise=(int)(v->rng&65535)-32768;v->filter+=(noise-v->filter)/4;

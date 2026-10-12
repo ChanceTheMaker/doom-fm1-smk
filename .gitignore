@@ -18,3 +18,8 @@ __pycache__/
 !site/firmware/doom-fm1-test08.bin
 !site/firmware/doom-smk37-pro-test08.bin
 !site/firmware/doom-smk37-elite-test08.bin
+
+# Release 10 app-only files, identical to the accepted candidates.
+!site/firmware/doom-fm1-10.bin
+!site/firmware/doom-smk37-pro-10.bin
+!site/firmware/doom-smk37-elite-10.bin
