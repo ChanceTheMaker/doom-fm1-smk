@@ -158,7 +158,7 @@ export class Updater {
     })));
     if(ports!==this.lastPorts){this.lastPorts=ports;this.log('MIDI ports: '+ports);}
     if(!inputs.length||!outputs.length){
-      this.diagnostic('No connected MIDI '+(!inputs.length&&!outputs.length?'inputs or outputs':!inputs.length?'inputs':'outputs')+'. Discovery cannot continue. Doom Test06 and earlier have no USB MIDI updater; Test07 adds one.');
+      this.diagnostic('No connected MIDI '+(!inputs.length&&!outputs.length?'inputs or outputs':!inputs.length?'inputs':'outputs')+'. Discovery cannot continue. Older Doom builds lack a USB MIDI updater and require recovery-adapter installation.');
       return null;
     }
     const opened=new Set(), listeners=[], matches=[];
