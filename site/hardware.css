@@ -32,3 +32,7 @@ header .brand{font-size:48px;gap:15px}header .sigil{width:55px;height:55px;font-
 @media(max-width:800px){header .brand{font-size:40px}header .sigil{width:45px;height:45px;font-size:38px}header .brand-small{font-size:10px;max-width:88px}.hero{gap:22px}.showcase-detail{font-size:7px}}
 @media(max-width:580px){.hero{grid-template-columns:1fr;gap:15px}.hardware-showcase{max-width:480px;margin:auto}header .brand{font-size:44px}.showcase-pause{right:0}.hardware-showcase figcaption{padding-right:30px}}
 @media(prefers-reduced-motion:reduce){.hardware-layer{transition:none}}
+
+/* Static instances of the hero artwork; selection never follows its animation. */
+.device-illustration{display:block;width:100%;max-width:240px;height:105px;margin:4px 0 10px;pointer-events:none;filter:drop-shadow(0 5px 3px #0006)}
+@media(max-width:580px){.device-illustration{height:62px;margin:2px 0 6px}}
