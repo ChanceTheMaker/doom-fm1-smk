@@ -1,7 +1,7 @@
 # Test10: lower-cost music rendering
 
 Release 10 music build, accepted on FM-1 and SMK-37 Pro over normal USB.
-Prepared for publication on 2026-10-12. Test09's owner check confirmed music,
+Published on 2026-10-12 in commit 0a77485. Pages deployment succeeded; all three live application hashes were independently verified. Test09's owner check confirmed music,
 effects, volume and HUD, but reported gameplay slower than Release 08.
 The FM-1 owner accepted this optimized build as-is: “It's fien for now push it.”
 This is release acceptance, not a measurement of frame-rate parity with Release 08.

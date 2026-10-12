@@ -63,3 +63,15 @@ The website analytics/preferences module and styles are adapted from the same Sl
 The runtime USB stack and RAM loader cores derive from GPL Sloop SMK revision `090588d112a4a6230fe71d2f3263bdcca2203820`. Source hashes and adaptations are in `src/native/update/PROVENANCE.json`; original notices remain in source.
 
 Native enemy artwork and the face HUD use Freedoom v0.13.0, licensed under the BSD-style terms in `assets/freedoom/COPYING.adoc`. Asset hashes, sources and credits are retained in `assets/freedoom/`; website copies of its license and credits are in `site/licenses/`. No commercial Doom artwork is included.
+
+## Dual-core audio worker
+
+`src/native/audio_worker.h` and its fault regression derive from the local
+Melodee SMK dual-core checkout, revision
+`02671a8545a8027210314687508aaee5ed3430c4`, under GPL-3.0-only. The AC79/WL82
+launch sequence in `dual_core.h` and `crt0.S` adapts that checkout's
+`firmware/hal/fm1_multicore.h` and `firmware/smk37_crt0.S`, which document the
+AC79 SDK startup sequence. Doom adds asynchronous whole-block audio dispatch,
+private DMA staging, consumer reset after retirement, separate stacks, and
+read-only execution diagnostics. The polling loop runs from SRAM; render callbacks
+use XIP. Doom holds CPU1 before every flash or recovery handoff.

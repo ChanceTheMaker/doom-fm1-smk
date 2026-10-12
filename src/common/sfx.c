@@ -17,16 +17,20 @@ static void barrier(void){
 }
 int dp_sfx_post(unsigned effect,unsigned volume,unsigned priority){
  if(effect>DP_SFX_COUNT)return 0;
- unsigned w=write_at,next=(w+1)&(QSIZE-1);if(next==read_at)return 0;
+ unsigned w=write_at,next=(w+1)&(QSIZE-1),r=read_at;barrier();if(next==r)return 0;
  queue[w]=(event){effect,volume>127?127:volume,priority};barrier();write_at=next;return 1;
 }
 void dp_sfx_master(unsigned volume){master=volume>1023?1023:volume;}
 void dp_sfx_reset(void){dp_sfx_post(DP_SFX_COUNT,0,255);}
+void dp_sfx_recover(void){
+ for(unsigned i=0;i<NVOICE;i++)voices[i]=(voice){0};
+ read_at=write_at;barrier();dp_music_recover();
+}
 void dp_sfx_render(int32_t *out,unsigned frames){
  dp_music_begin();
  static const unsigned lengths[]={11025,3528,15435,7056,19845,8820,2205,11025,4410};
  static const unsigned hz[]={75,1000,110,175,140,660,880,330,95};
- /* Drain a bounded snapshot. Main cannot preempt this IRQ on the device. */
+ /* Single producer/consumer: acquire the published queue snapshot. */
  unsigned end=write_at;barrier();
  while(read_at!=end){event e=queue[read_at];barrier();read_at=(read_at+1)&(QSIZE-1);
   if(e.kind==DP_SFX_COUNT){for(unsigned i=0;i<NVOICE;i++)voices[i].left=0;continue;}

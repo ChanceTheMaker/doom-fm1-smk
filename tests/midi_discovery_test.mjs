@@ -1,6 +1,6 @@
 // Discovery must never start an update, including when no compatible firmware replies.
 import assert from 'node:assert/strict';
-import {Updater,pack7} from '../site/vendor/fm1ota.js?v=release10';
+import {Updater,pack7} from '../site/vendor/fm1ota.js?v=release14';
 
 const logs=[];
 assert.equal(await new Updater({inputs:new Map(),outputs:new Map()},s=>logs.push(s)).findAny(()=>true),null);

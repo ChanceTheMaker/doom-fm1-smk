@@ -8,14 +8,14 @@ from prepare_engine import prepare,ROOT,UPSTREAM
 from static_wad import freeze
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--board',required=True,choices=['fm1','smk37-pro','smk37-elite'])
-p.add_argument('--campaign',action='store_true',help='Build Test10 three-level combat campaign')
+p.add_argument('--campaign',action='store_true',help='Build Test14 nine-level dual-core campaign')
 p.add_argument('--toolchain',type=Path,default=os.environ.get('JIELI_TOOLCHAIN'))
 a=p.parse_args()
 if not a.toolchain:p.error('Set JIELI_TOOLCHAIN or pass --toolchain')
 tc=Path(a.toolchain).resolve();cc=tc/'pi32v2/bin/clang';ld=tc/'pi32v2/bin/ld';objcopy=tc/'common/bin/objcopy';objdump=tc/'common/bin/objdump'
 if not cc.exists():p.error('Native compiler not found')
 out=ROOT/'build/native'/a.board;out.mkdir(parents=True,exist_ok=True)
-version='test10' if a.campaign else 'test04'
+version='test14' if a.campaign else 'test04'
 engine=prepare(out/'engine',campaign=a.campaign);native=ROOT/'src/native';common=ROOT/'src/common'
 # The native display frontend consumes the indexed framebuffer directly.
 path=engine/'i_video.c';text=path.read_text();start=text.index('void I_FinishUpdate (void)');end=text.index('\n}',start)+2
@@ -34,7 +34,7 @@ sources += [common/'lcd_frame.c',common/'menu_view.c',common/'wad_view.c',native
 flags=['-target','pi32v2','-mcpu=r3','-mfprev1','-Os','-ffunction-sections','-fdata-sections',
        '-isystem',str(tc/'pi32v2/include'),
        '-fno-builtin','-std=gnu11','-DDOOMGENERIC_RESX=320','-DDOOMGENERIC_RESY=200',
-       '-DCMAP256','-DNORMALUNIX','-DLINUX','-DMELODEE_DUAL_CORE=0','-DMELODEE_CACHE_RAM=0',
+       '-DCMAP256','-DNORMALUNIX','-DLINUX','-DMELODEE_DUAL_CORE='+('1' if a.campaign else '0'),'-DMELODEE_CACHE_RAM=0','-DDP_DUAL_CORE='+('1' if a.campaign else '0'),
        '-DDP_SMK='+('0' if a.board=='fm1' else '1'),'-I'+str(engine),'-I'+str(common),
        '-I'+str(native),'-I'+str(native/'hal')]
 if a.campaign:
@@ -71,10 +71,15 @@ for section,address in [('.text',0x02000120),('.data',sym('_data_load'))]:
     image.extend(b'\xff'*(offset-len(image)));image.extend(blob)
 image.extend(b'\xff'*(-len(image)%4))
 if sym('_start')!=0x02000120 or len(image)>0x8dfbc or sym('_bss_end')>0x01c74000:raise SystemExit('Native application bounds failed')
+if a.campaign:
+    if not sym('_data_start')<=sym('audio_worker_loop')<sym('_data_end'):raise SystemExit('CPU1 polling loop must run in SRAM')
+    if not 0x01c7c000<=sym('_cpu1_stacks_lo')<sym('_cpu1_stacks_hi')<=0x01c7fd50:raise SystemExit('CPU1 private stack bounds failed')
 path=out/('doom-'+a.board+'-'+version+'.bin');path.write_bytes(image)
 report={'board':a.board,'kind':'native-application-only','hardware_tested':False,'version':version,
         'image':path.name,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),
         'entry':hex(sym('_start')),'bss_end':hex(sym('_bss_end')),'ram_data_bss':sym('_bss_end')-sym('_data_start'),
+        'dual_core':a.campaign,'audio_worker':'CPU1 with serial fallback' if a.campaign else None,
+        'cpu1_stack_bytes':sym('_cpu1_stacks_hi')-sym('_cpu1_stacks_lo'),
         'static_lump_count':lump_count,'directory_storage':'XIP','zone_bytes':256*1024,'libc_heap_bytes':24*1024,'audio':a.campaign,'flash_writes':False,
         'usb_updater':a.campaign,'loader':loader_report if a.campaign else None,'assets':'Freedoom front-facing enemies and face HUD over original Miniwad campaign' if a.campaign else 'Miniwad MAP01 trimmed','campaign':a.campaign,'wad_sha256':hashlib.sha256(wad.read_bytes()).hexdigest(),'install_package':False}
 (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))

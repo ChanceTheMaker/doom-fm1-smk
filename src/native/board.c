@@ -35,22 +35,32 @@ static int cmd(uint8_t c){uint32_t before=fm1_lcd_timeouts;fm1_lcd_send_cmd(c);f
 static int data(const void *p,uint32_t n){uint32_t before=fm1_lcd_timeouts;fm1_lcd_send_data(p,n);fm1_lcd_wait();fm1_lcd_deselect();return before==fm1_lcd_timeouts;}
 static const smk37_panel_io_t panel={cmd,data,fm1_delay_ms};
 #endif
+/* Retained only until a healthy game boot; available to CPU1 launch policy. */
+volatile struct {uint32_t magic,pending,failures;} dp_boot __attribute__((section(".noinit")));
 #ifdef DP_CAMPAIGN
 #include "sfx.h"
 #include "splash.h"
 #define AUDIO_FRAMES 128u
 static int32_t audio_buffer[4*AUDIO_FRAMES] __attribute__((aligned(4)));
+#if DP_DUAL_CORE
+#include "dual_core.h"
+#else
+#define dp_audio_fill(out) dp_sfx_render(out,AUDIO_FRAMES)
+#endif
 extern void dp_audio_isr(void);
 void dp_audio_irq(void){
 #if DP_SMK
  unsigned p=smk37_audio_pending();smk37_audio_ack_aux(p);
- if(p&SMK37_AUDIO_HALF){dp_sfx_render(audio_buffer+smk37_audio_free_half()*2*AUDIO_FRAMES,AUDIO_FRAMES);smk37_audio_ack_half();}
+ if(p&SMK37_AUDIO_HALF){dp_audio_fill(audio_buffer+smk37_audio_free_half()*2*AUDIO_FRAMES);smk37_audio_ack_half();}
 #else
  unsigned p=fm1_audio_pending();fm1_audio_ack_aux(p);
- if(p&FM1_AUDIO_HALF){dp_sfx_render(audio_buffer+fm1_audio_free_half()*2*AUDIO_FRAMES,AUDIO_FRAMES);fm1_audio_ack_half();}
+ if(p&FM1_AUDIO_HALF){dp_audio_fill(audio_buffer+fm1_audio_free_half()*2*AUDIO_FRAMES);fm1_audio_ack_half();}
 #endif
 }
 static void audio_start(void){
+#if DP_DUAL_CORE
+ dp_multicore_start();
+#endif
 #if DP_SMK
  const smk37_audio_hooks_t hooks={fm1_delay_ms,fm1_irq_attach};
  if(!smk37_audio_init(audio_buffer,2*AUDIO_FRAMES,dp_audio_isr,3,&hooks))dp_panic("AUDIO INIT FAILED");
@@ -61,6 +71,10 @@ static void audio_start(void){
 }
 #endif
 static void audio_stop(void){
+ fm1_irq_mask(FM1_IRQ_ALNK0);
+#if DP_DUAL_CORE
+ dp_multicore_stop();
+#endif
 #if DP_SMK
  smk37_audio_stop();
 #else
@@ -71,8 +85,6 @@ static uint8_t display_ready,input_ready;
 static uint32_t millis,last_tick,remainder,scan_at,buttons,returned;
 static uint16_t wire_row[240] __attribute__((aligned(4)));
 static uint32_t actions;
-/* Separate magic from music firmware; retained only until a healthy game boot. */
-volatile struct {uint32_t magic,pending,failures;} dp_boot __attribute__((section(".noinit")));
 static void guards_init(void){
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c74000;p<(volatile uint32_t *)0x01c74100;p++)*p=0x5aa55aa5;
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c7a000;p<(volatile uint32_t *)0x01c7a100;p++)*p=0x5aa55aa5;
@@ -204,6 +216,7 @@ void dp_panic(const char *text){
 static void fm1_fault(const fm1_crash_t *record){(void)record;dp_panic("CPU FAULT - POWER OFF");}
 extern uint32_t _data_start[],_data_end[],_data_load[],_bss_start[],_bss_end[];
 void dp_cstart(const uint32_t *parameters){
+    fm1_core1_stop(); /* before clearing shared RAM inherited from any firmware */
     fm1_wdt_arm(0x0f);
     if(dp_boot.magic!=0x444f4f4d){dp_boot.magic=0x444f4f4d;dp_boot.pending=dp_boot.failures=0;}
     if(dp_boot.pending)dp_boot.failures++;
@@ -245,7 +258,10 @@ void dp_cstart(const uint32_t *parameters){
     fm1_irq_enable_all();
     dp_clear_display();
     #ifdef DP_CAMPAIGN
-    dp_message("DOOM TEST 07");
+    dp_message("DOOM - NINE LEVELS");
+#if DP_DUAL_CORE
+    dp_message(audio_worker_online?"DUAL CORE AUDIO":"SINGLE CORE FALLBACK");
+#endif
     #else
     dp_message("DOOM TEST 04");
     #endif

@@ -26,3 +26,8 @@ __pycache__/
 
 # Owner-requested official V15 restore package; exact hash enforced by CI.
 !site/restore-stock/FM-1-v15.fwsc
+
+# Release 14 app-only images; private recovery files remain excluded.
+!site/firmware/doom-fm1-14.bin
+!site/firmware/doom-smk37-pro-14.bin
+!site/firmware/doom-smk37-elite-14.bin

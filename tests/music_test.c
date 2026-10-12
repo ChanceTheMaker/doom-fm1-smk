@@ -28,5 +28,9 @@ int main(void){
  assert(energy>1000000);
  dp_music_stop();dp_sfx_reset();silence(128);
  dp_music_start();dp_sfx_render(out,4096);assert(!memcmp(out,baseline,sizeof(out)));
+ /* A retired CPU1 may leave a partial effect/music block. With its consumer
+  * stopped, recovery clears effects and deterministically restarts the score. */
+ assert(dp_sfx_post(DP_BANG,127,5));dp_sfx_render(out,113);
+ dp_sfx_recover();dp_sfx_render(out,4096);assert(!memcmp(out,baseline,sizeof(out)));
  puts("PASS original music: opt-in, deterministic restart, pause/resume, volume, master mute, loop endurance, effects mix and stop");
 }

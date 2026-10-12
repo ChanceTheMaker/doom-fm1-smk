@@ -36,10 +36,24 @@ int dp_usb_service(void){
     mi_r=mi_w; /* game has no MIDI note consumer */
     const uint8_t *p;uint32_t n;
     static const uint8_t query[]={0,0x32,0x45,0,0,0,0x40,0x7f};
+    static const uint8_t stats_query[]={0x7d,0x44,0x50,1};
     if(ota_frame_get(&p,&n)){
         int identity=n==sizeof query&&!memcmp(p,query,n);
+        int stats=n==sizeof stats_query&&!memcmp(p,stats_query,n);
         ota_frame_done();
         if(identity)ota_wire_send(dp_identity_wire,sizeof dp_identity_wire);
+#if DP_DUAL_CORE
+        if(stats){
+            uint32_t words[8];uint8_t reply[47]={0xf0,0x7d,0x44,0x50,1};
+            dp_audio_stats(words);unsigned at=5,sum=0;
+            for(unsigned i=0;i<8;i++)for(unsigned shift=0;shift<35;shift+=7)reply[at++]=(words[i]>>shift)&127u;
+            for(unsigned i=1;i<at;i++)sum+=reply[i];
+            reply[at++]=(-sum)&127u;reply[at++]=0xf7;
+            ota_wire_send(reply,at);
+        }
+#else
+        (void)stats;
+#endif
     }
     if(usb.ota_req){usb.ota_req=0;return 1;}
     if(usb.uboot_req){usb.uboot_req=0;return 2;}
@@ -47,7 +61,7 @@ int dp_usb_service(void){
 }
 void dp_usb_enter(void){
     /* Caller stops audio/DMA first. Copy destroys game RAM and never returns. */
-    fm1_irq_off();FM1_T5_CON=0x4000u;
+    fm1_irq_off();fm1_core1_stop();FM1_T5_CON=0x4000u;
     usb_detach();fm1_delay_ms(100);
     volatile uint8_t *dst=(volatile uint8_t *)0x01c0a800u;
     for(unsigned i=0;i<sizeof dp_loader_image;i++)dst[i]=dp_loader_image[i];

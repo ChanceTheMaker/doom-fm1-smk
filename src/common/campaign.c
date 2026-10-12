@@ -14,10 +14,10 @@ void dp_campaign_load(void){dp_sfx_reset();if(entered_map==gamemap)dp_score=entr
 int dp_campaign_overlay(dp_menu_view *v){
  if(gamestate!=GS_INTERMISSION && (gamestate!=GS_LEVEL||players[consoleplayer].playerstate!=PST_DEAD))return 0;
  memset(v,0,sizeof(*v));v->selected=-1;v->message=1;
- snprintf(v->title,sizeof(v->title),"%s",gamestate==GS_LEVEL?"YOU DIED":gamemap==3?"CAMPAIGN CLEAR":"LEVEL COMPLETE");
+ snprintf(v->title,sizeof(v->title),"%s",gamestate==GS_LEVEL?"YOU DIED":gamemap==DP_CAMPAIGN_LEVELS?"CAMPAIGN CLEAR":"LEVEL COMPLETE");
  snprintf(v->rows[v->count++],20,"SCORE %u",dp_score);
  snprintf(v->rows[v->count++],20,"KILLS %d / %d",players[consoleplayer].killcount,totalkills);
- if(gamestate==GS_INTERMISSION){snprintf(v->rows[v->count++],20,"TIME %d SECONDS",(leveltime/35)%100000);snprintf(v->rows[v->count++],20,"%s",gamemap==3?"THREE LEVELS CLEAR":"NEXT SECTOR AHEAD");}
+ if(gamestate==GS_INTERMISSION){snprintf(v->rows[v->count++],20,"TIME %d SECONDS",(leveltime/35)%100000);snprintf(v->rows[v->count++],20,"%s",gamemap==DP_CAMPAIGN_LEVELS?"NINE LEVELS CLEAR":"NEXT SECTOR AHEAD");}
  snprintf(v->footer,sizeof(v->footer),"%s",gamestate==GS_LEVEL?"6 USE TO RETRY / 7 MENU":"5 FIRE OR 6 USE TO CONTINUE");
  return 1;
 }
@@ -32,7 +32,7 @@ static int hud_row(void *opaque,unsigned y,const uint16_t *src,unsigned width){
 int dp_campaign_present(const unsigned char *pixels,const unsigned short *palette,dp_row_sink sink,void *ctx){
  hud_context c={.sink=sink,.ctx=ctx};player_t *p=&players[consoleplayer];
  ammotype_t type=weaponinfo[p->readyweapon].ammo;int ammo=type<NUMAMMO?p->ammo[type]:0;
- snprintf(c.score,sizeof(c.score),"SCORE %06u",dp_score);snprintf(c.level,sizeof(c.level),"L%d/3",gamemap);
+ snprintf(c.score,sizeof(c.score),"SCORE %06u",dp_score);snprintf(c.level,sizeof(c.level),"L%d/%d",gamemap,DP_CAMPAIGN_LEVELS);
  snprintf(c.status,sizeof(c.status),"HP%d AM%d K%d/%d",p->health<0?0:p->health,ammo,p->killcount,totalkills);
  return dp_lcd_present(pixels,palette,hud_row,&c);
 }

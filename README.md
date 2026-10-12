@@ -4,7 +4,7 @@
 
 **[Release 10: original background music](https://chancethemaker.github.io/doom-fm1-smk/)**
 
-Release 10 adds “Circuit Breaker,” an original heavy music loop with independent music volume. The steady face HUD and normal-USB updater remain in place. FM-1 and SMK-37 Pro passed normal-USB installation and owner checks; Elite hardware testing remains pending. Music synthesis runs at 11025 Hz and interpolates into the existing 44100 Hz effects mixer, on one core. The FM-1 owner accepted gameplay as-is after an earlier music candidate felt slower; frame-rate parity with Release 08 has not been measured.
+Release 14 expands the original campaign to nine levels and moves music and sound-effects mixing onto the second core. The first core runs Doom, display, controls and USB. “Circuit Breaker,” the original heavy loop, retains independent music volume. FM-1 and Pro report two active cores with growing audio-job counters and no worker errors; Elite hardware testing remains pending. This is measured processor activity, not a frame-rate benchmark. The steady face HUD and normal-USB updater remain in place.
 
 Test06 cannot receive this update over normal USB because it has no runtime USB driver. It needs a model-specific recovery installation first. Keep power connected during any active flash transfer; do not repeatedly retry a failed install. Other synth installers must explicitly recognize Doom before they can restore synth firmware over USB.
 
@@ -16,21 +16,21 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 
 ## Campaign
 
-- Three connected-room levels: The Outpost, Iron Halls and Reactor Core.
-- 18 enemies, directional guard/imp sprites, attacks and death animations.
+- Nine connected-room levels: The Outpost, Iron Halls, Reactor Core, Cooling Works, Switchback, The Foundry, Freight Line, Blackout and Last Transmission.
+- 76 enemies, guard/imp sprites, attacks and death animations.
 - Shotgun, health/ammo pickups, kill scoring and readable health/ammo/level HUD.
 - Original synthesized shotgun, reload, growl, impact, death, pickup and switch sounds.
 - A new boot splash, readable LCD menus and white-key controls.
 - Separate FM-1, SMK-37 Pro and SMK-37 Elite builds, all available in the website builder.
 - Animated hardware hero: alternating FM-1/SMK screen zooms, seven FM-1 finishes and six SMK finishes, with pause and reduced-motion support.
 
-| Model | Release 10 application | Physical status |
+| Model | Release 14 application | Physical status |
 | --- | ---: | --- |
-| FM-1 | 532,424 bytes | Normal-USB update and owner acceptance; performance accepted as-is |
-| SMK-37 Pro | 532,564 bytes | Normal-USB update, boot, steady HUD, music, effects and gameplay passed |
-| SMK-37 Elite | 532,568 bytes | Offline checks pass; hardware testing pending |
+| FM-1 | 566,864 bytes | Normal-USB installation from official V15; dual-core operation verified; owner confirms gameplay, music, effects, controls and steady HUD |
+| SMK-37 Pro | 567,120 bytes | Recovery installation and normal-USB reinstall passed; dual-core operation verified; owner says “Plays good” |
+| SMK-37 Elite | 567,124 bytes | Offline checks pass; hardware testing pending |
 
-The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. See [release checks](docs/TEST10.md) and [release hashes](site/firmware/releases.json).
+The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. CPU1 uses private 8 KiB stacks and a 1 KiB audio block; a worker fault or missed deadline returns audio to one core. Pro has 14,444 bytes left in the common application limit. See [release checks](docs/TEST14.md) and [release hashes](site/firmware/releases.json).
 
 ## Install
 
@@ -38,9 +38,9 @@ The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom
 2. Open the installer in desktop Chrome or Edge. Choose **FM-1**, **SMK-37 Pro** or **SMK-37 Elite**.
 3. Click **Build firmware**. The browser downloads the reviewed app and checksum-pinned base, validates the model/layout, preserves protected bytes and prepares the package locally. A local base-file fallback is available; no file upload is needed normally.
 4. Connect only that instrument by normal USB, running Doom Test07 or later, or compatible synth firmware. SMKs support official matching **016** firmware or the portable Felucca/Sloop/Melodee SMK updater (identity version 922 or newer).
-5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer now checks for the Doom release 10 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
+5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the Doom release 14 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
 
-**Doom replaces the synth application and has no persistent saves.** Test07 adds normal-USB updating through an embedded RAM loader; Test06 and earlier need the recovery adapter first. Other synth installers must recognize the Doom identity before restoring through USB. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Release 10 checks](docs/TEST10.md), [Test07 USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
+**Doom replaces the synth application and has no persistent saves.** Release 07 added normal-USB updating through an embedded RAM loader; Release 06 and earlier need the recovery adapter first. Earlier SMK loaders also reject a fully blank calibration sector before programming; those devices need a one-time recovery update to Release 14. The new loader preserves either valid calibration or a completely blank sector, and still rejects corrupt partial records. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Release 14 checks](docs/TEST14.md), [USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
 
 The Elite's official RAM loader can identify itself as `ota-FM-1`; the installer explicitly asks you to confirm the connected Elite before programming. It does not treat that generic identity as model proof. Failed handoffs do not automatically repeat writes.
 
@@ -75,9 +75,9 @@ python3 tools/build_campaign.py
 python3 -m pip install Pillow
 python3 tools/build_browser_campaign.py
 python3 tools/build_native_art.py
-python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32 --campaign
-python3 tools/check_campaign.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign/doom-host
-python3 tools/check_menu.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign/doom-host --campaign
+python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32 --campaign --native-art
+python3 tools/check_campaign.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign-test07/doom-host --wad build/fixtures/native-art.wad
+python3 tools/check_menu.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign-test07/doom-host --campaign
 python3 tools/build_native.py --board fm1 --campaign --toolchain /path/to/jieli/toolchain
 python3 tools/build_native.py --board smk37-pro --campaign --toolchain /path/to/jieli/toolchain
 python3 tools/build_native.py --board smk37-elite --campaign --toolchain /path/to/jieli/toolchain

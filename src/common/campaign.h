@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #pragma once
 #include "menu_view.h"
+#define DP_CAMPAIGN_LEVELS 9
 extern unsigned dp_score;
 void dp_campaign_kill(unsigned points);
 void dp_campaign_reset(void);

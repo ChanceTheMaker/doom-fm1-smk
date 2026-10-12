@@ -42,6 +42,9 @@ void dp_music_volume(unsigned volume){publish((requested&~127u)|(volume>127?127:
 
 void dp_music_begin(void){
  uint32_t state=requested;
+#ifdef DP_NATIVE_AUDIO
+ __asm__ volatile("csync" ::: "memory");
+#endif
  if((state^applied)&0xffff0000u){
   step=age=0;root_phase=fifth_phase=bass_phase=kick_phase=0;
   chord_env=kick_env=snare_env=hat_env=0;guitar_filter=0;rng=0x714f3a21u;
@@ -49,6 +52,7 @@ void dp_music_begin(void){
  }
  applied=state;gain=state&127;playing=(state&RUN)&&!(state&PAUSE);
 }
+void dp_music_recover(void){applied=requested^GENERATION;dp_music_begin();}
 static int triangle(uint32_t phase){
  int n=(int)(phase>>16);return n<32768?n*2-32768:98303-n*2;
 }

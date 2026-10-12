@@ -31,7 +31,7 @@ report={'source':'Native-art 240x240 host harness; not a photograph of hardware'
         'engine_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),
         'wad_sha256':hashlib.sha256((ROOT/'build/fixtures/native-art.wad').read_bytes()).hexdigest(),
         'files':{}}
-for name,level,frames,mode,splash in [('splash',1,1,'idle',True),('outpost',1,140,'idle',False),('combat',2,110,'play',False),('reactor',3,200,'idle',False)]:
+for name,level,frames,mode,splash in [('splash',1,1,'idle',True),('outpost',1,140,'idle',False),('combat',2,110,'play',False),('reactor',3,200,'idle',False),('cooling',4,180,'play',False),('switchback',5,180,'play',False),('foundry',6,180,'play',False),('freight',7,180,'play',False),('blackout',8,180,'play',False),('transmission',9,180,'play',False)]:
     folder=ROOT/'build/native-release'/name;folder.mkdir(parents=True,exist_ok=True)
     env={**os.environ,'DOOM_ZONE_KIB':'256','DOOM_FRAME_LIMIT':str(frames),'DOOM_FIXED_TICS':'1','DOOM_CAMPAIGN_BOT':mode}
     env.pop('DOOM_SPLASH',None)

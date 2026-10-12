@@ -51,6 +51,9 @@ void DG_Init(void) {
 static int write_row(void *ctx,unsigned y,const uint16_t *row,unsigned width) {
     (void)y;
     FILE *f=ctx;
+#ifdef DP_NATIVE_ART
+    if(fseek(f,15+y*240*3,SEEK_SET))return 0;
+#endif
     for(unsigned x=0;x<width;++x) {
         uint16_t c=row[x];
         unsigned r=(c>>11)&31,g=(c>>5)&63,b=c&31;
@@ -83,6 +86,10 @@ void DG_DrawFrame(void) {
 #ifdef DP_CAMPAIGN
     int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
     int ok=getenv("DOOM_SPLASH")?dp_splash_present(atoi(getenv("DOOM_SPLASH")),write_row,f):active?dp_menu_present(&menu,write_row,f):dp_campaign_present(I_VideoBuffer,palette565,write_row,f);
+#ifdef DP_NATIVE_ART
+    extern int dp_native_hud(const unsigned short *,dp_row_sink,void *);
+    if(ok&&!active&&!getenv("DOOM_SPLASH"))ok=dp_native_hud(palette565,write_row,f);
+#endif
 #else
     int ok=dp_menu_snapshot(&menu)?dp_menu_present(&menu,write_row,f):dp_lcd_present(I_VideoBuffer,palette565,write_row,f);
 #endif

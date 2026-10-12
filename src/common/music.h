@@ -9,4 +9,5 @@ void dp_music_volume(unsigned volume); /* Doom menu range: 0..127 */
 
 /* Audio consumer only, shared by native, host and browser renderers. */
 void dp_music_begin(void);
+void dp_music_recover(void); /* only after stopping the audio consumer */
 int dp_music_sample(void);

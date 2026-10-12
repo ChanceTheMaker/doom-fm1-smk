@@ -92,12 +92,23 @@ for texname,patchname,accent in [('DPSTEEL','DPWALL','metal'),('DPRUST','DPRPANE
  new=[(name,newpn if name=='PNAMES' else bytes(out) if name=='TEXTURE1' else blob) for name,blob in new]
 # All geometry is authored here: grid cells combine into rooms, with narrow connectors.
 def make_map(number):
- rooms=([(0,0),(4,0),(4,4)] if number==1 else [(0,0),(4,0),(8,0)] if number==2 else [(0,0),(4,0),(4,4),(8,4)])
+ layouts={
+  1: ([(0,0),(4,0),(4,4)],[(3,1),(5,3)],'THE OUTPOST'),
+  2: ([(0,0),(4,0),(8,0)],[(3,1),(7,1)],'IRON HALLS'),
+  3: ([(0,0),(4,0),(4,4),(8,4)],[(3,1),(5,3),(7,5)],'REACTOR CORE'),
+  # Geometry is loaded one level at a time; keep rooms and sightlines compact.
+  4: ([(0,0),(4,0),(4,4),(0,4)],[(3,1),(5,3),(3,5)],'COOLING WORKS'),
+  5: ([(0,0),(0,4),(4,4),(4,8)],[(1,3),(3,5),(5,7)],'SWITCHBACK'),
+  6: ([(0,0),(4,0),(4,4),(0,4)],[(3,1),(5,3),(3,5),(1,3)],'THE FOUNDRY'),
+  7: ([(0,0),(4,0),(8,0),(12,0)],[(3,1),(7,1),(11,1)],'FREIGHT LINE'),
+  8: ([(0,0),(0,4),(-4,4),(-4,8)],[(1,3),(-1,5),(-3,7)],'BLACKOUT'),
+  9: ([(0,0),(4,0),(8,0),(4,4),(8,4)],[(3,1),(7,1),(5,3),(7,5),(9,3)],'LAST TRANSMISSION'),
+ }
+ rooms,halls,title=layouts[number]
  cells={}
  for sec,(x,y) in enumerate(rooms):
   for xx in range(x,x+3):
    for yy in range(y,y+3):cells[xx,yy]=sec
- halls=[(3,1)] + ([(5,3)] if number==1 else [(7,1)] if number==2 else [(5,3),(7,5)])
  for xy in halls:cells[xy]=len(rooms)+halls.index(xy)
  lines=[];verts=[];vi={};sides=[]
  def vertex(p):
@@ -119,17 +130,20 @@ def make_map(number):
    lines.append(struct.pack('<HHHHHHH',vertex(a),vertex(b),4 if back is not None else 1,special,0,front,bs))
  sectors=[]
  for i in range(len(rooms)+len(halls)):
-  sectors.append(struct.pack('<hh8s8shhh',0,128,b'FLOOR0_1',b'CEIL3_5',224 if i%2==0 else 176,0,0))
+  light=(224 if i%2==0 else 176) if number<=3 else {4:192,5:208,6:160,7:208,8:144,9:176}[number]+(16 if i%2==0 else 0)
+  sectors.append(struct.pack('<hh8s8shhh',0,128,b'FLOOR0_1',b'CEIL3_5',light,0,0))
  things=[(64,192,0,1,7)];enemies=[]
  for i,(x,y) in enumerate(rooms):
   points=[(x*128+256,y*128+192,3004 if i%2==0 else 3001)]
-  if number>=2 or i==len(rooms)-1:points.append((x*128+192,y*128+288,3001 if number==3 else 3004))
+  if number>=2 or i==len(rooms)-1:points.append((x*128+192,y*128+288,3001 if number>=3 else 3004))
+  if number>=6 and i>=len(rooms)-2:points.append((x*128+288,y*128+96,3001))
   for px,py,kind in points:things.append((px,py,180,kind,7));enemies.append((px,py,kind))
   things.extend([(x*128+96,y*128+96,0,2049,7),(x*128+96,y*128+288,0,2012,7)])
+  if number>=4:things.append((x*128+192,y*128+192,0,2012,7))
  lumps_out=[('THINGS',b''.join(struct.pack('<hhhhh',*t) for t in things)),('LINEDEFS',b''.join(lines)),('SIDEDEFS',b''.join(sides)),('VERTEXES',b''.join(struct.pack('<hh',*v) for v in verts)),('SEGS',b''),('SSECTORS',b''),('NODES',b''),('SECTORS',b''.join(sectors)),('REJECT',b''),('BLOCKMAP',b'')]
- return [('MAP%02d'%number,b''),*lumps_out],dict(level=number,rooms=len(rooms),enemies=enemies,exit=(ex*128+192,(ey+3)*128),start=(64,192),title=['THE OUTPOST','IRON HALLS','REACTOR CORE'][number-1])
+ return [('MAP%02d'%number,b''),*lumps_out],dict(level=number,rooms=len(rooms),enemies=enemies,exit=(ex*128+192,(ey+3)*128),start=(64,192),title=title)
 metadata=[]
-for number in range(1,4):
+for number in range(1,10):
  level,meta=make_map(number);metadata.append(meta);new.extend(level)
 raw=OUT/'campaign-input.wad';raw.write_bytes(wad(new))
 built=OUT/'campaign-nodes.wad';subprocess.run(['zdbsp','-o',str(built),str(raw)],check=True)

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "fm1",
+    "board": "FM-1",
+    "public": true,
+    "version": "DOOM FM1 TEST10",
+    "product": "FM-1_999",
+    "app": "doom-fm1-10.bin",
+    "bytes": 532424,
+    "sha256": "bf6b7d24d6907910a143a73ffe1af019eeae22d33b09b843d788cee2206c373a",
+    "hardware": "Hardware verified"
+  },
+  {
+    "id": "smk37-pro",
+    "board": "SMK-37 Pro",
+    "public": true,
+    "version": "DOOM SMK TEST10",
+    "product": "SMK-37_999",
+    "app": "doom-smk37-pro-10.bin",
+    "bytes": 532564,
+    "sha256": "a5847d71f5459beb4fc37f099796ae38762e632e5feef84e48cc1981b502341f",
+    "hardware": "Hardware verified"
+  },
+  {
+    "id": "smk37-elite",
+    "board": "SMK-37 Elite",
+    "public": true,
+    "version": "DOOM SMK TEST10",
+    "product": "SMK-37_999",
+    "app": "doom-smk37-elite-10.bin",
+    "bytes": 532568,
+    "sha256": "956462034c0cfcab4fdf49783f9b557977422bf01255d1c0822de277168dca23",
+    "hardware": "Experimental \u00b7 hardware validation pending"
+  }
+]

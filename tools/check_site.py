@@ -5,15 +5,18 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]/'site'
 releases=json.loads((root/'firmware/releases.json').read_text())
 assert {r['id'] for r in releases}=={'fm1','smk37-pro','smk37-elite'}
-archived=json.loads((root/'firmware/archive-test07.json').read_text())+json.loads((root/'firmware/archive-test08.json').read_text())
+archived=sum((json.loads((root/'firmware'/name).read_text()) for name in
+              ['archive-test07.json','archive-test08.json','archive-release10.json']),[])
 apps=set()
 for r in releases+archived:
     p=root/'firmware'/r['app'];b=p.read_bytes();apps.add(p)
     assert len(b)==r['bytes'] and hashlib.sha256(b).hexdigest()==r['sha256'],p
     assert b[:4]==bytes.fromhex('04818000') and r['public'] is True,p
-    version,product=('TEST10','_999') if r in releases else (('TEST08','_997') if r['version'].endswith('TEST08') else ('TEST07','_996'))
+    number=int(re.search(r'TEST(\d+)$',r['version'])[1])
+    assert number==14 if r in releases else number in (7,8,10),p
+    version,product=f'TEST{number:02d}',{7:'_996',8:'_997',10:'_999',14:'_999'}[number]
     assert r['version'].endswith(version) and r['product'].endswith(product),p
-    suffix="10" if r in releases else version.lower()
+    suffix=str(number) if number>=10 else version.lower()
     assert r['app']==f"doom-{r['id']}-{suffix}.bin",p
 stock=root/'restore-stock/FM-1-v15.fwsc'
 assert stock.stat().st_size==699956 and hashlib.sha256(stock.read_bytes()).hexdigest()=='db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a'

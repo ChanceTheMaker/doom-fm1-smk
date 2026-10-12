@@ -57,8 +57,12 @@ def prepare(out,campaign=False):
         change('g_game.c','    P_SetupLevel (gameepisode, gamemap, 0, gameskill);',
                '    dp_campaign_load();\n    P_SetupLevel (gameepisode, gamemap, 0, gameskill);')
         change('g_game.c','    gamemap = map;', '    gamemap = map;\n    dp_campaign_reset();')
+        # The original campaign supplies its own results/replay screen. MAP06
+        # must not enter Doom II's commercial story finale after intermission.
+        change('g_game.c','    gameaction = ga_worlddone;',
+               '    gameaction = ga_worlddone;\n    return; /* custom campaign: no commercial story finale */')
         change('g_game.c','    gamemap = wminfo.next+1;',
-               '    if (gamemap>=3) { G_DeferedInitNew(gameskill,1,1); return; }\n    gamemap = wminfo.next+1;')
+               '    if (gamemap>=DP_CAMPAIGN_LEVELS) { G_DeferedInitNew(gameskill,1,1); return; }\n    gamemap = wminfo.next+1;')
         change('m_menu.c','int\t\t\tscreenblocks = 10;', 'int\t\t\tscreenblocks = 11;')
     return out
 if __name__=='__main__':
