@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/ChanceTheMaker/felucca-smk",
+  "revision": "cc13e146f11d93328b4fc13ec92c4d69f6bc6e76",
+  "files_sha256": {
+    "tools/fm1pkg_make.py": "7ae21bbabadcfd25d711908b15a8319794f63846485b3908c5748b544c8a263a",
+    "tools/smk37_package.py": "f3bb55a42f37ce8e8933af811cf9b1d7d98a1277e5d872937f681a20c26f0547",
+    "tools/smk37_layout.py": "f02c8bc2e14eb6c0c5953019b4283c6ac713f4b8ffc22bc0d77731d8856c294b",
+    "tools/smk37_backup.py": "9c615651c32d80a0bb7f816659342aa4314418278977f23bed63db031889f87f",
+    "tools/smk37_test_image.py": "de54d37782540d9d05742e5b0d044e0d9ff1bed8a94c59f0f7cc9a064c127d6c",
+    "web/fm1ota.js": "b4688c95cfef8c5de9ffb583ebacc60e22c0bbbf048f23f09f6ec6e30ae8e7c7",
+    "web/smk37-update.js": "ac30b3fe1587137b2f12a66e261041d68ff63b6c55ee7712427d72e17a425a10"
+  }
+}

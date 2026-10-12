@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/ChanceTheMaker/melodee-smk",
+  "revision": "5859bc4d07e7f51a3ee8702464a8d777384da801",
+  "source_directory": "firmware/hal",
+  "files_sha256": {
+    "smk37_controls.h": "6d22a11ddc1c09ae9bc438049f5c49034c0ca707eebfbc7875a251fbb17e295d",
+    "smk37_contacts.h": "e6f323d1c2a5f42d3a3cd090d59b1967742e1ac0d76209f0d603ac233c3d4252",
+    "smk37_keyscan.h": "5fab3ddbbb68704bd5f62017c8f980f39cf18bb77291dd7cf8fe4a4721235985",
+    "smk37_scanner.h": "6219f5b38e8d11b3371dee57f14fe9a04c4edcee54b9f34c8b0babe0518aa3ea",
+    "smk37_lights.h": "41b0778efc46d96f8ef355a469522cea0af35b7a5379f713c62b890496ccc06d",
+    "smk37_time.h": "aadc395d2d6d09aa00283348f74123e87526b1ab7f088a1a24c45e83cb72fa39",
+    "smk37_boot.h": "0a904676d002f99ad8076041edb3cebd0d3cc995af68c4ceec8e0b5e908757be",
+    "smk37_panel.h": "8c8c554b320a27ee31baa7a7a75dc391c32f4030dd3a22658e24ab5a2d21c11a",
+    "smk37_lcd_hw.h": "6036a7ce9c423c87385016e4f09964769e693d4f28ce531a183391fb5f3bf74a",
+    "smk37_audio.h": "d7cf79907a2bda0774855feeae87ffec8de18a534e47a052b12e160449c570bc",
+    "fm1_audio.h": "024a8202cb0b428067b83c9135b208e0511b15d9b23a6a06a05c96ec258f8955",
+    "fm1_gpio.h": "945fa4831c0856453f323ae4b1cfc93f1159d5570a9b5f75ed1592d35b0373d0",
+    "fm1_irq.h": "29cd346105309827225fe1bc4901f68d6ccecbd9854a8228de6b42c904e49add",
+    "fm1_time.h": "54367c16d7a8577a6c80f743b693bb3314698646886aaf74108dd20ec5117828",
+    "fm1_cc.h": "3a4a44eb638b5e0e1b78c3ca77a9eb74cb7ad8fa8d61454713d4b5649a541d46",
+    "fm1_vec.S": "a15de84eae13f2a77291992167bad160c1e367569a6430029735bea32121f4e8",
+    "fm1_lcd_hw.h": "7ddc8af04b8c4adb2163b1474ad2b704c3bd6f5bfcca439c7bd435b87317662f",
+    "fm1_input.h": "a373dc17ba134c8ed86af545fbcc73ce83afdab092f6a19e10cfa138b43111bd",
+    "fm1_led_pwm.h": "571f6426ddd637d978e5f0d8ca7fb88f960cc97166e27e0b82d8753c69b18623",
+    "fm1_sys.h": "fd7b7b8c1cc4136a4a4313057afaef4c6c331992e2435d0a80a8477282b20d76"
+  },
+  "note": "Exact local source hashes recorded; original per-file notices retained."
+}

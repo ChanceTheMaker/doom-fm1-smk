@@ -24,7 +24,7 @@ The requested boot clock is not a measured runtime frequency. The SRAM window in
 
 DoomGeneric normally requests a 32-bit output buffer; at 320x200 that alone is 256,000 bytes, in addition to the engine's internal screen, heap and static memory. The new strip path removes that duplicate allocation and has passed host image and input comparisons. Compiling it successfully on Linux says nothing about embedded fit.
 
-The host starting point now uses paletted 320x200 rendering, a small level, read-only mapped assets, and RGB565 conversion one LCD row at a time. A complete 240x240 RGB565 framebuffer costs 115,200 bytes; it is not allocated. The active view is aspect-corrected to 240x180 with black bars. Do not change Doom's internal dimensions blindly. See [BASELINE_RESULTS.md](BASELINE_RESULTS.md) for the 280 KiB zone play check and the static-memory overhead that still prevents device fit.
+The host starting point now uses paletted 320x200 rendering, a small level, read-only mapped assets, and RGB565 conversion one LCD row at a time. A complete 240x240 RGB565 framebuffer costs 115,200 bytes; it is not allocated. The active view is aspect-corrected to 240x180 with black bars. Do not change Doom's internal dimensions blindly. See [BASELINE_RESULTS.md](BASELINE_RESULTS.md) for the original host measurements. The reduced native renderer now fits the linker bounds; see [NATIVE_TEST01.md](NATIVE_TEST01.md) for limits and outstanding hardware checks.
 
 Flash is the likely asset bottleneck. Our existing music application slot is about 568 KiB, much less than the chip's full capacity. Bootloader, calibration and other persistent regions must not be treated as game storage. Determine a Doom-specific safe layout separately; never reuse an FM-1 flash writer on SMK by assumption. Start with one small level and stripped assets, not the complete shareware WAD.
 
@@ -43,4 +43,4 @@ Proposed actions: piano/touch keys for forward/back/turn/strafe, separate keys o
 2. Prove native startup, LCD strips and controls independently on each board.
 3. Render the same small level without audio or persistence.
 4. Add effects and measure frame latency, watchdog margin and input responsiveness.
-5. Only then prepare separately identified FM-1 and SMK update packages.
+5. Expand beyond the private Pro test package only after those hardware checks. FM-1 and SMK packages remain separate.

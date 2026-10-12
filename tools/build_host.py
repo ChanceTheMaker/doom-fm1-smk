@@ -14,6 +14,7 @@ p.add_argument('--cc', default='cc')
 p.add_argument('--display', choices=['rgba','strip'], default='strip')
 p.add_argument('--no-wipe', action='store_true')
 p.add_argument('--mapped-wad', action='store_true')
+p.add_argument('--small-room', action='store_true')
 a = p.parse_args()
 profile = json.loads((ROOT / 'targets' / (a.board + '.json')).read_text())
 engine = ROOT / 'third_party/doomgeneric/doomgeneric'
@@ -25,8 +26,12 @@ if not line:
     p.error('Pinned upstream source list missing.')
 sources = [engine / (name[:-2] + '.c') for name in line[1].split() if name != 'doomgeneric_xlib.o']
 
-out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else ''))
+out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else ''))
 out.mkdir(parents=True, exist_ok=True)
+if a.small_room:
+    from prepare_engine import prepare
+    engine=prepare(out/'engine')
+    sources=[engine/s.name for s in sources]
 # Keep upstream pinned and clean; append introspection only in a generated copy.
 zone=out/'z_zone_probe.c'
 zone.write_text((engine/'z_zone.c').read_text()+'\n'+(ROOT/'src/host/zone_probe.inc').read_text())
@@ -48,6 +53,6 @@ command = [a.cc, '-std=c11', '-O2', '-D_DEFAULT_SOURCE', '-DNORMALUNIX', '-DLINU
            *flags, *map(str, sources), '-lm', '-o', str(out / 'doom-host')]
 subprocess.run(command, check=True, cwd=out)
 (out / 'target.json').write_text(json.dumps({'build_kind': 'host-only', 'profile': profile,
-    'mapped_wad': a.mapped_wad, 'display': a.display, 'no_wipe': a.no_wipe, 'output_framebuffer_bytes': 320 * 200 * 4 if a.display=='rgba' else 0, 'native_firmware': False}, indent=2) + '\n')
+    'small_room': a.small_room, 'mapped_wad': a.mapped_wad, 'display': a.display, 'no_wipe': a.no_wipe, 'output_framebuffer_bytes': 320 * 200 * 4 if a.display=='rgba' else 0, 'native_firmware': False}, indent=2) + '\n')
 print('Built host baseline for', profile['name'], 'at', out / 'doom-host')
 print('This is NOT flashable firmware.')

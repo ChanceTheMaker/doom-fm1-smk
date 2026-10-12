@@ -12,14 +12,17 @@
 - [x] Record host zone peaks, static sections and individual compiler stack frames.
 - [ ] Measure engine heap, static data, stack and framebuffer peak use.
   Remaining: other heap allocations, full call-chain stack high-water and native target measurements.
-- [ ] Choose low-memory engine strategy after measurement; compare RP2040 Doom/GBADoom.
-- [ ] Design asset packing within a validated application-only flash budget.
-- [ ] Import versioned FM-1 and SMK HAL subsets with provenance.
-- [ ] Implement separate board startup, clocks, input and LCD adapters.
-- [ ] Implement fixed-size allocator and file-free asset access on device.
-- [ ] Cross-compile each native target and inspect linker/binary bounds.
+- [x] Implement bounded reductions to the existing renderer; pass the same host play test.
+- [x] Design asset packing within a validated application-only flash budget.
+- [x] Import versioned FM-1 and SMK HAL subsets with provenance.
+- [x] Implement separate board startup, clocks, input and LCD adapters.
+- [x] Implement fixed-size allocator and file-free asset access on device.
+- [x] Cross-compile each native target and inspect linker/binary bounds.
 - [ ] Bring up color bars and input feedback, then one Doom level on each device.
 - [ ] Add sound effects, then assess music and optional saves.
-- [ ] Verify board-specific update/recovery route before creating install packages.
+- [x] Stage a private Pro application-only package from two matching, verified stock reads.
+- [x] Add an offline restore planner that preserves current data outside the application.
+- [ ] Physically validate Doom boot and the adapter restore procedure.
+- [ ] Create separately validated FM-1 and Elite install packages.
 
 No current task requires publishing or flashing a device automatically.

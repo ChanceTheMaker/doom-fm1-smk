@@ -2,7 +2,7 @@
   "id": "fm1",
   "name": "M-VAVE FM-1",
   "hal_family": "fm1",
-  "native_status": "not-implemented",
+  "native_status": "built-hardware-test-pending",
   "display_width": 240,
   "display_height": 240,
   "performance_keys": 27,

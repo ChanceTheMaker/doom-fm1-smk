@@ -2,7 +2,7 @@
   "id": "smk37-elite",
   "name": "M-VAVE SMK-37 Elite",
   "hal_family": "smk37",
-  "native_status": "not-implemented",
+  "native_status": "built-hardware-test-pending",
   "display_width": 240,
   "display_height": 240,
   "performance_keys": 37,
