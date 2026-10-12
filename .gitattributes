@@ -3,3 +3,5 @@
 *.h text eol=lf
 *.py text eol=lf
 *.md text eol=lf
+# Pinned upstream assets are verified byte-for-byte, including license text.
+assets/freedoom/** -text
