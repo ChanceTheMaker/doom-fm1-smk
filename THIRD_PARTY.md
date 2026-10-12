@@ -55,3 +55,5 @@ Published app binaries embed the modified Miniwad campaign. The source generator
 ## Hardware hero illustrations
 
 The FM-1 SVG geometry comes from ChanceTheMaker/Felucca `ab9e880890eeda57a1772b2d1250f107a3e199c6`, `webapp/installer/index.html`; SMK geometry comes from ChanceTheMaker/sloop-smk `090588d112a4a6230fe71d2f3263bdcca2203820`, `web/index.html`. Adapted under the existing GPL terms: synth display replaced with captured Doom output, original finish palettes retained, and a new alternating screen-zoom presentation.
+
+The website analytics/preferences module and styles are adapted from the same Sloop SMK revision, `web/analytics.js` and `web/analytics.css`, retaining GPL notices. The Doom adaptation scopes tracking to this site and reports package/transfer outcomes separately from successful device boots.

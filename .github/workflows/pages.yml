@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: '22'
       - run: node tests/site_installer_test.mjs
+      - run: node tests/analytics_test.mjs
       - run: python3 tools/check_site.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
