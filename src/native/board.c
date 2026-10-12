@@ -5,6 +5,9 @@
 #include "fm1_time.h"
 #include "fm1_sys.h"
 #include "fm1_irq.h"
+#ifdef DP_USB_UPDATE
+#include "usb_update.c" /* shared HAL owns one IRQ/vector state */
+#endif
 #include "smk37_time.h"
 #include "smk37_boot.h"
 #if DP_SMK
@@ -91,6 +94,14 @@ static const uint8_t note_keys[]={0,2,4,6,7,9,11,12,14,16,18};
 uint32_t dp_millis(void){uint32_t t=fm1_ticks();remainder+=t-last_tick;last_tick=t;millis+=remainder/24000u;remainder%=24000u;return millis;}
 void dp_service(void){
     fm1_wdt_feed();uint32_t now=dp_millis();
+#ifdef DP_USB_UPDATE
+    int request=dp_usb_service();
+    if(request){
+        dp_boot.pending=0;audio_stop();
+        if(request==1)dp_usb_enter();
+        fm1_enter_uboot();
+    }
+#endif
     if(!input_ready || now-scan_at<2)return;
     scan_at=now;
 #if DP_SMK
@@ -228,10 +239,13 @@ void dp_cstart(const uint32_t *parameters){
 #ifdef DP_CAMPAIGN
     audio_start();
 #endif
+#ifdef DP_USB_UPDATE
+    dp_usb_init();
+#endif
     fm1_irq_enable_all();
     dp_clear_display();
     #ifdef DP_CAMPAIGN
-    dp_message("DOOM TEST 06");
+    dp_message("DOOM TEST 07");
     #else
     dp_message("DOOM TEST 04");
     #endif
@@ -241,10 +255,10 @@ void dp_cstart(const uint32_t *parameters){
     dp_message("FM1 - DOOM");
 #endif
     char *args[]={"doom","-iwad","miniwad.wad","-nosound","-warp","1","-skill","2"};
+    doomgeneric_Create(8,args);
 #ifdef DP_CAMPAIGN
     if(!dp_splash_present(DP_SMK?(DP_ELITE?2:1):0,dp_lcd_row,0))dp_panic("SPLASH DISPLAY FAILED");
     uint32_t splash_start=dp_millis();while(dp_millis()-splash_start<1600)dp_service();
 #endif
-    doomgeneric_Create(8,args);
     for(;;){doomgeneric_Tick();dp_service();}
 }

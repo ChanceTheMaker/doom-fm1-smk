@@ -3,9 +3,9 @@
 import hashlib,struct
 CAMPAIGN_SHA='00c26fa84d199c5800edb471edf5b079e8f752463fa34bcd6e94a1f13f617d8c'
 EXPECTED='5382808534297f82d29873d9132410dcb20f314e01f58f1ec4c653f7f0ddf98d'
-def freeze(engine,wad,static_textures=True,campaign=False):
+def freeze(engine,wad,static_textures=True,campaign=False,expected_sha=None):
     data=wad.read_bytes()
-    if hashlib.sha256(data).hexdigest()!=(CAMPAIGN_SHA if campaign else EXPECTED): raise ValueError('Unexpected static WAD')
+    if hashlib.sha256(data).hexdigest()!=(expected_sha or (CAMPAIGN_SHA if campaign else EXPECTED)): raise ValueError('Unexpected static WAD')
     _,count,directory=struct.unpack_from('<4sII',data)
     def change(file,old,new):
         p=engine/file;s=p.read_text()

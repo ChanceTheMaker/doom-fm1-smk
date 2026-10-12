@@ -153,6 +153,14 @@ export class Updater {
   async findAny(filter, {probeMs=700, openMs=1500, deadline=Infinity}={}) {
     const inputs=[...this.access.inputs.values()].filter(p=>p.state!=='disconnected');
     const outputs=[...this.access.outputs.values()].filter(p=>p.state!=='disconnected');
+    const ports=JSON.stringify([...inputs,...outputs].map(p=>({
+      type:p.type,name:p.name??'',manufacturer:p.manufacturer??'',state:p.state,connection:p.connection
+    })));
+    if(ports!==this.lastPorts){this.lastPorts=ports;this.log('MIDI ports: '+ports);}
+    if(!inputs.length||!outputs.length){
+      this.diagnostic('No connected MIDI '+(!inputs.length&&!outputs.length?'inputs or outputs':!inputs.length?'inputs':'outputs')+'. Discovery cannot continue. Doom Test06 and earlier have no USB MIDI updater; Test07 adds one.');
+      return null;
+    }
     const opened=new Set(), listeners=[], matches=[];
     let querying=null, selected=null;
     const bounded=(operation,ms)=>new Promise((resolve,reject)=>{
@@ -176,8 +184,9 @@ export class Updater {
           if(!querying)return;
           const id=parseIdentity(Array.from(ev.data));
           if(!id)return;
-          this.log('Identity '+id.text+' on input "'+input.name+'", queried output "'+querying.name+'".');
-          if(filter(id)&&!matches.some(m=>m.input===input&&m.output===querying&&m.id.text===id.text))matches.push({input,output:querying,id});
+          const accepted=filter(id);
+          this.log('Identity '+id.text+' on input "'+input.name+'", queried output "'+querying.name+'" ('+(accepted?'accepted':'not the expected identity')+').');
+          if(accepted&&!matches.some(m=>m.input===input&&m.output===querying&&m.id.text===id.text))matches.push({input,output:querying,id});
         };
         input.addEventListener('midimessage',receive);listeners.push([input,receive]);
       }
@@ -195,7 +204,7 @@ export class Updater {
       for(const [input,receive] of listeners)input.removeEventListener('midimessage',receive);
       await Promise.allSettled([...opened].filter(p=>p!==selected?.input&&p!==selected?.output).map(closePort));
     }
-    if(!selected)return null;
+    if(!selected){this.diagnostic('No acceptable update identity was received. Discovery sent identity queries only; no update command was sent.');return null;}
     const {input,output,id}=selected,link=new Link(input,output),close=link.close.bind(link);
     link.close=()=>{close();return Promise.allSettled([input,output].filter(p=>opened.has(p)).map(closePort));};
     return {id,link,name:output.name,inputName:input.name};

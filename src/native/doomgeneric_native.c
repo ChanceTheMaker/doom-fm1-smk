@@ -9,6 +9,7 @@
 #include "platform.h"
 extern struct color colors[256];
 static uint16_t palette[256];
+int dp_native_hud(const unsigned short *,dp_row_sink,void *);
 void DG_Init(void){}
 void DG_DrawFrame(void){
     for(unsigned i=0;i<256;i++)palette[i]=(uint16_t)(((colors[i].r>>3)<<11)|((colors[i].g>>2)<<5)|(colors[i].b>>3));
@@ -16,6 +17,9 @@ void DG_DrawFrame(void){
 #ifdef DP_CAMPAIGN
     int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
     int ok=active?dp_menu_present(&menu,dp_lcd_row,0):dp_campaign_present(I_VideoBuffer,palette,dp_lcd_row,0);
+#ifdef DP_NATIVE_ART
+    if(ok&&!active)ok=dp_native_hud(palette,dp_lcd_row,0);
+#endif
 #else
     int ok=dp_menu_snapshot(&menu)?dp_menu_present(&menu,dp_lcd_row,0):dp_lcd_present(I_VideoBuffer,palette,dp_lcd_row,0);
 #endif

@@ -21,7 +21,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node tests/public_pause_test.mjs
+      - run: node tests/site_installer_test.mjs
+      - run: node tests/midi_discovery_test.mjs
+      - run: node tests/verify_boot_test.mjs
+      - run: cc -std=c11 -O2 -DTEST_PUBLIC -Isrc/native/hal tests/usb_smk37_update_test.c -o /tmp/usb-smk-test && /tmp/usb-smk-test
+      - run: cc -std=c11 -O2 -Isrc/native/hal -DT_CDC=0 -DT_UAC=0 -DT_LAYOUT=0 -DT_ON=0 tests/usb_desc_test.c -o /tmp/usb-desc-test && /tmp/usb-desc-test
       - run: node tests/analytics_test.mjs
       - run: python3 tools/check_site.py
       - uses: actions/configure-pages@v5

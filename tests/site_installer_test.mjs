@@ -2,11 +2,11 @@
 // Offline transport decisions; never opens a MIDI port.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
-import {buildFirmware,installFm1} from '../site/firmware-builder.js';
-import {Package,logicalImage} from '../site/vendor/fm1pkg.js';
-import {smkLogicalImage} from '../site/vendor/smk37-package.js';
-import {parsePackage,installStockSmk,installSmk,LO,HI} from '../site/vendor/smk37-update.js';
-import {Updater} from '../site/vendor/fm1ota.js';
+import {buildFirmware,installFm1} from '../site/firmware-builder.js?v=test07';
+import {Package,logicalImage} from '../site/vendor/fm1pkg.js?v=test07';
+import {smkLogicalImage} from '../site/vendor/smk37-package.js?v=test07';
+import {parsePackage,installStockSmk,installSmk,LO,HI} from '../site/vendor/smk37-update.js?v=test07';
+import {Updater} from '../site/vendor/fm1ota.js?v=test07';
 
 const saved=Object.fromEntries(['findAny','waitForAny','serve','write'].map(k=>[k,Updater.prototype[k]]));
 let identity, nextIdentity, transfers=[], sends=0, closes=0, failStage=0;
@@ -41,6 +41,18 @@ try{
  reset({model:'SMK-37',version:921});await assert.rejects(installSmk({},pkg),/older private/);assert.equal(sends,0);
  reset({model:'SMK-37',version:931},{model:'ota-SMK-37',version:931});
  await installStockSmk({},pkg);assert.deepEqual(transfers,[0xf0000000]);assert.equal(closes,2);
+ reset({model:'Doom-SMK-37',version:7},{model:'ota-Doom-SMK-37',version:7});
+ await installStockSmk({},pkg);assert.deepEqual(transfers,[0xf0000000]);assert.equal(closes,2);
+ reset({model:'Doom-SMK-37',version:7},{model:'ota-Doom-FM-1',version:7});
+ await assert.rejects(installStockSmk({},pkg),/did not appear/);assert.equal(transfers.length,0);
+ reset({model:'ota-Doom-SMK-37',version:7});
+ await installStockSmk({},pkg);assert.deepEqual(transfers,[0xf0000000]);assert.equal(closes,1);
+ reset({model:'Doom-FM-1',version:7},{model:'ota-Doom-FM-1',version:7});
+ await installFm1({},pkg,()=>{});assert.deepEqual(transfers,[0xf0000000]);assert.equal(closes,2);
+ reset({model:'Doom-FM-1',version:7},{model:'ota-Doom-SMK-37',version:7});
+ await assert.rejects(installFm1({},pkg,()=>{}),/did not appear/);assert.equal(transfers.length,0);
+ reset({model:'Doom-FM-1',version:7});
+ await assert.rejects(installStockSmk({},pkg),/No matching/);assert.equal(sends,0);
  reset({model:'ota-FM-1',version:900});await assert.rejects(installFm1({},pkg,()=>{}),/cancelled/);assert.equal(sends,0);
  reset({model:'ota-FM-1',version:900});await installFm1({},pkg,()=>{},{confirmGeneric:async()=>true});assert.equal(transfers.length,1);
  reset({model:'SMK-37',version:931});await assert.rejects(installFm1({},pkg,()=>{}),/No updater/);assert.equal(sends,0);
@@ -60,7 +72,7 @@ if(process.argv.length>2){
    const a=new Package(base),b=new Package(result.factory);
    assert.deepEqual(a.flash.subarray(0,LO),b.flash.subarray(0,LO));
    assert.deepEqual(b.dec.subarray(b.appOff,b.appOff+app.length),app);
-   assert.equal(b.product,'FM-1_995');assert.deepEqual(result.image,logicalImage(result.factory));
+   assert.equal(b.product,r.product);assert.deepEqual(result.image,logicalImage(result.factory));
   }else{
    assert.equal((await parsePackage(result.bytes,result.sha)).product,r.product);
    const a=smkLogicalImage(base).raw,b=result.image;

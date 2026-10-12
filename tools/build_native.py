@@ -15,14 +15,14 @@ if not a.toolchain:p.error('Set JIELI_TOOLCHAIN or pass --toolchain')
 tc=Path(a.toolchain).resolve();cc=tc/'pi32v2/bin/clang';ld=tc/'pi32v2/bin/ld';objcopy=tc/'common/bin/objcopy';objdump=tc/'common/bin/objdump'
 if not cc.exists():p.error('Native compiler not found')
 out=ROOT/'build/native'/a.board;out.mkdir(parents=True,exist_ok=True)
-version='test06' if a.campaign else 'test04'
+version='test07' if a.campaign else 'test04'
 engine=prepare(out/'engine',campaign=a.campaign);native=ROOT/'src/native';common=ROOT/'src/common'
 # The native display frontend consumes the indexed framebuffer directly.
 path=engine/'i_video.c';text=path.read_text();start=text.index('void I_FinishUpdate (void)');end=text.index('\n}',start)+2
 text=text[:start]+'void I_FinishUpdate(void) { DG_DrawFrame(); }'+text[end:];path.write_text(text)
-wad=ROOT/'build/fixtures'/('campaign.wad' if a.campaign else 'miniwad-room.wad')
+wad=ROOT/'build/fixtures'/('native-art.wad' if a.campaign else 'miniwad-room.wad')
 if not wad.exists():p.error('Build the selected pinned fixture first')
-lump_count=freeze(engine,wad,campaign=a.campaign)
+lump_count=freeze(engine,wad,campaign=a.campaign,expected_sha=json.loads(wad.with_suffix('.json').read_text())['sha256'] if a.campaign else None)
 asset=out/'wad.S';asset.write_text('.section .rodata.wad,"a",@progbits\n.balign 4\n.globl dp_wad_start\n.globl dp_wad_end\ndp_wad_start:\n.incbin "'+wad.as_posix()+'"\ndp_wad_end:\n')
 line=re.search(r'^SRC_DOOM\s*=\s*(.+)$',(UPSTREAM/'Makefile').read_text(),re.M)
 sources=[engine/(name[:-2]+'.c') for name in line[1].split() if name!='doomgeneric_xlib.o']
@@ -38,7 +38,10 @@ flags=['-target','pi32v2','-mcpu=r3','-mfprev1','-Os','-ffunction-sections','-fd
        '-DDP_SMK='+('0' if a.board=='fm1' else '1'),'-I'+str(engine),'-I'+str(common),
        '-I'+str(native),'-I'+str(native/'hal')]
 if a.campaign:
-    sources.extend([common/'campaign.c',common/'sfx.c',common/'game_sound.c',common/'splash.c',native/'audio_isr.S']);flags+=['-DDP_CAMPAIGN','-DDP_NATIVE_AUDIO','-DDP_ELITE='+('1' if a.board=='smk37-elite' else '0')]
+    sources.extend([common/'campaign.c',common/'sfx.c',common/'game_sound.c',common/'native_hud.c',ROOT/'src/browser/browser_splash.c',native/'audio_isr.S']);flags+=['-DDP_CAMPAIGN','-DDP_NATIVE_ART','-DDP_NATIVE_AUDIO','-DDP_ELITE='+('1' if a.board=='smk37-elite' else '0')]
+    from build_usb_loader import build as build_loader
+    gen,loader_report=build_loader(tc,out,a.board)
+    flags+=['-DDP_USB_UPDATE','-I'+str(gen)]
 
 def compile_one(src):
     obj=out/(src.stem+'.o')
@@ -73,5 +76,5 @@ report={'board':a.board,'kind':'native-application-only','hardware_tested':False
         'image':path.name,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),
         'entry':hex(sym('_start')),'bss_end':hex(sym('_bss_end')),'ram_data_bss':sym('_bss_end')-sym('_data_start'),
         'static_lump_count':lump_count,'directory_storage':'XIP','zone_bytes':256*1024,'libc_heap_bytes':24*1024,'audio':a.campaign,'flash_writes':False,
-        'usb_updater':False,'assets':'Original three-level campaign over Miniwad' if a.campaign else 'Miniwad MAP01 trimmed','campaign':a.campaign,'wad_sha256':hashlib.sha256(wad.read_bytes()).hexdigest(),'install_package':False}
+        'usb_updater':a.campaign,'loader':loader_report if a.campaign else None,'assets':'Freedoom front-facing enemies and face HUD over original Miniwad campaign' if a.campaign else 'Miniwad MAP01 trimmed','campaign':a.campaign,'wad_sha256':hashlib.sha256(wad.read_bytes()).hexdigest(),'install_package':False}
 (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))

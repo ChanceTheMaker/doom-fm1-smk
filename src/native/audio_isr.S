@@ -11,3 +11,14 @@ dp_audio_isr:
  {psr, rets, reti} = [sp++]
  csync
  rti
+
+ .section .text.dp_usb_isr,"ax",@progbits
+ .globl dp_usb_isr
+dp_usb_isr:
+ [--sp] = {psr, rets, reti}
+ [--sp] = {r3-r0}
+ call dp_usb_irq
+ {r3-r0} = [sp++]
+ {psr, rets, reti} = [sp++]
+ csync
+ rti

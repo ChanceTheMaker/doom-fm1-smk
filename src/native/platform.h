@@ -7,4 +7,7 @@ int dp_key(int *down,unsigned char *key);
 int dp_lcd_row(void *context,unsigned y,const uint16_t *row,unsigned width);
 void dp_message(const char *text);
 void dp_frame_done(void);
+void dp_usb_init(void);
+int dp_usb_service(void);
+void dp_usb_enter(void) __attribute__((noreturn));
 void dp_panic(const char *text) __attribute__((noreturn));

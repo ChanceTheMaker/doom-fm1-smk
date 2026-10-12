@@ -57,3 +57,9 @@ Published app binaries embed the modified Miniwad campaign. The source generator
 The FM-1 SVG geometry comes from ChanceTheMaker/Felucca `ab9e880890eeda57a1772b2d1250f107a3e199c6`, `webapp/installer/index.html`; SMK geometry comes from ChanceTheMaker/sloop-smk `090588d112a4a6230fe71d2f3263bdcca2203820`, `web/index.html`. Adapted under the existing GPL terms: synth display replaced with captured Doom output, original finish palettes retained, and a new alternating screen-zoom presentation.
 
 The website analytics/preferences module and styles are adapted from the same Sloop SMK revision, `web/analytics.js` and `web/analytics.css`, retaining GPL notices. The Doom adaptation scopes tracking to this site and reports package/transfer outcomes separately from successful device boots.
+
+## Test07
+
+The runtime USB stack and RAM loader cores derive from GPL Sloop SMK revision `090588d112a4a6230fe71d2f3263bdcca2203820`. Source hashes and adaptations are in `src/native/update/PROVENANCE.json`; original notices remain in source.
+
+Native enemy artwork and the face HUD use Freedoom v0.13.0, licensed under the BSD-style terms in `assets/freedoom/COPYING.adoc`. Asset hashes, sources and credits are retained in `assets/freedoom/`; website copies of its license and credits are in `site/licenses/`. No commercial Doom artwork is included.

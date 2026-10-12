@@ -2,9 +2,13 @@
 
 **Your synth. Their Doom.** A real Doom-engine port for the M-VAVE FM-1 and SMK-37 Pro / Elite, by Chance Roth (@ChanceTheMaker).
 
-**Public installation is paused for FM-1, SMK-37 Pro and Elite following reports of device failures. Do not install previously downloaded Doom packages. [Status and recovery guidance](https://chancethemaker.github.io/doom-fm1-smk/#install).**
+**[Test07 experimental USB-updater release](https://chancethemaker.github.io/doom-fm1-smk/)**
 
-Test06 lacks a runtime USB MIDI updater. Test07 remains unreleased pending hardware validation. The build instructions below are development information, not a recommendation to flash a device.
+Test06 downloads are withdrawn following reported device failures. Test07 adds a runtime USB MIDI updater and model-specific RAM loaders; the website checks for the expected Doom identity after a transfer. Offline loader, packaging and transport checks pass. Physical Test07 USB update validation is still pending: this is not a confirmed fix for every reported failure.
+
+Test06 cannot receive this update over normal USB because it has no runtime USB driver. It needs a model-specific recovery installation first. Keep power connected during any active flash transfer; do not repeatedly retry a failed install. Other synth installers must explicitly recognize Doom before they can restore synth firmware over USB.
+
+Test07 also includes Freedoom enemy artwork, an updated splash and face HUD. Existing gallery screenshots below show Test06 gameplay.
 
 ![Test06 splash](site/screenshots/splash.png) ![The Outpost](site/screenshots/outpost.png) ![Reactor Core](site/screenshots/reactor.png)
 
@@ -20,11 +24,11 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 - Separate FM-1, SMK-37 Pro and SMK-37 Elite builds, all available in the website builder.
 - Animated hardware hero: alternating FM-1/SMK screen zooms, seven FM-1 finishes and six SMK finishes, with pause and reduced-motion support.
 
-| Model | Test06 application | Physical status |
+| Model | Test07 application | Physical status |
 | --- | ---: | --- |
-| FM-1 | 557,576 bytes | Graphics and sound confirmed; adapter install fully read back |
-| SMK-37 Pro | 557,452 bytes | Experimental; compiled and host-tested, physical Doom test pending |
-| SMK-37 Elite | 557,452 bytes | Experimental; compiled and host-tested, physical Doom test pending |
+| FM-1 | 533,464 bytes | Offline checks pass; Test07 USB hardware testing pending |
+| SMK-37 Pro | 533,624 bytes | Offline checks pass; Test07 USB hardware testing pending |
+| SMK-37 Elite | 533,624 bytes | Offline checks pass; Test07 USB hardware testing pending |
 
 The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. See [release checks](docs/TEST06.md) and [release hashes](site/firmware/releases.json).
 
@@ -34,9 +38,9 @@ The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom
 2. Open the installer in desktop Chrome or Edge. Choose **FM-1**, **SMK-37 Pro** or **SMK-37 Elite**.
 3. Click **Build firmware**. The browser downloads the reviewed app and checksum-pinned base, validates the model/layout, preserves protected bytes and prepares the package locally. A local base-file fallback is available; no file upload is needed normally.
 4. Connect only that instrument by normal USB, running compatible synth firmware. SMKs support official matching **016** firmware or the portable Felucca/Sloop/Melodee SMK updater (identity version 922 or newer).
-5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. Check the physical screen: USB MIDI disappearing when Doom starts is expected.
+5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer now checks for the Doom Test07 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
 
-**Doom replaces the synth application and currently has no USB MIDI updater or persistent saves.** Installing another version or returning to synth firmware requires the recovery adapter. An installed Doom device cannot be discovered by the normal-USB website. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
+**Doom replaces the synth application and has no persistent saves.** Test07 adds normal-USB updating through an embedded RAM loader; Test06 and earlier need the recovery adapter first. Other synth installers must recognize the Doom identity before restoring through USB. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Test07 details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
 
 The Elite's official RAM loader can identify itself as `ota-FM-1`; the installer explicitly asks you to confirm the connected Elite before programming. It does not treat that generic identity as model proof. Failed handoffs do not automatically repeat writes.
 
@@ -68,6 +72,9 @@ cd doom-fm1-smk
 python3 tools/fetch_test_wad.py
 python3 tools/pack_test_wad.py --trim-textures
 python3 tools/build_campaign.py
+python3 -m pip install Pillow
+python3 tools/build_browser_campaign.py
+python3 tools/build_native_art.py
 python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32 --campaign
 python3 tools/check_campaign.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign/doom-host
 python3 tools/check_menu.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign/doom-host --campaign
@@ -89,7 +96,7 @@ node tests/site_installer_test.mjs /private/fm1-salt14.fwsc /private/Pro016.fwsc
 python3 tools/check_site.py
 ```
 
-Node 22 or newer is recommended. Optional original-firmware fixtures stay outside Git. Tests validate actual packages, protected data, corruption rejection, wrong-model refusal, loader failure paths and completion without a returning Doom MIDI identity. Tests use simulated transport and never open MIDI hardware.
+Node 22 or newer is recommended. Optional original-firmware fixtures stay outside Git. Tests validate actual packages, protected data, corruption rejection, wrong-model refusal, loader failure paths and exact-model runtime identity confirmation after transfer. Tests use simulated transport and never open MIDI hardware.
 
 GitHub Pages publishes only `site/` on pushes to `main`. Compiled apps are checksum-verified in CI; vendor packages, complete device dumps, calibration, build output and private backups are excluded. The browser downloads base files from pinned public sources and assembles packages on the user's computer.
 
