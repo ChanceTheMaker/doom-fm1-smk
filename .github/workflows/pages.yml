@@ -23,6 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node site/test_update_progress.mjs
       - run: node site/restore-stock/test_restore.mjs
       - run: node tests/site_installer_test.mjs
       - run: node tests/midi_discovery_test.mjs

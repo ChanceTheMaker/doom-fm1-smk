@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {parsePackage} from '../web/vendor/smk37-update.js';
+import {parsePackage} from '../web/vendor/smk37-update.js?v=progress1';
 const base = new URL('../build/try-smk-pro/site/', import.meta.url);
 const m = JSON.parse(await readFile(new URL('candidate.json', base), 'utf8'));
 const b = new Uint8Array(await readFile(new URL(m.package, base)));
