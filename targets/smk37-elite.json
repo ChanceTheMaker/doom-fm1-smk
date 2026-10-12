@@ -1,0 +1,15 @@
+{
+  "id": "smk37-elite",
+  "name": "M-VAVE SMK-37 Elite",
+  "hal_family": "smk37",
+  "native_status": "not-implemented",
+  "display_width": 240,
+  "display_height": 240,
+  "performance_keys": 37,
+  "pads": 16,
+  "main_sram_window_bytes": 524288,
+  "flash_profile_bytes": 1048576,
+  "boot_requested_clock_hz": 360000000,
+  "runtime_clock_measured": false,
+  "hardware_validated_for_doom": false
+}

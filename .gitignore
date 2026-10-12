@@ -1,0 +1,10 @@
+build/
+.cache/
+__pycache__/
+*.wad
+*.WAD
+*.fwsc
+*.smkupdate
+*.bin
+*.elf
+*.map
