@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {Package,logicalImage,sha256hex} from './vendor/fm1pkg.js?v=test08';
-import {buildSmkPublicPackage} from './vendor/smk37-package.js?v=test08';
-import {STOCK_SOURCES} from './vendor/smk37-stock.js?v=test08';
-import {Updater} from './vendor/fm1ota.js?v=test08';
+import {Package,logicalImage,sha256hex} from './vendor/fm1pkg.js?v=release08';
+import {buildSmkPublicPackage} from './vendor/smk37-package.js?v=release08';
+import {STOCK_SOURCES} from './vendor/smk37-stock.js?v=release08';
+import {Updater} from './vendor/fm1ota.js?v=release08';
 export const FM1_BASE='https://raw.githubusercontent.com/ChanceTheMaker/Felucca/ab9e880890eeda57a1772b2d1250f107a3e199c6/firmware/felucca-0.9-salt14.fwsc';
 const BASE_SHA='efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28';
 export async function download(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error(`Download failed (${r.status}). Try again or provide the matching original firmware file.`);return new Uint8Array(await r.arrayBuffer());}
@@ -23,7 +23,7 @@ export async function installFm1(access,pkg,log,{confirmGeneric}={}){
  const up=new Updater(access,log,/fm-1|felucca|sloop|melodee|ota|composite|sinco|usb-midi/i);let link;
  try{
   let dev=await up.findAny(id=>['FM-1','ota-FM-1','Doom-FM-1','ota-Doom-FM-1'].includes(id.model));
-  if(!dev)throw Error('No updater-enabled FM-1 found. Doom Test07 supports normal USB updates; Test06 and earlier need a one-time recovery-adapter update.');
+  if(!dev)throw Error('No updater-enabled FM-1 found. Doom needs its USB updater enabled; older builds require a one-time recovery-adapter update.');
   link=dev.link;
   if(dev.id.model==='ota-FM-1'&&(!confirmGeneric||!await confirmGeneric()))throw Error('FM-1 loader confirmation cancelled. No programming started.');
   if(dev.id.model==='Doom-FM-1'){
@@ -45,6 +45,6 @@ export async function installFm1(access,pkg,log,{confirmGeneric}={}){
   log('Installing Doom application. Do not disconnect power or USB.');
   const r=await up.write(dev,pkg.image,(step,n)=>{if(step==='write'&&n%64===0)log('Transfer request '+n);});link=null;
   if(!r.finished)throw Error('Transfer interrupted. Keep power connected and save the log.');
-  log('Loader transfer complete. Check the physical game screen. '+(pkg.product==='FM-1_995'?'Test06 has no USB updater after boot.':'Test08 is expected to restart with USB updating enabled.'));
+  log('Loader transfer complete. Check the physical game screen. '+(pkg.product==='FM-1_995'?'This older build has no USB updater after boot.':'Doom is expected to restart with USB updating enabled.'));
  }finally{await link?.close();}
 }

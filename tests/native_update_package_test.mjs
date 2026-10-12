@@ -1,11 +1,11 @@
 // Offline package validation for native candidates; no website staging or device I/O.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
-import {buildFirmware} from '../site/firmware-builder.js?v=test08';
-import {Package} from '../site/vendor/fm1pkg.js?v=test08';
-import {smkLogicalImage} from '../site/vendor/smk37-package.js?v=test08';
-import {parsePackage} from '../site/vendor/smk37-update.js?v=test08';
-import {unpack7} from '../site/vendor/fm1ota.js?v=test08';
+import {buildFirmware} from '../site/firmware-builder.js?v=release08';
+import {Package} from '../site/vendor/fm1pkg.js?v=release08';
+import {smkLogicalImage} from '../site/vendor/smk37-package.js?v=release08';
+import {parsePackage} from '../site/vendor/smk37-update.js?v=release08';
+import {unpack7} from '../site/vendor/fm1ota.js?v=release08';
 const paths=process.argv.slice(2);assert.equal(paths.length,3,'Pass the pinned FM-1, Pro016 and Elite016 bases.');
 const targets=['fm1','smk37-pro','smk37-elite'];
 mkdirSync('build/test08-packages',{recursive:true});

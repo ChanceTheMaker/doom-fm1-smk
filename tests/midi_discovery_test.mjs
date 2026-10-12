@@ -1,11 +1,11 @@
 // Discovery must never start an update, including when no compatible firmware replies.
 import assert from 'node:assert/strict';
-import {Updater,pack7} from '../site/vendor/fm1ota.js?v=test08';
+import {Updater,pack7} from '../site/vendor/fm1ota.js?v=release08';
 
 const logs=[];
 assert.equal(await new Updater({inputs:new Map(),outputs:new Map()},s=>logs.push(s)).findAny(()=>true),null);
 assert(logs.some(s=>s==='MIDI ports: []'));
-assert(logs.some(s=>s.includes('Doom Test06 and earlier')));
+assert(logs.some(s=>s.includes('Older Doom builds lack a USB MIDI updater')));
 
 const listeners=new Set(),sent=[];
 const input={type:'input',name:'Different input name',state:'connected',connection:'closed',

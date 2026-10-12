@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {Updater} from './fm1ota.js?v=test08';
+import {Updater} from './fm1ota.js?v=release08';
 export const HEADER=1024, LO=0x4000, HI=0x9d000;
 export function crc32(data){let c=0xffffffff;for(const b of data){c^=b;for(let i=0;i<8;i++)c=(c>>>1)^((0-(c&1))&0xedb88320);}return (c^0xffffffff)>>>0;}
 export async function parsePackage(bytes,expectedSha){
@@ -43,7 +43,7 @@ export async function installSmk(access,pkg,log=()=>{},{device}={}){
     const r=await up.serve(link,pkg.bytes,0xf0000000,20000,(n)=>{if(n%64===0)log(`Transfer request ${n}`);});
     if(!r.finished)throw Error('Update stopped. Keep SMK powered on; retry while its loader is connected. If power was lost during programming, use the recovery adapter.');
     await link.close();link=null;log('Application readback verified. Waiting for restart...');
-    log('Doom transfer verified by the loader. Check the physical game screen. '+(pkg.product==='SMK-37_995'?'Test06 has no USB updater after boot.':'Test08 is expected to restart with USB updating enabled.'));
+    log('Doom transfer verified by the loader. Check the physical game screen. '+(pkg.product==='SMK-37_995'?'This older build has no USB updater after boot.':'Doom is expected to restart with USB updating enabled.'));
     return;
   } finally {await link?.close();}
 }
@@ -69,7 +69,7 @@ export async function installStockSmk(access,pkg,log=()=>{},{confirmGeneric}={})
   try{
     log('Looking for '+pkg.stockModel+' or its active loader...');
     let dev=await up.findAny(id=>portable(id)||loader(id)||(id.model===pkg.stockModel&&id.version===16));
-    if(!dev)throw Error('No matching SMK replied. Connect only '+pkg.stockModel+' by normal USB, running official 016, updater-enabled Felucca/Sloop/Melodee, or Doom Test07 or later. Close other MIDI apps and Studio/simulator tabs. Doom Test06 and earlier need a one-time recovery-adapter update. See the MIDI ports and identity details above.');
+    if(!dev)throw Error('No matching SMK replied. Connect only '+pkg.stockModel+' by normal USB, running official 016, updater-enabled Felucca/Sloop/Melodee, or updater-enabled Doom. Close other MIDI apps and Studio/simulator tabs. Older Doom builds without a USB updater need a one-time recovery-adapter update. See the MIDI ports and identity details above.');
     if(portable(dev.id)){
       log('Found '+dev.id.text+' on '+dev.name+'. Using its existing SMK USB updater.');
       return await installSmk(access,pkg,log,{device:dev});
@@ -97,7 +97,7 @@ export async function installStockSmk(access,pkg,log=()=>{},{confirmGeneric}={})
     if(!result.finished)throw Error('Installation did not finish. Keep the SMK powered and save the log. No automatic write retry was attempted.');
     await link.close();link=null;
     log('Loader transfer complete. Waiting for Doom to restart...');
-    log('Doom transfer complete. Check the physical game screen; transfer completion alone does not confirm boot. '+(pkg.product==='SMK-37_995'?'Test06 has no USB updater after boot.':'Test08 is expected to restart with USB updating enabled.'));
+    log('Doom transfer complete. Check the physical game screen; transfer completion alone does not confirm boot. '+(pkg.product==='SMK-37_995'?'This older build has no USB updater after boot.':'Doom is expected to restart with USB updating enabled.'));
     return;
   }finally{await link?.close();}
 }

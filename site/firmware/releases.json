@@ -8,7 +8,7 @@
     "app": "doom-fm1-test08.bin",
     "bytes": 533496,
     "sha256": "b5fdb9373f9423367c3b497f9602d9c10406a2d14d36ea1893ec8304876864ef",
-    "hardware": "Hardware tested"
+    "hardware": "Hardware verified"
   },
   {
     "id": "smk37-pro",
@@ -19,7 +19,7 @@
     "app": "doom-smk37-pro-test08.bin",
     "bytes": 533640,
     "sha256": "2ccaac71c1fe85203720d504d29b3f78dd08c0cd4911794bacf505d0c985f8e9",
-    "hardware": "Experimental \u00b7 hardware testing pending"
+    "hardware": "Experimental \u00b7 hardware validation pending"
   },
   {
     "id": "smk37-elite",
@@ -30,6 +30,6 @@
     "app": "doom-smk37-elite-test08.bin",
     "bytes": 533640,
     "sha256": "e846581f54a8cc07495ac04f149bc9487e383573f28744258c067eb99dc96e02",
-    "hardware": "Experimental \u00b7 hardware testing pending"
+    "hardware": "Experimental \u00b7 hardware validation pending"
   }
 ]

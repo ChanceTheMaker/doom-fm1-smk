@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {Updater} from './vendor/fm1ota.js?v=test08';
+import {Updater} from './vendor/fm1ota.js?v=release08';
 // Read-only confirmation: never START, retry programming, or infer boot from transfer success.
 export async function verifyDoomBoot(access,target,log=()=>{},timeout=30000){
   if(!['fm1','smk37-pro','smk37-elite'].includes(target))throw Error('Unknown Doom target');

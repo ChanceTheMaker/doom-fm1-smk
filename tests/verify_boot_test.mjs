@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {Updater} from '../site/vendor/fm1ota.js?v=test08';
-import {verifyDoomBoot} from '../site/verify-boot.js?v=test08';
+import {Updater} from '../site/vendor/fm1ota.js?v=release08';
+import {verifyDoomBoot} from '../site/verify-boot.js?v=release08';
 const old=Updater.prototype.waitForAny;let identity,closed=0;
 Updater.prototype.waitForAny=async function(filter){return identity&&filter(identity)?{id:identity,link:{close(){closed++;}}}:null;};
 try{
