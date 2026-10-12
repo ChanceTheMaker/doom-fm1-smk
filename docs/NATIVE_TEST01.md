@@ -84,4 +84,4 @@ The reduced renderer uses 64 draw segments, 32 visible sprites, 32 visplanes and
 
 Runtime allocator/read-only-file tests pass with AddressSanitizer and UndefinedBehaviorSanitizer. Package corruption, truncation and wrong-hash tests pass. Restore-plan tests reject mismatched reads and unknown applications while preserving current non-application data.
 
-Outstanding: native boot, heap/stack high-water, LCD orientation, key mapping/release, frame rate, ROM recovery, and a complete restore cycle. FM-1 and Elite need separate physical checks and packaging. Sound, normal USB updating, additional levels and persistence are future work.
+Outstanding: native boot, heap/stack high-water, LCD orientation, key mapping/release, frame rate, ROM recovery, and a complete restore cycle. FM-1 has a separate local test installer: see [FM1_TEST01.md](FM1_TEST01.md). Both FM-1 and Elite still need separate physical checks; Elite also needs packaging. Sound, normal USB updating, additional levels and persistence are future work.

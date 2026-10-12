@@ -37,3 +37,11 @@ Local package/backup helpers and browser update transport are copied from `feluc
 ## Embedded runtime
 
 [mpaland/printf](https://github.com/mpaland/printf), revision `d3b984684bb8a8bdc48cc7a1abecb93ce59bbe3e`, is an MIT-licensed submodule. Its original license and notices are retained. The native linker also uses libc, libm and compiler runtime from the separately installed JieLi Linux toolchain; those toolchain libraries are not vendored here. Preserve their licensing materials before distributing compiled releases.
+
+## FM-1 local test package
+
+The FM-1 staging tool accepts only the pinned Felucca Salt14 package in local `Felucca-site-publish/firmware/felucca-0.9-salt14.fwsc` (site revision `ab9e880890eeda57a1772b2d1250f107a3e199c6`). Its existing GPL FM-1 loader is retained byte-for-byte, with package and loader hashes recorded in `tools/stage_fm1_test.py` and the generated manifest. The original package is not tracked here.
+
+The inherited package also contains JieLi SDK `uboot.boot`, `cfg_tool.bin` and `eq_cfg_hw.bin`, covered by [Apache 2.0](licenses/Apache-2.0.txt). The local staging tool copies that license beside the candidate. The FM-1 loader writes the application region and update metadata; its package boot header is not flashed.
+
+The loader host check was compiled from local Felucca review revision `5874362969e021b3e16e63697a9de926972b848f`, `tests/ldr_test.c`, which exercises `firmware/loader/ldr_core.c` and `firmware/src/ota.c`. This is a source-level simulated-flash test, not execution of the packaged native loader on hardware.

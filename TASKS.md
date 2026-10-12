@@ -23,6 +23,7 @@
 - [x] Stage a private Pro application-only package from two matching, verified stock reads.
 - [x] Add an offline restore planner that preserves current data outside the application.
 - [ ] Physically validate Doom boot and the adapter restore procedure.
-- [ ] Create separately validated FM-1 and Elite install packages.
+- [x] Stage a separate FM-1 package and run the FM-1 loader host test.
+- [ ] Validate FM-1 installation/boot on hardware, then package Elite separately.
 
 No current task requires publishing or flashing a device automatically.
