@@ -1,3 +1,5 @@
+**Historical Test01 notes: Test01 is withdrawn after the FM-1 allocation failure. Use [FM-1 Test02](FM1_TEST01.md).**
+
 # Native Test01 — private device test
 
 Built 2026-10-11. No hardware was flashed during preparation. Compilation and host checks are not proof of a successful hardware boot.

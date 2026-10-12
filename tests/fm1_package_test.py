@@ -7,7 +7,7 @@ from stage_fm1_test import unpack
 site=Path(__file__).resolve().parents[1]/'build/try-fm1/site'
 m=json.loads((site/'candidate.json').read_text());b=(site/m['package']).read_bytes()
 assert hashlib.sha256(b).hexdigest()==m['sha256']
-r,files=unpack(b);assert r['product']=='FM-1_990'
+r,files=unpack(b);assert r['product']=='FM-1_991'
 assert hashlib.sha256(files['ota.bin']).hexdigest()==m['loader_sha256']
 # 1024 is package padding: the full SHA check covers it even though payload CRCs do not.
 for at in (10,1024,1044,2000,len(b)-1):

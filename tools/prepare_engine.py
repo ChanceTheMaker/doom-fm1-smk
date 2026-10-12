@@ -13,7 +13,7 @@ def prepare(out):
         path=out/file;s=path.read_text()
         if s.count(old)!=1:raise RuntimeError('Pinned engine changed: '+file+' '+repr(old))
         path.write_text(s.replace(old,new))
-    for file,macro,value in [('r_defs.h','MAXDRAWSEGS',64),('r_things.h','MAXVISSPRITES',32),
+    for file,macro,value in [('net_defs.h','BACKUPTICS',16),('r_defs.h','MAXDRAWSEGS',64),('r_things.h','MAXVISSPRITES',32),
                               ('r_plane.c','MAXVISPLANES',32),('r_plane.c','MAXOPENINGS','(SCREENWIDTH*16)'),
                               ('r_draw.c','MAXWIDTH','SCREENWIDTH'),('r_draw.c','MAXHEIGHT','SCREENHEIGHT')]:
         path=out/file;s=path.read_text();s,n=re.subn(r'^#define\s+'+macro+r'\s+[^\n]+',

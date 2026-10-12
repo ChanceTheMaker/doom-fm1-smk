@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('executable',type=Path)
+p.add_argument('--static-room', action='store_true', help='Fixed-directory build: compare with the previously verified Miniwad frame')
 p.add_argument('--zone',type=int,default=384,help='Trimmed-room zone size in KiB (default: 384)')
 a=p.parse_args();exe=a.executable.resolve()
 if not 64<=a.zone<=65536:p.error('Zone must be 64..65536 KiB.')
@@ -14,7 +15,7 @@ fixtures=ROOT/'build/fixtures'
 hashes={'miniwad':'daed5e9dc341a9ff4b9c6901cb8467a630bd31b87f3ecb58a93a8b2bc186fbfb',
         'miniwad-room':'5382808534297f82d29873d9132410dcb20f314e01f58f1ec4c653f7f0ddf98d'}
 results=[]
-for name,zone,play in [('miniwad',16384,True),('miniwad-room',a.zone,False),
+for name,zone,play in [('miniwad-room' if a.static_room else 'miniwad',a.zone if a.static_room else 16384,True),('miniwad-room',a.zone,False),
                        ('miniwad-room',a.zone,True),('miniwad-room',a.zone,True)]:
     wad=fixtures/(name+'.wad')
     if hashlib.sha256(wad.read_bytes()).hexdigest()!=hashes[name]:
@@ -36,6 +37,8 @@ for name,zone,play in [('miniwad',16384,True),('miniwad-room',a.zone,False),
         assert all(report[k] for k in ('moved','turned','fired','controls_released')),report
     results.append(result)
     print(name,zone,'play' if play else 'idle',result['frame_sha256'])
+if a.static_room:
+    assert results[0]['frame_sha256']=='9039fbabf77d34201496b57d78c06ee636d307ac198139c6bbbf5d5800d1d5cb'
 # Trimmed assets must produce the same gameplay image; repeated runs must agree.
 assert results[0]['frame_sha256']==results[2]['frame_sha256']==results[3]['frame_sha256']
 assert results[1]['frame_sha256']!=results[2]['frame_sha256'],'Input did not change the rendered frame'

@@ -11,14 +11,18 @@
 typedef struct block {size_t size;struct block *next;unsigned available,reserved;} block;
 static unsigned char arena[24*1024] __attribute__((aligned(8),section(".lowheap")));
 static block *head;
+static size_t heap_peak,heap_failed;
+size_t dp_heap_peak(void){return heap_peak;}
+size_t dp_heap_failed(void){return heap_failed;}
 void *malloc(size_t n){
-    if(!n)n=1;if(n>sizeof(arena)-sizeof(block)-7)return NULL;n=(n+7)&~(size_t)7;
+    if(!n)n=1;if(n>sizeof(arena)-sizeof(block)-7){heap_failed=n;return NULL;}n=(n+7)&~(size_t)7;
     if(!head){head=(block *)arena;head->size=sizeof(arena)-sizeof(block);head->available=1;head->next=NULL;}
     for(block *b=head;b;b=b->next)if(b->available && b->size>=n){
         if(b->size>=n+sizeof(block)+8){block *rest=(block *)((unsigned char *)(b+1)+n);rest->size=b->size-n-sizeof(block);rest->available=1;rest->next=b->next;b->next=rest;b->size=n;}
-        b->available=0;return b+1;
+        b->available=0;size_t used=0;for(block *q=head;q;q=q->next)if(!q->available)used+=q->size+sizeof(block);
+        if(used>heap_peak)heap_peak=used;return b+1;
     }
-    errno=ENOMEM;return NULL;
+    heap_failed=n;errno=ENOMEM;return NULL;
 }
 void free(void *p){
     if(!p)return;block *found=NULL;
@@ -28,6 +32,8 @@ void free(void *p){
 }
 void *calloc(size_t count,size_t size){if(size&&count>SIZE_MAX/size)return NULL;size_t n=count*size;void *p=malloc(n);if(p)memset(p,0,n);return p;}
 void *realloc(void *p,size_t n){if(!p)return malloc(n);if(!n){free(p);return NULL;}block *b=(block *)p-1;if(b->size>=n)return p;void *q=malloc(n);if(q){memcpy(q,p,b->size);free(p);}return q;}
+char *strdup(const char *s){size_t n=strlen(s)+1;char *p=malloc(n);if(p)memcpy(p,s,n);return p;}
+#ifndef DP_HEAP_ONLY
 struct _reent;
 void *_malloc_r(struct _reent *r,size_t n){(void)r;return malloc(n);}
 void _free_r(struct _reent *r,void *p){(void)r;free(p);}
@@ -68,3 +74,4 @@ int fflush(FILE *f){(void)f;return 0;}
 int remove(const char *s){(void)s;errno=EROFS;return -1;}
 int rename(const char *a,const char *b){(void)a;(void)b;errno=EROFS;return -1;}
 void exit(int n){(void)n;dp_panic("PROGRAM EXIT");}
+#endif

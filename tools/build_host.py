@@ -15,7 +15,11 @@ p.add_argument('--display', choices=['rgba','strip'], default='strip')
 p.add_argument('--no-wipe', action='store_true')
 p.add_argument('--mapped-wad', action='store_true')
 p.add_argument('--small-room', action='store_true')
+p.add_argument('--static-wad', action='store_true')
+p.add_argument('--bounded-heap', action='store_true')
+p.add_argument('--abi32', action='store_true', help='32-bit host ABI for native memory-budget checks')
 a = p.parse_args()
+if a.static_wad and not (a.small_room and a.mapped_wad): p.error('--static-wad needs --small-room --mapped-wad')
 profile = json.loads((ROOT / 'targets' / (a.board + '.json')).read_text())
 engine = ROOT / 'third_party/doomgeneric/doomgeneric'
 if not (engine / 'Makefile').exists():
@@ -26,12 +30,15 @@ if not line:
     p.error('Pinned upstream source list missing.')
 sources = [engine / (name[:-2] + '.c') for name in line[1].split() if name != 'doomgeneric_xlib.o']
 
-out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else ''))
+out = ROOT / 'build' / a.board / (a.display + ('-no-wipe' if a.no_wipe else '') + ('-mapped' if a.mapped_wad else '') + ('-small' if a.small_room else '') + ('-static' if a.static_wad else '') + ('-heap24' if a.bounded_heap else '') + ('-abi32' if a.abi32 else ''))
 out.mkdir(parents=True, exist_ok=True)
 if a.small_room:
     from prepare_engine import prepare
     engine=prepare(out/'engine')
     sources=[engine/s.name for s in sources]
+if a.static_wad:
+    from static_wad import freeze
+    freeze(engine,ROOT/'build/fixtures/miniwad-room.wad')
 # Keep upstream pinned and clean; append introspection only in a generated copy.
 zone=out/'z_zone_probe.c'
 zone.write_text((engine/'z_zone.c').read_text()+'\n'+(ROOT/'src/host/zone_probe.inc').read_text())
@@ -48,11 +55,26 @@ if a.mapped_wad:
 if a.no_wipe:
     sources=[ROOT/'src/common/wipe_disabled.c' if s.name=='f_wipe.c' else s for s in sources]
 sources += [ROOT/'src/host/doomgeneric_host.c',ROOT/'src/host/memory_probe.c',ROOT/'src/host/input_smoke.c']
-command = [a.cc, '-std=c11', '-O2', '-D_DEFAULT_SOURCE', '-DNORMALUNIX', '-DLINUX',
+abi=['-m32'] if a.abi32 else []
+command = [a.cc, *abi, '-std=c11', '-O2', '-D_DEFAULT_SOURCE', '-D_FILE_OFFSET_BITS=64', '-DNORMALUNIX', '-DLINUX',
            '-DDOOMGENERIC_RESX=320', '-DDOOMGENERIC_RESY=200', '-I' + str(engine),
            *flags, *map(str, sources), '-lm', '-o', str(out / 'doom-host')]
-subprocess.run(command, check=True, cwd=out)
+if a.bounded_heap:
+    from concurrent.futures import ThreadPoolExecutor
+    renames=['-D'+n+'=dp_'+n for n in ['malloc','free','calloc','realloc','strdup']]
+    base=command[:command.index(str(sources[0]))]
+    def compile_one(pair):
+        i,src=pair;obj=out/(str(i)+'-'+src.stem+'.o')
+        bounded=src.parent==engine or src==zone
+        subprocess.run([*base,*(renames if bounded else []),'-c',str(src),'-o',str(obj)],check=True,cwd=out)
+        return obj
+    with ThreadPoolExecutor(4) as pool: objects=list(pool.map(compile_one,enumerate(sources)))
+    heap=out/'bounded-heap.o'
+    subprocess.run([a.cc,*abi,'-O2','-fno-builtin','-DDP_HEAP_ONLY',*renames,'-c',str(ROOT/'src/native/libc_support.c'),'-o',str(heap)],check=True)
+    subprocess.run([a.cc,*abi,*flags,*map(str,objects),str(heap),str(ROOT/'src/host/native_heap_probe.c'),'-lm','-o',str(out/'doom-host')],check=True)
+else:
+    subprocess.run(command, check=True, cwd=out)
 (out / 'target.json').write_text(json.dumps({'build_kind': 'host-only', 'profile': profile,
-    'small_room': a.small_room, 'mapped_wad': a.mapped_wad, 'display': a.display, 'no_wipe': a.no_wipe, 'output_framebuffer_bytes': 320 * 200 * 4 if a.display=='rgba' else 0, 'native_firmware': False}, indent=2) + '\n')
+    'abi32': a.abi32, 'bounded_heap': a.bounded_heap, 'static_wad': a.static_wad, 'small_room': a.small_room, 'mapped_wad': a.mapped_wad, 'display': a.display, 'no_wipe': a.no_wipe, 'output_framebuffer_bytes': 320 * 200 * 4 if a.display=='rgba' else 0, 'native_firmware': False}, indent=2) + '\n')
 print('Built host baseline for', profile['name'], 'at', out / 'doom-host')
 print('This is NOT flashable firmware.')

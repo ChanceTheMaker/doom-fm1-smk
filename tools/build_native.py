@@ -5,6 +5,7 @@ import argparse,hashlib,json,os,re,subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from prepare_engine import prepare,ROOT,UPSTREAM
+from static_wad import freeze
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--board',required=True,choices=['fm1','smk37-pro','smk37-elite'])
 p.add_argument('--toolchain',type=Path,default=os.environ.get('JIELI_TOOLCHAIN'))
@@ -19,6 +20,7 @@ path=engine/'i_video.c';text=path.read_text();start=text.index('void I_FinishUpd
 text=text[:start]+'void I_FinishUpdate(void) { DG_DrawFrame(); }'+text[end:];path.write_text(text)
 wad=ROOT/'build/fixtures/miniwad-room.wad'
 if not wad.exists() or hashlib.sha256(wad.read_bytes()).hexdigest()!='5382808534297f82d29873d9132410dcb20f314e01f58f1ec4c653f7f0ddf98d':p.error('Build the pinned trimmed-room fixture first')
+lump_count=freeze(engine,wad)
 asset=out/'wad.S';asset.write_text('.section .rodata.wad,"a",@progbits\n.balign 4\n.globl dp_wad_start\n.globl dp_wad_end\ndp_wad_start:\n.incbin "'+wad.as_posix()+'"\ndp_wad_end:\n')
 line=re.search(r'^SRC_DOOM\s*=\s*(.+)$',(UPSTREAM/'Makefile').read_text(),re.M)
 sources=[engine/(name[:-2]+'.c') for name in line[1].split() if name!='doomgeneric_xlib.o']
@@ -42,7 +44,7 @@ with ThreadPoolExecutor(4) as pool:compiled=list(pool.map(compile_one,sources))
 errors=[str(o)+':\n'+err for o,code,err in compiled if code]
 if errors:raise SystemExit('\n'.join(errors))
 objects=[o for o,_,_ in compiled]
-elf=out/'doom-test01.elf'
+elf=out/'doom-test02.elf'
 libs=tc/'pi32v2/lib/r3'
 cmd=[str(ld),'--gc-sections','-T',str(native/'app.ld'),*[str(o) for o in objects],
      '-L'+str(libs),'--start-group','-lc','-lm','-lcompiler_rt','--end-group','-o',str(elf)]
@@ -61,10 +63,10 @@ for section,address in [('.text',0x02000120),('.data',sym('_data_load'))]:
     image.extend(b'\xff'*(offset-len(image)));image.extend(blob)
 image.extend(b'\xff'*(-len(image)%4))
 if sym('_start')!=0x02000120 or len(image)>0x8dfbc or sym('_bss_end')>0x01c74000:raise SystemExit('Native application bounds failed')
-path=out/('doom-'+a.board+'-test01.bin');path.write_bytes(image)
-report={'board':a.board,'kind':'native-application-only','hardware_tested':False,'version':'test01',
+path=out/('doom-'+a.board+'-test02.bin');path.write_bytes(image)
+report={'board':a.board,'kind':'native-application-only','hardware_tested':False,'version':'test02',
         'image':path.name,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),
         'entry':hex(sym('_start')),'bss_end':hex(sym('_bss_end')),'ram_data_bss':sym('_bss_end')-sym('_data_start'),
-        'zone_bytes':240*1024,'libc_heap_bytes':24*1024,'audio':False,'flash_writes':False,
+        'static_lump_count':lump_count,'directory_storage':'XIP','zone_bytes':256*1024,'libc_heap_bytes':24*1024,'audio':False,'flash_writes':False,
         'usb_updater':False,'assets':'Miniwad MAP01 trimmed','install_package':False}
 (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))

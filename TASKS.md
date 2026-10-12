@@ -27,3 +27,7 @@
 - [ ] Validate FM-1 installation/boot on hardware, then package Elite separately.
 
 No current task requires publishing or flashing a device automatically.
+
+- [x] Reproduce and fix the Test01 lump-directory OOM; store fixed metadata in XIP.
+- [x] Add a 32-bit host gameplay check with the native 24 KiB allocator and revised 256 KiB zone.
+- [ ] Recover FM-1 through the adapter and physically test Test02.

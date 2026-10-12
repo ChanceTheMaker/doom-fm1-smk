@@ -140,7 +140,17 @@ void dp_message(const char *s){
         diagnostic_row+=10;
     }
 }
-void dp_panic(const char *text){dp_message("DOOM STOPPED");dp_message(text);for(;;)dp_service();}
+static void dp_clear_display(void){
+    uint16_t pixels[240]={0};
+    for(unsigned y=0;y<240;y++)dp_lcd_row(0,y,pixels,240);
+    diagnostic_row=30;
+}
+void dp_panic(const char *text){
+    dp_clear_display();
+    dp_message("DOOM STOPPED");dp_message(text);
+    dp_message("HOLD BOTH OCT FOR RECOVERY");
+    for(;;)dp_service();
+}
 static void fm1_fault(const fm1_crash_t *record){(void)record;dp_panic("CPU FAULT - POWER OFF");}
 extern uint32_t _data_start[],_data_end[],_data_load[],_bss_start[],_bss_end[];
 void dp_cstart(const uint32_t *parameters){
@@ -177,7 +187,8 @@ void dp_cstart(const uint32_t *parameters){
 #endif
     input_ready=1;
     fm1_irq_enable_all();
-    dp_message("DOOM TEST 01");
+    dp_clear_display();
+    dp_message("DOOM TEST 02");
 #if DP_SMK
     dp_message("SMK37 - SILENT ROOM");
 #else

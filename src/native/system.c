@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-static unsigned char zone[240*1024] __attribute__((aligned(8)));
+static unsigned char zone[256*1024] __attribute__((aligned(8)));
 byte *I_ZoneBase(int *size){*size=sizeof zone;return zone;}
 void I_Init(void){}
 void I_AtExit(atexit_func_t f,boolean error){(void)f;(void)error;}

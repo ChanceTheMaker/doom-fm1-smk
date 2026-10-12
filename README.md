@@ -5,13 +5,13 @@ Created by Chance Roth (@ChanceTheMaker).
 
 ## Current status
 
-**Native Test01 builds are available locally for FM-1, SMK-37 Pro and Elite. Separate local FM-1 and private SMK Pro installers are staged. Hardware execution is not yet confirmed.** This repository has no publication remote or deployment workflow.
+**FM-1 Test02 is staged after fixing Test01's startup allocation failure. Test01 reached the FM-1 display but did not enter the game. Test01 is withdrawn on both families; a corrected private SMK Pro Test02 package is also staged.** This repository has no publication remote or deployment workflow.
 
 The build embeds a small open-content Miniwad room in application flash. It uses the real Doom engine, a 240x180 RGB565 view on the 240x240 LCD, piano-key movement/fire controls, and separate FM-1/SMK startup and scanner drivers. It has **no sound, saves, USB MIDI, or USB updater**.
 
-For the first FM-1 test, use [FM-1 Test01 instructions](docs/FM1_TEST01.md) and the local installer on port 8785. [SMK Test01 instructions](docs/NATIVE_TEST01.md) cover the private Pro package on port 8784. The private Pro package is tied to the owner's verified backup. Elite currently has an application binary only; do not install an SMK package on FM-1.
+For the first FM-1 test, use [FM-1 Test02 instructions](docs/FM1_TEST01.md) and the local installer on port 8785. [SMK Test01 instructions](docs/NATIVE_TEST01.md) cover the private Pro package on port 8784. The private Pro package is tied to the owner's verified backup. Elite currently has an application binary only; do not install an SMK package on FM-1.
 
-Native Pro application: 482,000 bytes including assets. Static data/BSS: 436,640 bytes, including the 240 KiB Doom zone; a separate 24 KiB C heap occupies low RAM. Linker bounds and runtime allocator tests pass. Actual heap/stack high-water, LCD orientation, controls and frame rate still need a device test.
+Test02 stores its fixed lump directory in flash and uses a 256 KiB Doom zone plus a separate 24 KiB C heap. A 32-bit host gameplay test now exercises those limits. See the generated native manifest for section sizes. Linker bounds and runtime allocator tests pass. Actual heap/stack high-water, LCD orientation, controls and frame rate still need a device test.
 
 ## Build and exercise the host
 

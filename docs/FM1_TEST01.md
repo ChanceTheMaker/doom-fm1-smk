@@ -1,16 +1,16 @@
-# FM-1 Test01
+# FM-1 Test02
 
-This is a private first hardware test, not a tested firmware release. It contains the real Doom engine and an open-content Miniwad room, without sound or USB updating.
+Test01 reached the FM-1 display but stopped with `Couldn't realloc lumpinfo`. Test02 fixes that startup allocation; it is not yet hardware-validated. It contains the real Doom engine and an open-content Miniwad room, without sound or USB updating.
 
 Open the local FM-1 installer at `http://127.0.0.1:8785/`. Connect the FM-1 directly by normal USB while running firmware with the standard FM-1 MIDI updater. Close other MIDI applications. Have the FM-1 XIAO recovery adapter ready, but leave it disconnected during normal USB installation. The installer rejects SMK identities and never starts automatically.
 
-The package is derived from the pinned Felucca Salt14 FM-1 release (package SHA-256 `efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28`). It retains its loader byte-for-byte (`2c9f43bf7dff81a953c07f3c82cedf5f5899aac14e5b62c2cb23ba7f560ce7db`). Only application bytes, their CRC fields, and the enclosing package metadata change. Package identity is `FM-1_990`; that identity is for installation only because Doom has no MIDI stack.
+The package is derived from the pinned Felucca Salt14 FM-1 release (package SHA-256 `efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28`). It retains its loader byte-for-byte (`2c9f43bf7dff81a953c07f3c82cedf5f5899aac14e5b62c2cb23ba7f560ce7db`). Only application bytes, their CRC fields, and the enclosing package metadata change. Package identity is `FM-1_991`; that identity is for installation only because Doom has no MIDI stack.
 
 The inherited loader writes application sectors `0x4000..0x93000`, validates the chip key, and verifies sectors. It preserves the bootloader. The running synth stages the loader and the loader clears its update records outside that range, so this is not a promise that no update-metadata flash is touched. Back up synth projects using that synth before installing.
 
 ## First check
 
-Expected: `DOOM TEST 01`, then the room. Count white touch keys from the left: turn left, forward, turn right, back, fire, use, menu, enter, run, strafe left, strafe right. Test movement and release. No sound is expected. Photograph any `DOOM STOPPED` message; report a black screen rather than repeatedly reinstalling.
+Expected: `DOOM TEST 02`, then the room. Count white touch keys from the left: turn left, forward, turn right, back, fire, use, menu, enter, run, strafe left, strafe right. Test movement and release. No sound is expected. Photograph any `DOOM STOPPED` message; report a black screen rather than repeatedly reinstalling.
 
 ## Return to synth firmware
 
@@ -28,3 +28,20 @@ python -m http.server 8785 --bind 127.0.0.1 --directory build/try-fm1/site
 ```
 
 Native app details and limitations are in `docs/NATIVE_TEST01.md`. Both native runtime tests and package checks run without hardware. Hardware boot, LCD, controls, runtime memory headroom and restore remain to be tested.
+
+## Test02 memory regression checks
+
+Test01 tried to allocate 2,097 lump records (58,716 bytes on the native 32-bit ABI) from a 24,576-byte C heap. Test02 generates an immutable directory in XIP flash and validates the mapped WAD directory against it before use. There is no runtime directory allocation or mutable hash-chain allocation. Additional WADs are deliberately rejected.
+
+A new 32-bit host build uses the actual bounded C allocator for engine allocations. It also revealed that the old 240 KiB zone was too small during rendering. For this single-player test, reducing command history from 128 to 16 tics recovers space for a 256 KiB zone without moving the stack or boot-record boundaries. The 120-frame play test crosses the smaller ring repeatedly.
+
+Reproduce the stronger check:
+
+```sh
+python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32
+python3 tools/check_play.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32/doom-host --zone 256 --static-room
+```
+
+This requires GCC multilib. It verifies startup, movement, turning, firing and release with an identical reference frame. It still does not emulate the JieLi processor or scanner. The error display now clears stale loader pixels and explicitly labels the OCT recovery shortcut.
+
+Final Test02 validation: the 32-bit host completed four 120-frame runs with a 262,144-byte zone (peak 248,612 bytes) and the native C allocator (peak 312 bytes, no failures). FM-1 binary: 539,900 bytes; data+BSS: 434,624 bytes including the zone. The linker places all 58,716 directory bytes in XIP at `0x02034e44`. Firmware SHA-256: `5bd39672416887b69415fec7d13702eef0d6cb9742751f3f868215f8f710a35b`.
