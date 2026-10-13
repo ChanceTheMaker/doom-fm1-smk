@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 import createEngine from '../site/simulator/doom-engine.js';
 const bytes=await readFile(new URL('../site/simulator/doom-engine.wasm',import.meta.url));
 let m;let releases=0;let seq=0;const timers=new Map(),messages=[];const self={};
-const source=(await readFile(new URL('../site/simulator/worker.js',import.meta.url),'utf8')).replace("import createEngine from './doom-engine.js?v=faithful15-1';",'');
+const source=(await readFile(new URL('../site/simulator/worker.js',import.meta.url),'utf8')).replace(/import createEngine from '\.\/doom-engine\.js(?:\?[^']*)?';/,'');
 const context={self,URL,Uint8Array,Float32Array,Set,performance:{now:()=>0},postMessage:d=>{messages.push(d.type);if(d.type==='error')throw new Error(d.message);},clearTimeout:id=>timers.delete(id),setTimeout:fn=>{const id=++seq;timers.set(id,fn);return id;},createEngine:async opts=>{m=await createEngine({...opts,locateFile:()=>fileURLToPath(new URL('../site/simulator/doom-engine.wasm',import.meta.url)),wasmBinary:bytes});const release=m._browser_release;m._browser_release=()=>{releases++;release();};return m;}};
 await vm.runInNewContext('(async()=>{'+source.replaceAll('import.meta.url',JSON.stringify('https://test.invalid/simulator/worker.js'))+'})()',context);
 const send=data=>self.onmessage({data});const tick=n=>{for(let i=0;i<n;i++){const [id,fn]=timers.entries().next().value;timers.delete(id);fn();}};

@@ -30,8 +30,16 @@ then 81,433 worker jobs, with zero missed deadlines, faults or rejected requests
 Maximum observed audio job time was 412.67 microseconds. This is not a frame-rate
 benchmark or evidence of a manual all-nine-level playthrough.
 
-**Pro and Elite Release 15 hardware validation remains pending.** Earlier Pro
-Release 14 acceptance does not establish this release's physical behavior.
+The owner subsequently reported **"Sloop to Doom worked SMK Pro"** after the
+Sloop b9-dc2 (`SMK-37_938`) USB-updater repair. A follow-up read-only query found
+`ota-Doom-SMK-37_015`, confirming the Release 15 Doom updater was active. This
+records owner-reported cross-firmware installation success; it is not a separate
+confirmation of all Pro gameplay/audio/menu checks. No update or reset was sent
+during that follow-up query. The owner then reported **"Doom to Felucca SMK Pro
+worked"**, explaining the active updater and confirming a successful onward USB
+transition. The returned Felucca version was not independently queried. Detailed
+Pro gameplay acceptance and Elite validation remain pending; earlier Pro Release
+14 acceptance is recorded separately.
 
 ## Immutable application artifacts
 
@@ -60,3 +68,11 @@ Only `site/` is deployed. The official FM-1 restore package remains pinned;
 private recovery evidence and local complete packages remain ignored under
 `build/`. The original dirty development checkout and release worktree were
 preserved. Implementation and memory notes: [FAITHFUL_PREVIEW.md](FAITHFUL_PREVIEW.md).
+
+## Browser and website follow-up
+
+The simulator intro is removed, the homepage hero links directly to the simulator,
+and face expressions are centered in their HUD window in the shared renderer.
+The browser engine is rebuilt for this visual refinement. Published Release 15
+device binaries and their recorded hardware evidence are unchanged; the source
+refinement will enter a separately numbered future native build.

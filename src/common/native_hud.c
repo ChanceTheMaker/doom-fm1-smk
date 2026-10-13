@@ -39,11 +39,14 @@ int dp_native_hud(const unsigned short *palette,dp_row_sink sink,void *ctx){
  else if(p->damagecount>0)snprintf(name,sizeof name,"STFOUCH%d",tier);
  else{int glance=(leveltime/17)%8;snprintf(name,sizeof name,"STFST%d%d",tier,glance==3?1:glance==7?2:0);}
  const unsigned char *face=patch(name),*bar=patch("STBAR"),*arms=patch("STARMS"),*percent=patch("STTPRCNT");
+ /* Center each expression within the status bar's 26 x 30 face window. */
+ const int face_x=108+(26-(int)rd16(face))/2;
+ const int face_y=(30-(int)rd16(face+2))/2;
  ammotype_t type=weaponinfo[p->readyweapon].ammo;
  const int ammo_order[]={am_clip,am_shell,am_misl,am_cell};
  for(unsigned y=0;y<30;y++){
   uint16_t row[240];memset(row,0,sizeof row);draw(row,y,0,0,bar,palette);
-  draw(row,y,78,0,arms,palette);draw(row,y,107,0,face,palette);
+  draw(row,y,78,0,arms,palette);draw(row,y,face_x,face_y,face,palette);
   number(row,y,33,3,type<NUMAMMO?p->ammo[type]:-1,large,palette);
   number(row,y,67,3,p->health<0?0:p->health,large,palette);draw(row,y,67,3,percent,palette);
   number(row,y,165,3,p->armorpoints,large,palette);draw(row,y,165,3,percent,palette);

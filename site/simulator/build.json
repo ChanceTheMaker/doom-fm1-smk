@@ -11,6 +11,6 @@
   "wad_sha256": "bc4be2d2eebb911fac668d534a049290ba45806a85439c4ea266e88f14599d59",
   "files": {
     "doom-engine.js": "493fc14440c09b347ef1dbd861ee32bc403b5e04fd0f6da5571bd2c6b3673373",
-    "doom-engine.wasm": "5843481ffa17a46da687fa686a9e02b29deae64655e4e1e1bff1d3698d0a53ec"
+    "doom-engine.wasm": "d1b8011e7172e5094dc8ade0afaa91b0bdc98aa9317d9d3c49f97b1290c6d296"
   }
 }

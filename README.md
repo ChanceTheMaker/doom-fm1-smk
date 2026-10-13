@@ -14,9 +14,11 @@ USB updater continue from Release 14.
 **[Play in your browser](https://chancethemaker.github.io/doom-fm1-smk/simulator.html)**
 with FM-1, SMK-37 Pro or Elite device controls. The browser shares the game engine
 and LCD assets; its performance is not a measurement of physical hardware.
-Release 15 passed the FM-1 normal-USB update and owner gameplay check. Pro and Elite hardware checks remain pending for this release; see [release evidence](docs/RELEASE15.md).
+Release 15 passed the FM-1 normal-USB update and owner gameplay check. The owner also confirmed Sloop → Doom → Felucca USB transitions on SMK-37 Pro. The detailed Pro gameplay checklist and Elite hardware validation remain pending; see [release evidence](docs/RELEASE15.md).
 
 Test06 cannot receive this update over normal USB because it has no runtime USB driver. It needs a model-specific recovery installation first. Keep power connected during any active flash transfer; do not repeatedly retry a failed install. Other synth installers must explicitly recognize Doom before they can restore synth firmware over USB.
+
+The homepage has a **Simulator** button. The simulator opens directly to the device controls, with FM-1, Pro and Elite views, keyboard/touch play, pause, fullscreen and help. Its latest browser build centers each face expression in the HUD window. This visual refinement is in the shared source and browser build; the physically tested Release 15 device binaries remain unchanged.
 
 The gallery below shows Release 15 artwork and HUD from the shared host renderer.
 
@@ -29,7 +31,7 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 - Nine connected-room levels: The Outpost, Iron Halls, Reactor Core, Cooling Works, Switchback, The Foundry, Freight Line, Blackout and Last Transmission.
 - 77 enemies, guard/imp sprites, attacks and death animations.
 - Shotgun, pistol and fists, health/ammo pickups, kill scoring and a classic status HUD.
-- Original synthesized shotgun, reload, growl, impact, death, pickup and switch sounds.
+- Original background music and synthesized shotgun, reload, growl, impact, death, pickup and switch sounds, with separate music/effects volume controls.
 - A new boot splash, readable LCD menus and white-key controls.
 - Separate FM-1, SMK-37 Pro and SMK-37 Elite builds, all available in the website builder.
 - Animated hardware hero: alternating FM-1/SMK screen zooms, seven FM-1 finishes and six SMK finishes, with pause and reduced-motion support.
@@ -37,7 +39,7 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 | Model | Release 15 application | Physical status |
 | --- | ---: | --- |
 | FM-1 | 576,660 bytes | Normal USB, title/menu, door, weapons, HUD, gameplay and audio accepted |
-| SMK-37 Pro | 576,968 bytes | Compiled and package-checked; Release 15 hardware validation pending |
+| SMK-37 Pro | 576,968 bytes | Sloop → Doom → Felucca USB transitions confirmed; detailed gameplay checklist pending |
 | SMK-37 Elite | 576,968 bytes | Compiled and package-checked; Release 15 hardware validation pending |
 
 The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. CPU1 uses private 8 KiB stacks and a 1 KiB audio block; a worker fault or missed deadline returns audio to one core. Pro has 4,596 bytes left in the common application limit. See [release checks](docs/RELEASE15.md) and [release hashes](site/firmware/releases.json).
@@ -86,6 +88,7 @@ python3 tools/build_campaign.py
 python3 -m pip install Pillow
 python3 tools/build_browser_campaign.py
 python3 tools/build_native_art.py
+python3 tools/build_browser.py --emcc /path/to/emsdk/upstream/emscripten/emcc
 python3 tools/build_host.py --board fm1 --no-wipe --mapped-wad --small-room --static-wad --bounded-heap --abi32 --campaign --native-art
 python3 tools/check_campaign.py build/fm1/strip-no-wipe-mapped-small-static-heap24-abi32-campaign-test07/doom-host --wad build/fixtures/native-art.wad
 node tests/browser_engine_test.mjs # shared title/menu and gameplay regression
