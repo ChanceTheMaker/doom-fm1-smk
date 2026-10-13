@@ -8,7 +8,8 @@
       "frames": 1,
       "mode": "idle",
       "splash": true,
-      "sha256": "db4e4547d6d6e25d05b5321320cce1c3dc4a4ae149e68c3b6b3a676d19f258e1"
+      "sha256": "6b54bf14e5785929a48f8c93915f6938fbd78f21bede251e209efcfce5811dcd",
+      "source": "Release 16 shared browser/native title renderer, actual WASM framebuffer"
     },
     "outpost.png": {
       "level": 1,
@@ -46,5 +47,5 @@
       "sha256": "842879354b0bc8a6f6e4b6f4b7f1d99288e36a3cd14343e4913e3cde764e69ae"
     }
   },
-  "presentation": "Release 15 shared renderer; not a hardware photograph"
+  "presentation": "Release 16 splash; Release 15 campaign views; not hardware photographs"
 }

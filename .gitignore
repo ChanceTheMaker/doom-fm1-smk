@@ -36,3 +36,8 @@ __pycache__/
 !site/firmware/doom-fm1-15.bin
 !site/firmware/doom-smk37-pro-15.bin
 !site/firmware/doom-smk37-elite-15.bin
+
+# Release 16 reviewed application-only images.
+!site/firmware/doom-fm1-16.bin
+!site/firmware/doom-smk37-pro-16.bin
+!site/firmware/doom-smk37-elite-16.bin

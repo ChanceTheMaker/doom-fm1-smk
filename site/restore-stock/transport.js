@@ -1,4 +1,4 @@
-import {createTransferCounter,reportProgress} from '../update-progress.js?v=release15';
+import {createTransferCounter,reportProgress} from '../update-progress.js?v=release16';
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
 //

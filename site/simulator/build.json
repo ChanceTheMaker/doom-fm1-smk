@@ -1,16 +1,16 @@
 {
   "engine": "Development preview / native LCD artwork, nine maps",
   "artwork": {
-    "sha256": "bc4be2d2eebb911fac668d534a049290ba45806a85439c4ea266e88f14599d59",
-    "bytes": 250384,
+    "sha256": "b86346f86f73c2c352541fdbbbbb764975154c7d8d42a77b6665653d7ddb264b",
+    "bytes": 250656,
     "artwork": "Freedoom v0.13.0, front-facing native animation",
     "source_art_sha256": "b0692a567a6cc8eedf537b8524a0868f956c9d0c6976d1fe4e5c0a6ede9188fb",
-    "lumps": 937
+    "lumps": 954
   },
   "toolchain": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.12 (5488e0871d46d19a3209988190fa6a653126256f)",
-  "wad_sha256": "bc4be2d2eebb911fac668d534a049290ba45806a85439c4ea266e88f14599d59",
+  "wad_sha256": "b86346f86f73c2c352541fdbbbbb764975154c7d8d42a77b6665653d7ddb264b",
   "files": {
-    "doom-engine.js": "493fc14440c09b347ef1dbd861ee32bc403b5e04fd0f6da5571bd2c6b3673373",
-    "doom-engine.wasm": "d1b8011e7172e5094dc8ade0afaa91b0bdc98aa9317d9d3c49f97b1290c6d296"
+    "doom-engine.js": "7a3ea6f8aef406bf6f1294fc5e1a83e5ee0ead915474c2c7dad2f839754db24a",
+    "doom-engine.wasm": "35408585ade29057c744b7e2b251c3df7e5340210dbb98cf7c98ee0537e369f0"
   }
 }

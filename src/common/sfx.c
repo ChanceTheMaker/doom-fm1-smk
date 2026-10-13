@@ -7,7 +7,7 @@ typedef struct {unsigned kind,gain,priority;} event;
 typedef struct {unsigned kind,left,total,phase,step,rng,gain,priority;int filter;} voice;
 static voice voices[NVOICE];
 static event queue[QSIZE];
-static volatile unsigned read_at,write_at,master=512;
+static volatile unsigned read_at,write_at,master=512,trim=1023;
 static void barrier(void){
 #ifdef DP_NATIVE_AUDIO
  __asm__ volatile("csync" ::: "memory");
@@ -21,12 +21,14 @@ int dp_sfx_post(unsigned effect,unsigned volume,unsigned priority){
  queue[w]=(event){effect,volume>127?127:volume,priority};barrier();write_at=next;return 1;
 }
 void dp_sfx_master(unsigned volume){master=volume>1023?1023:volume;}
+void dp_sfx_trim(unsigned volume){trim=volume>1023?1023:volume;}
 void dp_sfx_reset(void){dp_sfx_post(DP_SFX_COUNT,0,255);}
 void dp_sfx_recover(void){
  for(unsigned i=0;i<NVOICE;i++)voices[i]=(voice){0};
  read_at=write_at;barrier();dp_music_recover();
 }
 void dp_sfx_render(int32_t *out,unsigned frames){
+ unsigned gain=master*trim/1023;
  dp_music_begin();
  static const unsigned lengths[]={11025,3528,15435,7056,19845,8820,2205,11025,4410};
  static const unsigned hz[]={75,1000,110,175,140,660,880,330,95};
@@ -61,7 +63,7 @@ void dp_sfx_render(int32_t *out,unsigned frames){
    int env=(int)(v->left*256/v->total);if(age<100)env=env*(int)age/100;
    value=(value*env)/256;mix+=(value*(int)v->gain)/512;v->left--;
   }
-  mix=(mix*(int)master)/1023;if(mix>16000)mix=16000;if(mix< -16000)mix=-16000;
+  mix=(mix*(int)gain)/1023;if(mix>16000)mix=16000;if(mix< -16000)mix=-16000;
   out[n*2]=out[n*2+1]=mix*128;
  }
 }

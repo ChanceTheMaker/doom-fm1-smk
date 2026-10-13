@@ -24,7 +24,7 @@ replace={'i_system.c':native/'system.c','w_file_stdc.c':wfile,'doomgeneric.c':co
 sources=[replace.get(s.name,s) for s in sources]
 sources += [common/(n+'.c') for n in ['lcd_frame','menu_view','wad_view','campaign','sfx','music','game_sound','native_hud']]+[ROOT/'src/browser/doom_browser.c',ROOT/'src/browser/browser_splash.c',asset]
 dest=ROOT/'site/simulator/doom-engine.js'
-exports=['browser_'+n for n in ['init','key','release','step','splash','frame','audio','stat']]
+exports=['browser_'+n for n in ['init','key','release','menu_scroll','step','splash','frame','audio','stat']]
 cmd=[a.emcc,'-O2','-std=gnu11','-Wno-incompatible-function-pointer-types','-Wno-int-conversion','-DCMAP256','-DDP_CAMPAIGN','-DDP_NATIVE_ART','-DNORMALUNIX','-DLINUX','-DDOOMGENERIC_RESX=320','-DDOOMGENERIC_RESY=200','-I'+str(engine),'-I'+str(common),'-I'+str(native),*map(str,sources),'-lm','--no-entry','-sMODULARIZE=1','-sEXPORT_ES6=1','-sENVIRONMENT=web,worker,node','-sEXPORTED_FUNCTIONS='+json.dumps(['_'+n for n in exports]),'-sEXPORTED_RUNTIME_METHODS='+json.dumps(['HEAPU8','HEAPF32']),'-sALLOW_MEMORY_GROWTH=1','-sINITIAL_MEMORY=16777216','-sSTACK_SIZE=1048576','-sFILESYSTEM=1','-sEXIT_RUNTIME=1','-o',str(dest)]
 subprocess.run(cmd,check=True)
 manifest={'engine':'Development preview / native LCD artwork, nine maps','artwork':art,'toolchain':subprocess.check_output([a.emcc,'--version'],text=True).splitlines()[0],'wad_sha256':hashlib.sha256(blob).hexdigest(),'files':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in [dest,dest.with_suffix('.wasm')]}}

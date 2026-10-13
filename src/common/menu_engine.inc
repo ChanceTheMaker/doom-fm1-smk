@@ -1,6 +1,13 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Appended to the generated m_menu.c; upstream input/menu state remain in charge. */
 #include "menu_view.h"
+void dp_menu_scroll(int steps) {
+    if(!menuactive||messageToPrint||saveStringEnter||currentMenu==&ReadDef1||currentMenu==&ReadDef2)return;
+    if(steps>16)steps=16;if(steps< -16)steps=-16;
+    event_t event={0};event.type=ev_keydown;
+    event.data1=steps>0?key_menu_down:key_menu_up;
+    for(int n=steps<0?-steps:steps;n;n--)M_Responder(&event);
+}
 static const struct {const char *patch,*label;} dp_labels[]={
  {"M_NGAME","START GAME"},{"M_OPTION","OPTIONS"},{"M_LOADG","LOAD GAME"},
  {"M_SAVEG","SAVE GAME"},{"M_RDTHIS","CONTROLS"},{"M_QUITG","QUIT GAME"},
@@ -44,7 +51,7 @@ int dp_menu_snapshot(dp_menu_view *v) {
     if(currentMenu==&ReadDef1||currentMenu==&ReadDef2) {
         v->message=1;dp_menu_line(v,"WHITE KEYS L TO R");dp_menu_line(v,"1 LEFT / 2 FORWARD");
         dp_menu_line(v,"3 RIGHT / 4 BACK");dp_menu_line(v,"5 FIRE / 6 USE");
-        dp_menu_line(v,"7 MENU / 8 SELECT");dp_menu_line(v,"9 RUN / 10-11 STRAFE");dp_menu_line(v,"12 NEXT WEAPON");return 1;
+        dp_menu_line(v,"7 MENU / 8 SELECT");dp_menu_line(v,"9 RUN / 10-11 STRAFE");dp_menu_line(v,"12 NEXT WEAPON");dp_menu_line(v,"K1 VOL / K2 MENU");return 1;
     }
     for(int i=0;i<currentMenu->numitems&&v->count<DP_MENU_ROWS;i++) {
         menuitem_t *item=&currentMenu->menuitems[i];if(item->status==-1)continue;

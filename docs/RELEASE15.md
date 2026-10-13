@@ -71,6 +71,11 @@ preserved. Implementation and memory notes: [FAITHFUL_PREVIEW.md](FAITHFUL_PREVI
 
 ## Browser and website follow-up
 
+A later level-1 crash report was reproduced locally as missing enemy overkill
+death frames. Reconnecting restored play but does not remove that crash path.
+See [the revision 16 candidate notes](CANDIDATE16.md) for the correction and
+local regression evidence. Published Release 15 binaries remain unchanged.
+
 The simulator intro is removed, the homepage hero links directly to the simulator,
 and face expressions are centered in their HUD window in the shared renderer.
 The browser engine is rebuilt for this visual refinement. Published Release 15

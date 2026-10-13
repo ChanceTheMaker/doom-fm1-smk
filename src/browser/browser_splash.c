@@ -12,11 +12,12 @@ int dp_title_present(const dp_menu_view *menu,dp_row_sink sink,void *ctx){
  for(unsigned y=0;y<240;y++){
   for(unsigned x=0;x<240;x++){
    row[x]=y<142?0:((x+y)%7==0?0x1082:0x0841);
-   if(y>=12&&y<12+h&&(int)x>=left&&x<left+w){
-    unsigned i=(y-12)*w+x-left,c=(logo[36+i/2]>>((i&1)*4))&15;
+   if(y>=4&&y<4+h&&(int)x>=left&&x<left+w){
+    unsigned i=(y-4)*w+x-left,c=(logo[36+i/2]>>((i&1)*4))&15;
     if(c)row[x]=le16(logo+4+c*2);
    }
   }
+  dp_text_row(row,y,73,127,"FM-1/SMK",2,0xfd20);
   for(int i=0;i<menu->count&&i<3;i++){
    unsigned yy=150+i*22;int selected=i==menu->selected;
    if(selected&&y>=yy-3&&y<yy+17)for(unsigned x=22;x<218;x++)row[x]=0x2800;

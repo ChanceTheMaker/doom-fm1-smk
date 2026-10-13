@@ -2,11 +2,11 @@
 // Offline transport decisions; never opens a MIDI port.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
-import {buildFirmware,installFm1} from '../site/firmware-builder.js?v=release15';
-import {Package,logicalImage} from '../site/vendor/fm1pkg.js?v=release15';
-import {smkLogicalImage} from '../site/vendor/smk37-package.js?v=release15';
-import {parsePackage,installStockSmk,installSmk,LO,HI} from '../site/vendor/smk37-update.js?v=release15';
-import {Updater} from '../site/vendor/fm1ota.js?v=release15';
+import {buildFirmware,installFm1} from '../site/firmware-builder.js?v=release16';
+import {Package,logicalImage} from '../site/vendor/fm1pkg.js?v=release16';
+import {smkLogicalImage} from '../site/vendor/smk37-package.js?v=release16';
+import {parsePackage,installStockSmk,installSmk,LO,HI} from '../site/vendor/smk37-update.js?v=release16';
+import {Updater} from '../site/vendor/fm1ota.js?v=release16';
 
 const saved=Object.fromEntries(['findAny','waitForAny','serve','write'].map(k=>[k,Updater.prototype[k]]));
 let identity, nextIdentity, transfers=[], sends=0, closes=0, failStage=0;

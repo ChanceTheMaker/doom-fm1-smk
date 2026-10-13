@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Offline: no MIDI access, connected instruments, or network required.
 import assert from 'node:assert/strict';
-import {createTransferCounter,progressView,createProgress,reportProgress} from './update-progress.js?v=release15';
+import {createTransferCounter,progressView,createProgress,reportProgress} from './update-progress.js?v=release16';
 const count=createTransferCounter(1024);
 assert.deepEqual(count(512,256),{bytes:256,total:1024});
 assert.equal(count(512,256).bytes,256);
@@ -37,7 +37,7 @@ ui.reset();assert.equal(box.hidden,true);ui.destroy();assert.equal(box.removed,t
 // inflate progress, and a send failure cannot count bytes or confirm a reboot.
 const events=[];doc.addEventListener('firmware-transfer-progress',e=>events.push(e.detail));
 for(const path of ['./vendor/fm1ota.js', './restore-stock/transport.js']){
- const {Updater}=await import(path+'?v=release15');
+ const {Updater}=await import(path+'?v=release16');
  const pack=data=>{let a=0,n=0,out=[];for(const b of data){a|=b<<n;n+=8;while(n>=7){out.push(a&127);a>>>=7;n-=7;}}if(n)out.push(a&127);return out;};
  const request=(addr,len)=>{const b=[0,0x59,0x30,8,0,0,0,addr&255,(addr>>>8)&255,(addr>>>16)&255,addr>>>24,len&255,len>>>8,0];b.push(~b.slice(6).reduce((a,b)=>a+b,0)&255);return [0xf0,...pack(b),0xf7];};
  const image=Uint8Array.from({length:1024},(_,i)=>i&255),u=new Updater({});

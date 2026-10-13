@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Device layout adapted from sloop-smk 090588d. Doom input only.
-export function createSMKPanel(host,bind,actions,start,volume){
+export function createSMKPanel(host,bind,actions,start,volume,knob){
  const el=(tag,cls,text='')=>{const e=document.createElement(tag);e.className=cls;e.textContent=text;return e;};
  const shell=el('div','smk-simulator-shell'),name=el('div','smk-name','SMK-37 PRO');host.append(shell);shell.append(name);
  const top=el('div','sim-top');shell.append(top);
@@ -10,7 +10,7 @@ export function createSMKPanel(host,bind,actions,start,volume){
  const overlay=el('div','smk-overlay'),play=el('button','','Play + sound');play.type='button';play.onclick=start;overlay.append(play);bezel.append(canvas,overlay);left.append(bezel);top.append(left);
  const label=el('label','volume-label','BROWSER VOLUME'),range=el('input','browser-volume');range.type='range';range.min=0;range.max=100;range.value=70;range.oninput=()=>volume(range.value);label.append(range);left.append(label);
  const center=el('div','sim-center'),knobs=el('div','sim-knobs'),pads=el('div','sim-pads');top.append(center);center.append(knobs,pads);
- for(let i=1;i<=8;i++){const wrap=el('div','sim-encoder','K'+i),dial=el('button','sim-dial');dial.disabled=true;dial.setAttribute('aria-label','Knob '+i+' unused in Doom');wrap.append(dial);knobs.append(wrap);}
+ for(let i=1;i<=8;i++){const wrap=el('div','sim-encoder','K'+i),dial=el('button','sim-dial');if(i<=2){knob(dial,i);wrap.append(el('small','',i===1?'VOLUME':'MENU'));}else{dial.disabled=true;dial.setAttribute('aria-label','Knob '+i+' unused in Doom');}wrap.append(dial);knobs.append(wrap);}
  for(let i=1;i<=16;i++){const pad=el('button','sim-pad',String(i));pad.disabled=true;pad.title='Unused in Doom';pads.append(pad);}
  const right=el('div','sim-right'),faders=el('div','sim-faders'),buttons=el('div','sim-buttons');right.append(faders,buttons);top.append(right);
  for(let i=1;i<=4;i++){const label=el('label','sim-fader','F'+i),f=el('input','');f.type='range';f.disabled=true;label.append(f);faders.append(label);}

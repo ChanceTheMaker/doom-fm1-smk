@@ -28,6 +28,9 @@ static uint16_t palette565[256];
 static unsigned frames, limit = 120;
 static struct timespec start;
 static const char *output;
+#ifdef DP_NATIVE_ART
+#include "../../tests/native_sprite_regression.inc"
+#endif
 
 void DG_Init(void) {
     const char *value = getenv("DOOM_FRAME_LIMIT");
@@ -66,6 +69,9 @@ static int write_row(void *ctx,unsigned y,const uint16_t *row,unsigned width) {
 void __wrap_I_FinishUpdate(void) { DG_DrawFrame(); }
 #endif
 void DG_DrawFrame(void) {
+#ifdef DP_NATIVE_ART
+    dp_sprite_regression();
+#endif
 #ifdef DP_TEXTURE_PROBE
     extern void DP_ExportTextureColumns(void);
     if(!frames)DP_ExportTextureColumns();

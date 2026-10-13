@@ -40,6 +40,8 @@ volatile struct {uint32_t magic,pending,failures;} dp_boot __attribute__((sectio
 #ifdef DP_CAMPAIGN
 #include "sfx.h"
 #include "splash.h"
+#include "knob_control.h"
+static dp_knobs knobs={DP_SMK?512:1023,0,{0,0}};
 #define AUDIO_FRAMES 128u
 static int32_t audio_buffer[4*AUDIO_FRAMES] __attribute__((aligned(4)));
 #if DP_DUAL_CORE
@@ -62,6 +64,7 @@ static void audio_start(void){
  dp_multicore_start();
 #endif
 #if DP_SMK
+ dp_sfx_master(1023);dp_sfx_trim(knobs.volume);
  const smk37_audio_hooks_t hooks={fm1_delay_ms,fm1_irq_attach};
  if(!smk37_audio_init(audio_buffer,2*AUDIO_FRAMES,dp_audio_isr,3,&hooks))dp_panic("AUDIO INIT FAILED");
 #else
@@ -119,7 +122,11 @@ void dp_service(void){
 #if DP_SMK
     for(unsigned i=0;i<16;i++){
         if(smk37_scan_tick()){
-            smk37_controls_tick(&controls,smk37_scan_frame);buttons=controls.buttons;
+            smk37_control_changes_t changes=smk37_controls_tick(&controls,smk37_scan_frame);buttons=controls.buttons;
+#ifdef DP_CAMPAIGN
+            if(dp_knob_turn(&knobs,0,changes.encoder[0],4))dp_sfx_trim(knobs.volume);
+            dp_knob_turn(&knobs,1,changes.encoder[1],4);
+#endif
             for(unsigned k=0;k<37;k++){
                 unsigned raw=smk37_contact_closed(smk37_scan_frame,smk37_key_contacts[k][0]) |
                     (smk37_contact_closed(smk37_scan_frame,smk37_key_contacts[k][1])<<1);
@@ -135,6 +142,8 @@ void dp_service(void){
 #else
     fm1_input_scan();
 #ifdef DP_CAMPAIGN
+    if(dp_knob_turn(&knobs,0,fm1_enc_take(2),1))dp_sfx_trim(knobs.volume);
+    dp_knob_turn(&knobs,1,fm1_enc_take(3),1);
     static uint32_t volume_at;
     if(now-volume_at>=30){volume_at=now;int vol=fm1_adc_read(FM1_ADC_MASTER);if(vol>=0)dp_sfx_master((unsigned)vol);}
 #endif
@@ -155,6 +164,9 @@ void dp_service(void){
 }
 int dp_key(int *down,unsigned char *key){
     dp_service();uint32_t changed=actions^returned;
+#ifdef DP_CAMPAIGN
+    if(knobs.menu){int steps=knobs.menu;knobs.menu=0;dp_menu_scroll(steps);}
+#endif
     for(unsigned i=0;i<sizeof(action_keys);i++)if(changed&(1u<<i)){
         *down=!!(actions&(1u<<i));*key=action_keys[i];returned^=1u<<i;return 1;
     }

@@ -35,6 +35,7 @@ jobs:
       - run: cc -std=c11 -O2 -DCMAP256 -DDP_CAMPAIGN -DDP_NATIVE_ART -Ithird_party/doomgeneric/doomgeneric -Isrc/common -Isrc/native tests/native_frame_test.c src/native/doomgeneric_native.c -o /tmp/native-frame-test && /tmp/native-frame-test
       - run: cc -std=c11 -O2 -Wall -Wextra -Werror -Isrc/common tests/music_test.c src/common/music.c src/common/sfx.c -o /tmp/music-test && /tmp/music-test
       - run: cc -std=c11 -O2 -Isrc/common tests/sfx_test.c src/common/music.c src/common/sfx.c -o /tmp/sfx-test && /tmp/sfx-test
+      - run: cc -std=c11 -O2 -Isrc/common tests/knob_control_test.c src/common/music.c src/common/sfx.c -o /tmp/knob-test && /tmp/knob-test
       - run: cc -std=c11 -O1 -g -fsanitize=address,undefined tests/audio_worker_test.c -o /tmp/audio-worker-test && /tmp/audio-worker-test
       - run: cc -std=c11 -O1 -g -fsanitize=address,undefined tests/audio_pipeline_test.c -o /tmp/audio-pipeline-test && /tmp/audio-pipeline-test
       - run: python3 tests/runtime_status_test.py

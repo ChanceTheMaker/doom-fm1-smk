@@ -55,6 +55,7 @@ EMSCRIPTEN_KEEPALIVE void browser_key(int action,int down){
  held[action]=!!down;events[wr][0]=!!down;events[wr][1]=keys[action];wr=next;
 }
 EMSCRIPTEN_KEEPALIVE void browser_release(void){for(int i=0;i<12;i++)browser_key(i,0);}
+EMSCRIPTEN_KEEPALIVE void browser_menu_scroll(int steps){dp_menu_scroll(steps);}
 EMSCRIPTEN_KEEPALIVE void browser_step(void){ticks+=29;doomgeneric_Tick();}
 EMSCRIPTEN_KEEPALIVE void browser_splash(void){dp_splash_present(0,row,0);}
 EMSCRIPTEN_KEEPALIVE void *browser_frame(void){return screen;}

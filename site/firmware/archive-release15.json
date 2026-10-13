@@ -1,0 +1,35 @@
+[
+  {
+    "id": "fm1",
+    "board": "FM-1",
+    "public": true,
+    "version": "DOOM FM1 TEST15",
+    "product": "FM-1_999",
+    "app": "doom-fm1-15.bin",
+    "bytes": 576660,
+    "sha256": "0e4ff0544b233ff4cb9a376eb66bb3e4dd70638516651e02d460c412d1b0d23d",
+    "hardware": "Normal USB, menus, weapons, gameplay and dual-core audio verified"
+  },
+  {
+    "id": "smk37-pro",
+    "board": "SMK-37 Pro",
+    "public": true,
+    "version": "DOOM SMK TEST15",
+    "product": "SMK-37_999",
+    "app": "doom-smk37-pro-15.bin",
+    "bytes": 576968,
+    "sha256": "a1194c7abd4cbf99a79f5719774ff45fc1b386d7ba259b760d18b307289929b7",
+    "hardware": "Hardware validation pending for this release"
+  },
+  {
+    "id": "smk37-elite",
+    "board": "SMK-37 Elite",
+    "public": true,
+    "version": "DOOM SMK TEST15",
+    "product": "SMK-37_999",
+    "app": "doom-smk37-elite-15.bin",
+    "bytes": 576968,
+    "sha256": "984b87ea3c132eb4f668d002767ba867ee836d8cc473b1388d64dd5cc9b42f4b",
+    "hardware": "Hardware validation pending for this release"
+  }
+]

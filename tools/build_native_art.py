@@ -57,6 +57,13 @@ def build():
             elif candidates:blob=newart[candidates[0]]
             else:raise ValueError('Missing enemy frame '+front)
             enemies.append((family+frame+'0',compact_patch(blob)))
+    # Overkill damage enters the engine's XDIE states even with the shotgun.
+    # Keep every referenced frame. Reuse the existing five-stage death art so
+    # the immutable WAD deduplicator adds directory entries, not 31 KiB of art.
+    packed_enemies=dict(enemies)
+    for family,first,sequence in [('POSS','M','HHIIJJKKL'),('TROO','N','IIJJKLLM')]:
+        for i,source in enumerate(sequence):
+            enemies.append((family+chr(ord(first)+i)+'0',packed_enemies[family+source+'0']))
     outrows=[];patches=False
     for name,blob in rows:
         if name=='P_START':patches=True

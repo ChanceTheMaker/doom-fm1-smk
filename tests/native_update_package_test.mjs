@@ -8,10 +8,13 @@ import {parsePackage} from '../site/vendor/smk37-update.js';
 import {unpack7} from '../site/vendor/fm1ota.js';
 const paths=process.argv.slice(2);assert.equal(paths.length,3,'Pass the pinned FM-1, Pro016 and Elite016 bases.');
 const targets=['fm1','smk37-pro','smk37-elite'];
-mkdirSync('build/test15-packages',{recursive:true});
+const revision=Number(process.env.DOOM_REVISION??16);
+assert.ok(Number.isInteger(revision)&&revision>=15&&revision<=999,'Invalid candidate revision');
+const out=`build/test${revision}-packages`;
+mkdirSync(out,{recursive:true});
 for(let i=0;i<targets.length;i++){
  const id=targets[i],manifest=JSON.parse(readFileSync(`build/native/${id}/manifest.json`));
- assert.equal(manifest.version,'test15');assert.equal(manifest.usb_updater,true);
+ assert.equal(manifest.version,`test${revision}`);assert.equal(manifest.usb_updater,true);
  const header=readFileSync(`build/native/${id}/update/doom_loader_image.h`,'utf8');
  const wire=header.match(/dp_identity_wire\[\]=\{([^}]+)\}/)[1].split(',').map(Number);
  assert.equal(wire[0],0xf0);assert.equal(wire.at(-1),0xf7);
@@ -20,7 +23,7 @@ for(let i=0;i<targets.length;i++){
  assert.equal(String.fromCharCode(...decoded.slice(6,33)).replace(/\0+$/,''),manifest.loader.product);
  assert.equal(decoded[33],~decoded.slice(6,33).reduce((a,b)=>a+b,0)&255);
  const base=new Uint8Array(readFileSync(paths[i])),app=new Uint8Array(readFileSync(`build/native/${id}/${manifest.image}`));
- const release={id,board:['FM-1','SMK-37 Pro','SMK-37 Elite'][i],public:true,product:i?'SMK-37_999':'FM-1_999',version:i?'DOOM SMK TEST15':'DOOM FM1 TEST15',bytes:manifest.bytes,sha256:manifest.sha256};
+ const release={id,board:['FM-1','SMK-37 Pro','SMK-37 Elite'][i],public:true,product:i?'SMK-37_999':'FM-1_999',version:`DOOM ${i?'SMK':'FM1'} TEST${revision}`,bytes:manifest.bytes,sha256:manifest.sha256};
  const result=await buildFirmware(release,app,base);
  if(i===0){
   const before=new Package(base),after=new Package(result.factory);
@@ -32,9 +35,9 @@ for(let i=0;i<targets.length;i++){
   const before=smkLogicalImage(base).raw;
   assert.deepEqual(result.image.subarray(1024,1024+0x4000),before.subarray(1024,1024+0x4000));
   assert.deepEqual(result.image.subarray(1024+0x9d000),before.subarray(1024+0x9d000));
-  writeFileSync(`build/test15-packages/${id}.smkupdate`,result.bytes);
+  writeFileSync(`${out}/${id}.smkupdate`,result.bytes);
  }
- writeFileSync(`build/test15-packages/${id}.fwsc`,result.factory);
- writeFileSync(`build/test15-packages/${id}.json`,JSON.stringify({...release,loader:manifest.loader,package_sha256:result.sha,hardware_tested:false},null,2)+'\n');
- console.log('PASS:',id,'Revision 15 package round trip and protected bytes; local build output only.');
+ writeFileSync(`${out}/${id}.fwsc`,result.factory);
+ writeFileSync(`${out}/${id}.json`,JSON.stringify({...release,loader:manifest.loader,package_sha256:result.sha,hardware_tested:false},null,2)+'\n');
+ console.log('PASS:',id,`Revision ${revision} package round trip and protected bytes; local build output only.`);
 }

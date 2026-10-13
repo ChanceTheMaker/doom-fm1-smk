@@ -4,6 +4,13 @@
 @media(max-width:580px){.sim-main{padding-inline:10px}.sim-toolbar{flex-wrap:wrap;padding:0 5px;gap:12px}.sim-toolbar #sim-status{max-width:none}.play-actions{flex:1}.view-actions{margin-left:auto}.fm1-panel{gap:10px;grid-template-columns:.9fr 1.8fr}.right-controls{grid-column:1/-1;display:flex;align-items:center;gap:15px}.right-knobs{width:44%;font-size:7px}.right-knobs .dial{width:36px}.panel-buttons{flex:1;margin:0;grid-template-columns:repeat(6,1fr)}.panel-buttons button{font-size:6px}.panel-note{display:none}.left-controls{gap:10px;font-size:7px}.left-controls .dial{width:38px}.octaves span{padding:4px 6px}.case-label{font-size:9px}.case-label span{font-size:7px}.fm1-keys{grid-template-rows:59px 59px;margin-top:17px;gap:4px 1px;padding-inline:3px}.touch-key strong{font-size:6px;letter-spacing:-.5px}.touch-key{font-size:6px;overflow:hidden}.touch-key small{display:none}.touch-key:before{height:10px;width:2px;margin-bottom:5px}.case-bottom{font-size:5px;letter-spacing:1px}.quick-controls{gap:8px 14px;font-size:9px}.sim-footnote{padding:0 7px;font-size:10px}.simulator:is(:fullscreen,.window-full){padding:10px}.simulator.expanded .right-controls{display:none}.simulator.expanded .screen-frame{max-height:none}#help-controls{grid-template-columns:1fr}}
 
 .dummy-knob{--angle:-25deg}
+.active-knob{padding:0;cursor:ns-resize;touch-action:none;min-width:0;min-height:0;color:inherit}
+.active-knob:focus-visible{outline:2px solid #ffad49;outline-offset:3px}
+[data-knob="menu"]{--angle:0deg}
+.right-knobs .active-knob{display:block}
+.sim-encoder{position:relative}
+.sim-encoder small{position:absolute;bottom:-12px}
+.sim-dial:not([data-knob="volume"]){--angle:0deg}
 
 .simulator.window-full{position:fixed;inset:0;z-index:1000}
 

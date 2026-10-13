@@ -2,14 +2,12 @@
 
 **Your synth. Their Doom.** A real Doom-engine port for the M-VAVE FM-1 and SMK-37 Pro / Elite, by Chance Roth (@ChanceTheMaker).
 
-**[Release 15: classic title menus and browser simulator](https://chancethemaker.github.io/doom-fm1-smk/)**
+**[Release 16: splash branding, knob controls and sprite fix](https://chancethemaker.github.io/doom-fm1-smk/)**
 
-Release 15 adds the classic DOOM logo with Start Game, Options and Controls,
-more detailed pistol/fist/shotgun artwork, a classic status HUD and weapon
-cycling. The opening level now has a looping route, optional secret room,
-door, stepped floors and varied lighting. The campaign has nine original maps;
-the other eight layouts remain intact. Dual-core music/effects and the normal
-USB updater continue from Release 14.
+Release 16 adds `FM-1/SMK` beneath the classic DOOM logo, centers the HUD face,
+and gives K1 master volume and K2 menu navigation. It fixes missing enemy
+overkill-death sprite frames. The nine original maps, three weapons, dual-core
+music/effects and normal-USB updater remain. See [release evidence](docs/RELEASE16.md).
 
 **[Play in your browser](https://chancethemaker.github.io/doom-fm1-smk/simulator.html)**
 with FM-1, SMK-37 Pro or Elite device controls. The browser shares the game engine
@@ -18,13 +16,13 @@ Release 15 passed the FM-1 normal-USB update and owner gameplay check. The owner
 
 Test06 cannot receive this update over normal USB because it has no runtime USB driver. It needs a model-specific recovery installation first. Keep power connected during any active flash transfer; do not repeatedly retry a failed install. Other synth installers must explicitly recognize Doom before they can restore synth firmware over USB.
 
-The homepage has a **Simulator** button. The simulator opens directly to the device controls, with FM-1, Pro and Elite views, keyboard/touch play, pause, fullscreen and help. Its latest browser build centers each face expression in the HUD window. This visual refinement is in the shared source and browser build; the physically tested Release 15 device binaries remain unchanged.
+The homepage has a **Simulator** button. The simulator opens directly to the device controls, with FM-1, Pro and Elite views, keyboard/touch play, pause, fullscreen and help. The browser and Release 16 firmware share the updated splash, centered face, K1 volume and K2 menus.
 
-The gallery below shows Release 15 artwork and HUD from the shared host renderer.
+The gallery below shows the shared renderer: the Release 16 splash and existing campaign views.
 
 ![Native Doom splash](site/screenshots/splash.png) ![The Outpost](site/screenshots/outpost.png) ![Reactor Core](site/screenshots/reactor.png)
 
-Screenshots are actual engine output from the host harness at the device's 240 x 240 resolution.
+Screenshots are actual engine output at the device's 240 x 240 resolution; they are not hardware photographs.
 
 ## Campaign
 
@@ -42,7 +40,7 @@ Screenshots are actual engine output from the host harness at the device's 240 x
 | SMK-37 Pro | 576,968 bytes | Sloop → Doom → Felucca USB transitions confirmed; detailed gameplay checklist pending |
 | SMK-37 Elite | 576,968 bytes | Compiled and package-checked; Release 15 hardware validation pending |
 
-The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. CPU1 uses private 8 KiB stacks and a 1 KiB audio block; a worker fault or missed deadline returns audio to one core. Pro has 4,596 bytes left in the common application limit. See [release checks](docs/RELEASE15.md) and [release hashes](site/firmware/releases.json).
+The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. CPU1 uses private 8 KiB stacks and a 1 KiB audio block; a worker fault or missed deadline returns audio to one core. Pro has 3,404 bytes left in the common application limit. See [release checks](docs/RELEASE16.md) and [release hashes](site/firmware/releases.json).
 
 ## Install
 
@@ -50,7 +48,7 @@ The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom
 2. Open the installer in desktop Chrome or Edge. Choose **FM-1**, **SMK-37 Pro** or **SMK-37 Elite**.
 3. Click **Build firmware**. The browser downloads the reviewed app and checksum-pinned base, validates the model/layout, preserves protected bytes and prepares the package locally. A local base-file fallback is available; no file upload is needed normally.
 4. Connect only that instrument by normal USB, running Doom Test07 or later, or compatible synth firmware. SMKs support official matching **016** firmware or the portable Felucca/Sloop/Melodee SMK updater (identity version 922 or newer).
-5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the Doom release 15 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
+5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the Doom release 16 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
 
 **Doom replaces the synth application and has no persistent saves.** Release 07 added normal-USB updating through an embedded RAM loader; Release 06 and earlier need the recovery adapter first. Earlier SMK loaders also reject a fully blank calibration sector before programming; those devices need a one-time recovery update to Release 14. The new loader preserves either valid calibration or a completely blank sector, and still rejects corrupt partial records. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Release 14 checks](docs/TEST14.md), [USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
 
@@ -73,7 +71,7 @@ Count white keys from the far left (FM-1 starts at F; SMK starts at C).
 | 10 / 11 | Strafe left / right |
 | 12 | Next weapon |
 
-SMK **PATCH** opens the menu; **PARA** selects. Adjust effects and music volume under **Options > Sound**; FM-1 **MASTER** also controls output. Guards award 100 points, imps 200. Face the wall switch in the final room and press Use to exit. Fire or Use advances from results. Retry restores the score from level entry; finishing the campaign offers a fresh run.
+**K1** controls music/effects volume; **K2** scrolls menus (clockwise down, counterclockwise up). SMK **PATCH** opens the menu; **PARA** selects. Adjust effects and music volume under **Options > Sound**; FM-1 **MASTER** also controls output. Guards award 100 points, imps 200. Face the wall switch in the final room and press Use to exit. Fire or Use advances from results. Retry restores the score from level entry; finishing the campaign offers a fresh run.
 
 ## Build from source
 
