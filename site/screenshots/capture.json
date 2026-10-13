@@ -1,35 +1,50 @@
 {
   "source": "Native-art 240x240 host harness; not a photograph of hardware",
-  "engine_sha256": "167838c630d9e019a863548f8c6c0dfe21b5ca24b985da620a7ed7f672d8df47",
-  "wad_sha256": "41f2c9c8227180c25e57d9f8e55a655ac7e8139b46f59dad8767d46681d51bf9",
+  "engine_sha256": "b1e362e9f463bee4381ac65f0c3e117f8a6aea68c25bf4e98243235f2a00043d",
+  "wad_sha256": "bc4be2d2eebb911fac668d534a049290ba45806a85439c4ea266e88f14599d59",
   "files": {
     "splash.png": {
       "level": 1,
       "frames": 1,
       "mode": "idle",
       "splash": true,
-      "sha256": "0bffa1cf965ac19363c37c86da5d7ba493d7cfce772651c44eca01028f02014a"
+      "sha256": "db4e4547d6d6e25d05b5321320cce1c3dc4a4ae149e68c3b6b3a676d19f258e1"
     },
     "outpost.png": {
       "level": 1,
       "frames": 140,
       "mode": "idle",
       "splash": false,
-      "sha256": "66b3607a7ae721650ff63c3236430e643fbafe7e8280c873cc140995fc1575fb"
+      "sha256": "0ba3ce577d95cefb87e510b191af2ed903ec00cd23484b20d63faf2e709a1a87"
     },
     "combat.png": {
       "level": 2,
       "frames": 110,
       "mode": "play",
       "splash": false,
-      "sha256": "3799d24722f3f935185f23dfb7d8da36ecc2e66e7a6a8f64dfaba6cf3d2eb4c6"
+      "sha256": "5f8203b82e7a2b359266ae374187ecf06ed34bd5536c22b1daccede3c2d484be"
     },
     "reactor.png": {
       "level": 3,
       "frames": 200,
       "mode": "idle",
       "splash": false,
-      "sha256": "677949beb46a78533029b7022061bb1fd02c7c7702d0406ee74b71dfcb2fbfa8"
+      "sha256": "ff0e1d467233ffa636374bee770156173004a1be30451980491b8fe4a6fb55f4"
+    },
+    "switchback.png": {
+      "level": 5,
+      "frames": 180,
+      "mode": "play",
+      "splash": false,
+      "sha256": "d0ce5feab798b1611a79252ac124422d67cc9dbf3578b3b7625057242e07a274"
+    },
+    "transmission.png": {
+      "level": 9,
+      "frames": 180,
+      "mode": "play",
+      "splash": false,
+      "sha256": "842879354b0bc8a6f6e4b6f4b7f1d99288e36a3cd14343e4913e3cde764e69ae"
     }
-  }
+  },
+  "presentation": "Development preview; public firmware remains Release 14"
 }
