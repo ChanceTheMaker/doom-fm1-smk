@@ -1,5 +1,8 @@
 # Faithful presentation preview — local revision 15
 
+Historical development notes. Release 15 subsequently passed the FM-1 hardware
+check; current release evidence is in [RELEASE15.md](RELEASE15.md).
+
 Development worktree: `E:\AI_Apps\Doom-FM1-SMK-faithful`, branch
 `feat/faithful-presentation`, based on published Release 14 (`f522001`).
 The original dirty simulator checkout and the release worktree are preserved.

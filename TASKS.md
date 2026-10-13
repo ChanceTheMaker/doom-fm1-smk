@@ -26,7 +26,7 @@
 - [x] Stage a separate FM-1 package and run the FM-1 loader host test.
 - [ ] Validate FM-1 installation/boot on hardware, then package Elite separately.
 
-Current release: Release 10 music. FM-1 accepted as-is; SMK-37 Pro normal-USB installation, runtime identity, HUD, music, effects and acceptable gameplay confirmed by the owner. Elite hardware validation remains pending.
+Release 15 passed its FM-1 hardware check and is prepared for publication. Earlier Release 14 was physically accepted on FM-1 and Pro. See docs/RELEASE15.md for current evidence.
 
 - [x] Reproduce and fix the Test01 lump-directory OOM; store fixed metadata in XIP.
 - [x] Add a 32-bit host gameplay check with the native 24 KiB allocator and revised 256 KiB zone.
@@ -61,5 +61,13 @@ Current release: Release 10 music. FM-1 accepted as-is; SMK-37 Pro normal-USB in
 - [ ] Verify Pro and Elite Test08 on hardware.
 - [x] Add original music, reduce synthesis load and verify Release 10 on FM-1 and Pro.
 - [ ] Physically validate Release 10 on Elite.
-- [ ] Expand the campaign from three to six levels as a separate candidate.
-- [ ] Reconcile and integrate the preserved browser FM-1 simulator/artwork checkout.
+- [x] Expand the campaign to nine levels and enable dual-core audio (Release 14).
+- [x] Integrate the preserved FM-1 simulator and add Pro/Elite device views (Release 15).
+
+## Release 15
+
+- [x] Classic logo/title menus, weapon cycling, detailed weapons/HUD and revised opening level.
+- [x] Browser/host/native/package regression checks and refreshed thumbnails.
+- [x] Physically validate Release 15 on FM-1 through normal USB.
+- [x] Prepare the exact verified artifacts and website for Release 15 publication.
+- [ ] Physically validate Release 15 on Pro and Elite.

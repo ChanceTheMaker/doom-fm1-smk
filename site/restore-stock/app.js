@@ -1,6 +1,6 @@
-import {createProgress} from '../update-progress.js?v=release14';
+import {createProgress} from '../update-progress.js?v=release15';
 // SPDX-License-Identifier: GPL-3.0-only
-import {prepareStock,restoreStock} from './core.js?v=release14';
+import {prepareStock,restoreStock} from './core.js?v=release15';
 import {MODELS,SITE_NAME,BACK_URL} from './site.js';
 const base='https://raw.githubusercontent.com/jonathaslacerda/smk-37-pro-docs/ab85d7340163ba9e171dc9396e31c034829bbc02/firmware/';
 const sources={'FM-1':'./FM-1-v15.fwsc','SMK-37 Pro':base+'smk37pro/SMK-37_Pro_016.fwsc','SMK-37 Elite':base+'smk37elite/SMK-37_Elite_016.fwsc'};

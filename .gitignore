@@ -31,3 +31,8 @@ __pycache__/
 !site/firmware/doom-fm1-14.bin
 !site/firmware/doom-smk37-pro-14.bin
 !site/firmware/doom-smk37-elite-14.bin
+
+# Release 15 app-only candidates; no device backups.
+!site/firmware/doom-fm1-15.bin
+!site/firmware/doom-smk37-pro-15.bin
+!site/firmware/doom-smk37-elite-15.bin

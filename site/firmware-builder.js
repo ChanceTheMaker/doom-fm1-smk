@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import {Package,logicalImage,sha256hex} from './vendor/fm1pkg.js?v=release14';
-import {buildSmkPublicPackage} from './vendor/smk37-package.js?v=release14';
-import {STOCK_SOURCES} from './vendor/smk37-stock.js?v=release14';
-import {Updater} from './vendor/fm1ota.js?v=release14';
+import {Package,logicalImage,sha256hex} from './vendor/fm1pkg.js?v=release15';
+import {buildSmkPublicPackage} from './vendor/smk37-package.js?v=release15';
+import {STOCK_SOURCES} from './vendor/smk37-stock.js?v=release15';
+import {Updater} from './vendor/fm1ota.js?v=release15';
 export const FM1_BASE='https://raw.githubusercontent.com/ChanceTheMaker/Felucca/ab9e880890eeda57a1772b2d1250f107a3e199c6/firmware/felucca-0.9-salt14.fwsc';
 const BASE_SHA='efb516a7131d12eb5c008ff9af5a380d07e82eb1040bd03990f28d1233417e28';
 export async function download(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error(`Download failed (${r.status}). Try again or provide the matching original firmware file.`);return new Uint8Array(await r.arrayBuffer());}
