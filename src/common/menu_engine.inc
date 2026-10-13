@@ -2,7 +2,7 @@
 /* Appended to the generated m_menu.c; upstream input/menu state remain in charge. */
 #include "menu_view.h"
 static const struct {const char *patch,*label;} dp_labels[]={
- {"M_NGAME","NEW GAME"},{"M_OPTION","OPTIONS"},{"M_LOADG","LOAD GAME"},
+ {"M_NGAME","START GAME"},{"M_OPTION","OPTIONS"},{"M_LOADG","LOAD GAME"},
  {"M_SAVEG","SAVE GAME"},{"M_RDTHIS","CONTROLS"},{"M_QUITG","QUIT GAME"},
  {"M_JKILL","TOO YOUNG TO DIE"},{"M_ROUGH","NOT TOO ROUGH"},{"M_HURT","HURT ME PLENTY"},
  {"M_ULTRA","ULTRA-VIOLENCE"},{"M_NMARE","NIGHTMARE"},
@@ -44,7 +44,7 @@ int dp_menu_snapshot(dp_menu_view *v) {
     if(currentMenu==&ReadDef1||currentMenu==&ReadDef2) {
         v->message=1;dp_menu_line(v,"WHITE KEYS L TO R");dp_menu_line(v,"1 LEFT / 2 FORWARD");
         dp_menu_line(v,"3 RIGHT / 4 BACK");dp_menu_line(v,"5 FIRE / 6 USE");
-        dp_menu_line(v,"7 MENU / 8 SELECT");dp_menu_line(v,"9 RUN / 10-11 STRAFE");return 1;
+        dp_menu_line(v,"7 MENU / 8 SELECT");dp_menu_line(v,"9 RUN / 10-11 STRAFE");dp_menu_line(v,"12 NEXT WEAPON");return 1;
     }
     for(int i=0;i<currentMenu->numitems&&v->count<DP_MENU_ROWS;i++) {
         menuitem_t *item=&currentMenu->menuitems[i];if(item->status==-1)continue;
@@ -61,4 +61,14 @@ int dp_menu_snapshot(dp_menu_view *v) {
         else snprintf(line,DP_MENU_COLS+1,"%s",label);
     }
     return 1;
+}
+
+/* Restore the help item that commercial Doom hides, omit unavailable save/load
+ * and process-exit choices, then use the engine's own menu navigation. */
+void dp_title_start(void) {
+ MainMenu[loadgame].status=-1;MainMenu[savegame].status=-1;
+ MainMenu[quitdoom].status=-1;
+ MainMenu[readthis].status=1;strcpy(MainMenu[readthis].name,"M_RDTHIS");
+ MainMenu[readthis].routine=M_ReadThis;MainMenu[readthis].alphaKey='r';
+ MainDef.numitems=main_end;MainDef.lastOn=0;M_StartControlPanel();
 }

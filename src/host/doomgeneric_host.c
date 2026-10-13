@@ -85,7 +85,7 @@ void DG_DrawFrame(void) {
     dp_menu_view menu;
 #ifdef DP_CAMPAIGN
     int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
-    int ok=getenv("DOOM_SPLASH")?dp_splash_present(atoi(getenv("DOOM_SPLASH")),write_row,f):active?dp_menu_present(&menu,write_row,f):dp_campaign_present(I_VideoBuffer,palette565,write_row,f);
+    int ok=getenv("DOOM_SPLASH")?dp_splash_present(atoi(getenv("DOOM_SPLASH")),write_row,f):active?(!menu.message&&!strcmp(menu.title,"DOOM")?dp_title_present(&menu,write_row,f):dp_menu_present(&menu,write_row,f)):dp_campaign_present(I_VideoBuffer,palette565,write_row,f);
 #ifdef DP_NATIVE_ART
     extern int dp_native_hud(const unsigned short *,dp_row_sink,void *);
     if(ok&&!active&&!getenv("DOOM_SPLASH"))ok=dp_native_hud(palette565,write_row,f);

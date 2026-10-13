@@ -39,6 +39,28 @@ def prepare(out,campaign=False):
         change('m_menu.c','void '+function+' (int choice)\n{',
                'void '+function+' (int choice)\n{\n    M_StartMessage("Saves are not available in this test build.", NULL, false);\n    return;')
     if campaign:
+        # The LCD frontend draws the menu snapshot itself. Do not also invoke
+        # legacy bitmap menus: their patches are absent from the compact WAD.
+        change('m_menu.c','void M_Drawer (void)\n{',
+               'void M_Drawer (void)\n{\n#ifdef DP_NATIVE_ART\n    return;\n#endif')
+        change('m_menu.c','        // Deactivate menu\n',
+               '        // Deactivate menu\n#ifdef DP_NATIVE_ART\n        if (currentMenu != &MainDef && currentMenu->prevMenu) {\n            currentMenu->lastOn = itemOn; currentMenu = currentMenu->prevMenu;\n            itemOn = currentMenu->lastOn; S_StartSound(NULL,sfx_swtchn); return true;\n        }\n#endif\n')
+        # View-weapon sources are stored at half resolution only in native-art
+        # builds. Restore their original projection without a decode buffer.
+        path=out/'r_things.c';text=path.read_text()
+        begin=text.index('void R_DrawPSprite (');end=text.index('\nvoid R_DrawPlayerSprites',begin)
+        part=text[begin:end]
+        part=part.replace('    // calculate edges of the shape', '#ifdef DP_NATIVE_ART\n    const int asset_scale=2;\n#else\n    const int asset_scale=1;\n#endif\n    // calculate edges of the shape')
+        part=part.replace('tx -= spriteoffset[lump];','tx -= spriteoffset[lump]*asset_scale;')
+        part=part.replace('tx +=  spritewidth[lump];','tx += spritewidth[lump]*asset_scale;')
+        part=part.replace('(BASEYCENTER<<FRACBITS)+FRACUNIT/2-(psp->sy-spritetopoffset[lump])','((BASEYCENTER<<FRACBITS)+FRACUNIT/2-psp->sy)/asset_scale+spritetopoffset[lump]')
+        part=part.replace('vis->scale = pspritescale<<detailshift;', 'vis->scale = (pspritescale*asset_scale)<<detailshift;')
+        part=part.replace('vis->xiscale = -pspriteiscale;', 'vis->xiscale = -pspriteiscale/asset_scale;')
+        part=part.replace('vis->xiscale = pspriteiscale;', 'vis->xiscale = pspriteiscale/asset_scale;')
+        path.write_text(text[:begin]+part+text[end:])
+        change('m_controls.c','int key_nextweapon = 0;', "int key_nextweapon = ']' ;")
+        change('p_switch.c', '\t    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));',
+               '            if (R_CheckTextureNumForName(DEH_String(alphSwitchList[i].name1)) < 0 || R_CheckTextureNumForName(DEH_String(alphSwitchList[i].name2)) < 0) continue;\n\t    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));')
         path=out/'s_sound.c';path.write_text('#include "music.h"\nvoid dp_game_sound(void *,int,int);\n'+path.read_text())
         change('s_sound.c','void S_StartSound(void *origin_p, int sfx_id)\n{', 'void S_StartSound(void *origin_p, int sfx_id)\n{\n    dp_game_sound(origin_p,sfx_id,snd_SfxVolume); return;')
         for signature, action in [

@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import createEngine from '../site/simulator/doom-engine.js';
+const bytes=await readFile(new URL('../site/simulator/doom-engine.wasm',import.meta.url));
+const logs=[];const m=await createEngine({wasmBinary:bytes,print:s=>logs.push(s),printErr:s=>logs.push(s)});
+try{m._browser_init();}catch(e){console.error(logs.join("\n"));throw e;}
+const tick=(n)=>{try{for(let i=0;i<n;i++)m._browser_step();}catch(e){console.error(logs.join('\n'));throw e;}};
+const state=i=>m._browser_stat(i);
+const frame=()=>m.HEAPU8.slice(m._browser_frame(),m._browser_frame()+240*240*4);
+assert.equal(state(3),1);assert.ok(state(1)>0);assert.ok(frame().some(v=>v>0));
+assert.equal(state(9),1,'title menu is active at boot');
+const tap=a=>{m._browser_key(a,1);tick(2);m._browser_release();tick(3);};
+const title=frame();tap(3);tap(7);assert.equal(state(9),1);assert.notDeepEqual(frame(),title,'options submenu opens');tap(6);tap(3);tap(7);assert.notDeepEqual(frame(),title,'controls page opens');tap(6);tap(1);tap(1);tap(7);tap(7);tick(40);assert.equal(state(9),0,'start game and difficulty launch gameplay');
+const initial=frame();m._browser_splash();assert.notDeepEqual(frame(),initial);tick(1);
+const hud=frame().slice(210*240*4);assert.ok(new Set(hud).size>25,'classic status-bar artwork is rendered below the viewport');
+const x=state(4),y=state(5);m._browser_key(1,1);tick(8);m._browser_release();tick(6);assert.ok(x!==state(4)||y!==state(5),'forward moves player');
+const angle=state(6);m._browser_key(2,1);tick(70);m._browser_release();tick(2);assert.notEqual(state(6),angle,'turning works through 180 degrees');
+const before=state(7);m._browser_key(4,1);let sound=false;for(let i=0;i<25;i++){tick(1);const p=m._browser_audio()/4;const a=m.HEAPF32.slice(p,p+1260);assert.ok(a.every(v=>Number.isFinite(v)&&Math.abs(v)<=1));sound ||= a.some(v=>Math.abs(v)>.0001);}m._browser_release();tick(2);assert.ok(state(7)<before,'shotgun consumes ammo');assert.ok(sound,'sound effects generated');
+const game=frame();m._browser_key(6,1);tick(2);m._browser_release();tick(3);assert.notDeepEqual(frame(),game,'menu opens');m._browser_key(6,1);tick(2);m._browser_release();tick(3);
+const weapon=state(8);tap(11);tick(40);assert.notEqual(state(8),weapon,'next weapon changes the equipped weapon');m._browser_key(2,1);tick(2000);m._browser_release();tick(2);console.log('Browser engine passed: campaign, LCD/splash/menu, movement, 180-degree turns, fire/audio and 2,000-tick soak.');

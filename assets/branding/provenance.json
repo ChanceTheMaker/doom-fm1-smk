@@ -1,0 +1,9 @@
+{
+  "title": "Classic DOOM logo",
+  "author": "id Software / Don Ivan Punchatz (original logo)",
+  "source": "https://www.steamgriddb.com/logo/9942",
+  "asset_url": "https://cdn2.steamgriddb.com/logo_thumb/154aa6866aefb6f8d0b722621fa71e83.png",
+  "sha256": "ceb39e26ce4b201896bda52de1f4ffc5814d4e6587c81c29e5251eea7dd5530b",
+  "notice": "DOOM is a trademark of id Software. Original logo is not claimed as GPL or Freedoom artwork. Included at the project owner's request for identification of this independent Doom port. No endorsement implied.",
+  "conversion": "192-pixel-wide indexed LCD logo; 15 colours plus transparency. Source PNG retained unchanged."
+}

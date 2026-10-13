@@ -1,0 +1,6 @@
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const source=await readFile(new URL('../site/simulator/sound.js',import.meta.url),'utf8');
+for(const rate of [44100,48000]){let Sound;vm.runInNewContext(source,{Float32Array,sampleRate:rate,AudioWorkletProcessor:class{constructor(){this.port={};}},registerProcessor:(name,c)=>Sound=c});const s=new Sound();const output=()=>[new Float32Array(128),new Float32Array(128)];let o=output();s.process([], [o]);assert.ok(o[0].every(v=>v===0),'empty queue silent');for(let i=0;i<4;i++)s.port.onmessage({data:new Float32Array(1260).fill(.25)});o=output();s.process([],[o]);assert.ok(o[0].every(v=>v===.25),'audio reaches output');assert.deepEqual(o[0],o[1]);for(let i=0;i<200;i++){o=output();s.process([],[o]);assert.ok(o[0].every(Number.isFinite));}assert.ok(o[0].every(v=>v===0),'underrun silent');s.port.onmessage({data:new Float32Array(40000).fill(.5)});assert.ok(s.count<=16384);s.port.onmessage({data:{clear:true}});o=output();s.process([],[o]);assert.ok(o[0].every(v=>v===0),'pause flushes audio');}
+console.log('44.1/48 kHz audio: queue, stereo output, underflow, overflow and pause flush passed.');

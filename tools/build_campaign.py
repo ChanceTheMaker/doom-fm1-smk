@@ -90,10 +90,19 @@ for texname,patchname,accent in [('DPSTEEL','DPWALL','metal'),('DPRUST','DPRPANE
  out=bytearray(struct.pack('<I',len(records))+bytes(len(records)*4))
  for i,b in enumerate(records):struct.pack_into('<I',out,4+i*4,len(out));out.extend(b)
  new=[(name,newpn if name=='PNAMES' else bytes(out) if name=='TEXTURE1' else blob) for name,blob in new]
+# Small reusable floor/ceiling tiles replace the flat-colour placeholders.
+for flatname in ('FLOOR0_1','CEIL3_5'):
+ tile=bytearray()
+ for yy in range(64):
+  for xx in range(64):
+   seam=xx%32==0 or yy%32==0
+   shade=40 if seam else (64+((xx*13+yy*7)%5)*2 if flatname=='FLOOR0_1' else 104+(8 if yy%32==2 else 0))
+   tile.append(color((shade,shade,shade+4)))
+ new=[(n,bytes(tile) if n==flatname else b) for n,b in new]
 # All geometry is authored here: grid cells combine into rooms, with narrow connectors.
 def make_map(number):
  layouts={
-  1: ([(0,0),(4,0),(4,4)],[(3,1),(5,3)],'THE OUTPOST'),
+  1: ([(0,0),(4,0),(0,4),(4,4)],[(3,1),(5,3),(1,3),(3,5)],'THE OUTPOST'),
   2: ([(0,0),(4,0),(8,0)],[(3,1),(7,1)],'IRON HALLS'),
   3: ([(0,0),(4,0),(4,4),(8,4)],[(3,1),(5,3),(7,5)],'REACTOR CORE'),
   # Geometry is loaded one level at a time; keep rooms and sightlines compact.
@@ -109,6 +118,8 @@ def make_map(number):
  for sec,(x,y) in enumerate(rooms):
   for xx in range(x,x+3):
    for yy in range(y,y+3):cells[xx,yy]=sec
+ if number==1:
+  for xy in [(0,0),(6,0),(0,6),(6,6)]:cells.pop(xy)
  for xy in halls:cells[xy]=len(rooms)+halls.index(xy)
  lines=[];verts=[];vi={};sides=[]
  def vertex(p):
@@ -116,7 +127,8 @@ def make_map(number):
   if p not in vi:vi[p]=len(verts);verts.append(p)
   return vi[p]
  def side(sec,mid):
-  n=len(sides);sides.append(struct.pack('<hh8s8s8sh',0,0,b'-',b'-',mid.encode(),sec));return n
+  trim=b'DPSTEEL' if number==1 else b'-'
+  n=len(sides);sides.append(struct.pack('<hh8s8s8sh',0,0,trim,trim,mid.encode(),sec));return n
  ex,ey=rooms[-1];exit_edge=((ex+1,ey+3),(ex+2,ey+3))
  for (x,y),sec in sorted(cells.items()):
   edges=[((x,y),(x,y+1),(x-1,y)),((x,y+1),(x+1,y+1),(x,y+1)),((x+1,y+1),(x+1,y),(x+1,y)),((x+1,y),(x,y),(x,y-1))]
@@ -124,14 +136,17 @@ def make_map(number):
    back=cells.get(neighbor)
    if back==sec:continue
    if back is not None and sec>back:continue
-   special=11 if (a,b)==exit_edge else 0
+   special=11 if (a,b)==exit_edge else 1 if number==1 and back==len(rooms) else 0
    tex='SW1GRAY' if special else ('DPSTEEL' if sec%2==0 else 'DPRUST')
    front=side(sec,'-' if back is not None else tex);bs=side(back,'-') if back is not None else 65535
    lines.append(struct.pack('<HHHHHHH',vertex(a),vertex(b),4 if back is not None else 1,special,0,front,bs))
  sectors=[]
  for i in range(len(rooms)+len(halls)):
   light=(224 if i%2==0 else 176) if number<=3 else {4:192,5:208,6:160,7:208,8:144,9:176}[number]+(16 if i%2==0 else 0)
-  sectors.append(struct.pack('<hh8s8shhh',0,128,b'FLOOR0_1',b'CEIL3_5',light,0,0))
+  floor,ceiling,kind=0,128,0
+  if number==1:
+   floor,ceiling,light,kind=[(0,112,144,0),(16,160,224,0),(0,96,96,9),(32,192,176,0),(8,8,128,0),(24,112,144,0),(0,96,80,0),(16,112,112,0)][i]
+  sectors.append(struct.pack('<hh8s8shhh',floor,ceiling,b'FLOOR0_1',b'CEIL3_5',light,kind,0))
  things=[(64,192,0,1,7)];enemies=[]
  for i,(x,y) in enumerate(rooms):
   points=[(x*128+256,y*128+192,3004 if i%2==0 else 3001)]

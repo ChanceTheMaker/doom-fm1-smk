@@ -5,3 +5,6 @@
 *.md text eol=lf
 # Pinned upstream assets are verified byte-for-byte, including license text.
 assets/freedoom/** -text
+# Keep generated browser-engine hashes stable on Windows and Linux.
+site/simulator/doom-engine.js text eol=lf
+site/simulator/doom-engine.wasm -text

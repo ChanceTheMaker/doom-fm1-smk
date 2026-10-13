@@ -20,6 +20,13 @@ for r in releases+archived:
     assert r['app']==f"doom-{r['id']}-{suffix}.bin",p
 stock=root/'restore-stock/FM-1-v15.fwsc'
 assert stock.stat().st_size==699956 and hashlib.sha256(stock.read_bytes()).hexdigest()=='db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a'
+sim=root/'simulator'
+build=json.loads((sim/'build.json').read_text())
+assert set(build['files'])=={'doom-engine.js','doom-engine.wasm'}
+for name,digest in build['files'].items():
+    assert hashlib.sha256((sim/name).read_bytes()).hexdigest()==digest,name
+assert (sim/'doom-engine.wasm').read_bytes()[:4]==b'\0asm'
+assert build['wad_sha256']==build['artwork']['sha256']
 for p in root.rglob('*'):
     if not p.is_file():continue
     assert p==stock or p.suffix.lower() not in {'.fwsc','.smkupdate','.wad','.elf','.map'},p

@@ -26,7 +26,7 @@ Existing hardware adapter files carry GPL-3.0-only notices. Retain their exact n
 
 `tools/fetch_test_wad.py` explicitly downloads https://soulsphere.org/random/miniwad.zip into ignored build output. Archive SHA-256: `b4c9804343be34e485fddab802c18ecf836168d733c2f03441d8a9dff80b2393`. WAD SHA-256: `daed5e9dc341a9ff4b9c6901cb8467a630bd31b87f3ecb58a93a8b2bc186fbfb`.
 
-`tools/pack_test_wad.py` modifies that pinned fixture for local measurement. It retains MAP01, optionally prunes texture definitions, and rebuilds an aligned, deduplicated container. The asset license also applies to these generated files; the downloader places a notice alongside them. No WAD assets are tracked, and the compiler does not download them. No commercial Doom artwork is included.
+`tools/pack_test_wad.py` modifies that pinned fixture for local measurement. It retains MAP01, optionally prunes texture definitions, and rebuilds an aligned, deduplicated container. The asset license also applies to these generated files; the downloader places a notice alongside them. No WAD assets are tracked, and the compiler does not download them. These campaign assets contain no commercial Doom artwork; the development title logo is documented separately below.
 
 ## Imported native HAL and updater tools
 
@@ -62,7 +62,7 @@ The website analytics/preferences module and styles are adapted from the same Sl
 
 The runtime USB stack and RAM loader cores derive from GPL Sloop SMK revision `090588d112a4a6230fe71d2f3263bdcca2203820`. Source hashes and adaptations are in `src/native/update/PROVENANCE.json`; original notices remain in source.
 
-Native enemy artwork and the face HUD use Freedoom v0.13.0, licensed under the BSD-style terms in `assets/freedoom/COPYING.adoc`. Asset hashes, sources and credits are retained in `assets/freedoom/`; website copies of its license and credits are in `site/licenses/`. No commercial Doom artwork is included.
+Native enemy artwork and the face HUD use Freedoom v0.13.0, licensed under the BSD-style terms in `assets/freedoom/COPYING.adoc`. Asset hashes, sources and credits are retained in `assets/freedoom/`; website copies of its license and credits are in `site/licenses/`. These campaign assets contain no commercial Doom artwork; the development title logo is documented separately below.
 
 ## Dual-core audio worker
 
@@ -75,3 +75,23 @@ AC79 SDK startup sequence. Doom adds asynchronous whole-block audio dispatch,
 private DMA staging, consumer reset after retirement, separate stacks, and
 read-only execution diagnostics. The polling loop runs from SRAM; render callbacks
 use XIP. Doom holds CPU1 before every flash or recovery handoff.
+
+## Faithful presentation development preview
+
+Weapon patches (pistol, fist and shotgun) are from Freedoom v0.13.0, pinned
+commit `cfb8644b1a8dc7d7d2177e6a892ccaa2922bdaae`. Original PNGs, checksums,
+license and contributor credits remain in `assets/freedoom`. The native/browser
+LCD package scales these patches to half size and the renderer restores their
+display size. HUD artwork is converted to LCD dimensions; patch columns are
+losslessly deduplicated. No Freedoom maps are imported.
+
+The classic DOOM logo is a separate, non-GPL branding asset. Its source,
+checksum, ownership notice and conversion are in `assets/branding/provenance.json`.
+The project does not claim ownership or a Freedoom license for that logo.
+
+The browser simulator preserves the FM-1 work from the main development checkout.
+`site/simulator/smk-panel.css` and the SMK layout adapt Sloop SMK revision
+`090588d112a4a6230fe71d2f3263bdcca2203820`, `web/smk-studio.css` and
+`web/smk-simulator.js`, under GPL-3.0-only. Synth/MIDI functionality is omitted;
+only Doom's real key mappings are active. Emscripten notices are retained in
+`site/licenses/Emscripten.txt`.

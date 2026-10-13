@@ -218,6 +218,20 @@
     "graphics/stbar.png": "4c551b443341876876f1302c8f97415447183658045852381d0e84e0d51aefc8",
     "graphics/starms.png": "4f81fae3ea412370e89a2cf34e595ab92d81931fb043b9c83abaed1585c5881b",
     "graphics/sttprcnt.png": "34e57fba8affbaef453199fdfab3a078a73563e1f9ab78f555d35a6a93be5c5e",
-    "graphics/sttminus.png": "42d6d0e07501d4b42692956ccc4866003136f958068d60aa4ce2cb13bca1cff9"
+    "graphics/sttminus.png": "42d6d0e07501d4b42692956ccc4866003136f958068d60aa4ce2cb13bca1cff9",
+    "sprites/pisfa0.png": "32ca35d493fb948a86bcfc20a9003cd08ee53c27af47b123488d1a399a86358c",
+    "sprites/pisga0.png": "c54deb188194714b5e75d4a7a125c8ab4214415db93df83c76188b6c1bd3f523",
+    "sprites/pisgb0.png": "d41d5db3ce330ae28fd41486691a042fe18de49cb01b1cc88383479c60407b80",
+    "sprites/pisgc0.png": "f7d15a6ccc8fb0f3121121b5e72a8296d63a6e1badc7b82269bc579663f56bdd",
+    "sprites/punga0.png": "e8774d0009ff53d4879363a1fc1c0b88be54355fa3a11a97f5be3cccdef6475d",
+    "sprites/pungb0.png": "326abeea62bf140d32914efc5cd3090a14a536ee9b4569e01a6fb0a0bc8517f9",
+    "sprites/pungc0.png": "23fe158ea99dac6a08110e00388d1b0ef7229e719fac5ab5c540ad6beafe0375",
+    "sprites/pungd0.png": "ad830674669c870ef8363ee511075b4d6b0db1dd4a034776d714876d6776529d",
+    "sprites/shtfa0.png": "e5e41633716bea67d70e4871cea6d3cff7ad59c58ab2d8a2b4a71e5dd757dbee",
+    "sprites/shtfb0.png": "3d43c46ab34651537195ed6695dcb7ef4557457015a3a91f01e0ab280193aebe",
+    "sprites/shtga0.png": "058c6e234b1920c34da396a6ca22c19f3d86835aac344e7131a7d750274f2c28",
+    "sprites/shtgb0.png": "7b2dcc2f95c3a4c54a1f09d1287f93f33421cbb6f614a9f99c3e33dd58aacc59",
+    "sprites/shtgc0.png": "242dd101525f40d2d2b5e7976da1cd58cd8dcff7ec7278375d878758f40aa577",
+    "sprites/shtgd0.png": "80e8d92849517615ef1f3e298804fb085dbfa2dc1030e72b8ebf2a1578a7ac7f"
   }
 }

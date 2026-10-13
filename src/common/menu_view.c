@@ -27,6 +27,7 @@ static unsigned glyph(unsigned ch,unsigned row) {
     if(ch==39)return row<2?4:0;
     if(ch=='.')return row==6?4:0;
     if(ch=='!')return row<4||row==6?4:0;
+    if(ch=='>')return 1u<<(row<4?3-row:row-3);
     if(ch=='(')return row==0||row==6?2:4;
     if(ch==')')return row==0||row==6?8:4;
     return 0;
@@ -59,7 +60,7 @@ int dp_menu_present(const dp_menu_view *v,dp_row_sink sink,void *ctx) {
             dp_text_row(row,y,14,top,v->rows[i],2,selected?0:0xffff);
         }
         dp_text_row(row,y,10,215,v->footer,1,0xbdf7);
-        dp_text_row(row,y,10,229,v->message?"":"2 UP / 4 DOWN / 8 SELECT / 7 CLOSE",1,0xbdf7);
+        dp_text_row(row,y,10,229,v->message?"7 BACK":"2 UP / 4 DOWN / 8 SELECT / 7 BACK",1,0xbdf7);
         if(!sink(ctx,y,row,DP_LCD_WIDTH))return 0;
     }
     return 1;

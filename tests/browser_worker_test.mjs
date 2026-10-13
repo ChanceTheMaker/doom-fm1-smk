@@ -1,0 +1,14 @@
+import vm from 'node:vm';
+import {fileURLToPath} from 'node:url';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import createEngine from '../site/simulator/doom-engine.js';
+const bytes=await readFile(new URL('../site/simulator/doom-engine.wasm',import.meta.url));
+let m;let releases=0;let seq=0;const timers=new Map(),messages=[];const self={};
+const source=(await readFile(new URL('../site/simulator/worker.js',import.meta.url),'utf8')).replace("import createEngine from './doom-engine.js?v=faithful15-1';",'');
+const context={self,URL,Uint8Array,Float32Array,Set,performance:{now:()=>0},postMessage:d=>{messages.push(d.type);if(d.type==='error')throw new Error(d.message);},clearTimeout:id=>timers.delete(id),setTimeout:fn=>{const id=++seq;timers.set(id,fn);return id;},createEngine:async opts=>{m=await createEngine({...opts,locateFile:()=>fileURLToPath(new URL('../site/simulator/doom-engine.wasm',import.meta.url)),wasmBinary:bytes});const release=m._browser_release;m._browser_release=()=>{releases++;release();};return m;}};
+await vm.runInNewContext('(async()=>{'+source.replaceAll('import.meta.url',JSON.stringify('https://test.invalid/simulator/worker.js'))+'})()',context);
+const send=data=>self.onmessage({data});const tick=n=>{for(let i=0;i<n;i++){const [id,fn]=timers.entries().next().value;timers.delete(id);fn();}};
+assert.ok(messages.includes('ready'));send({type:'run',value:true});tick(2);for(let i=0;i<2;i++){send({type:'key',action:7,down:true});tick(2);send({type:'key',action:7,down:false});tick(8);}tick(70);assert.equal(m._browser_stat(9),0,'start and difficulty launch gameplay');
+let ammo=m._browser_stat(7);send({type:'key',action:4,down:true});send({type:'key',action:4,down:false});tick(35);assert.equal(m._browser_stat(7),ammo-1,'2 ms tap survives to a game tick');
+send({type:'key',action:1,down:true});tick(2);send({type:'run',value:false});assert.equal(timers.size,0);const released=releases;assert.ok(released>=2,'pause flushes held engine controls');send({type:'run',value:true});tick(12);assert.equal(releases,released+1,'resume also starts from released controls');send({type:'run',value:false});assert.equal(timers.size,0);console.log('Real engine Worker: quick taps, scheduling, pause/resume and released movement passed.');

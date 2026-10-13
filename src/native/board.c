@@ -95,13 +95,13 @@ void dp_frame_done(void){
     if(dp_millis()>30000){dp_boot.pending=0;dp_boot.failures=0;}
 }
 /* Lowest seven white keys: left, forward, right, back, fire, use, menu.
- * Next four: enter, run, strafe left, strafe right. */
+ * Next five: enter, run, strafe left, strafe right, cycle weapon. */
 static const unsigned char action_keys[]={KEY_LEFTARROW,KEY_UPARROW,KEY_RIGHTARROW,
-    KEY_DOWNARROW,KEY_FIRE,KEY_USE,KEY_ESCAPE,KEY_ENTER,KEY_RSHIFT,KEY_STRAFE_L,KEY_STRAFE_R};
+    KEY_DOWNARROW,KEY_FIRE,KEY_USE,KEY_ESCAPE,KEY_ENTER,KEY_RSHIFT,KEY_STRAFE_L,KEY_STRAFE_R,']'};
 #if DP_SMK
-static const uint8_t note_keys[]={0,2,4,5,7,9,11,12,14,16,17};
+static const uint8_t note_keys[]={0,2,4,5,7,9,11,12,14,16,17,19};
 #else
-static const uint8_t note_keys[]={0,2,4,6,7,9,11,12,14,16,18};
+static const uint8_t note_keys[]={0,2,4,6,7,9,11,12,14,16,18,19};
 #endif
 uint32_t dp_millis(void){uint32_t t=fm1_ticks();remainder+=t-last_tick;last_tick=t;millis+=remainder/24000u;remainder%=24000u;return millis;}
 void dp_service(void){
@@ -274,7 +274,7 @@ void dp_cstart(const uint32_t *parameters){
     doomgeneric_Create(8,args);
 #ifdef DP_CAMPAIGN
     if(!dp_splash_present(DP_SMK?(DP_ELITE?2:1):0,dp_lcd_row,0))dp_panic("SPLASH DISPLAY FAILED");
-    uint32_t splash_start=dp_millis();while(dp_millis()-splash_start<1600)dp_service();
+    dp_title_start();
 #endif
     for(;;){doomgeneric_Tick();dp_service();}
 }

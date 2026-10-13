@@ -8,14 +8,14 @@ from prepare_engine import prepare,ROOT,UPSTREAM
 from static_wad import freeze
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--board',required=True,choices=['fm1','smk37-pro','smk37-elite'])
-p.add_argument('--campaign',action='store_true',help='Build Test14 nine-level dual-core campaign')
+p.add_argument('--campaign',action='store_true',help='Build Candidate15 nine-level dual-core campaign')
 p.add_argument('--toolchain',type=Path,default=os.environ.get('JIELI_TOOLCHAIN'))
 a=p.parse_args()
 if not a.toolchain:p.error('Set JIELI_TOOLCHAIN or pass --toolchain')
 tc=Path(a.toolchain).resolve();cc=tc/'pi32v2/bin/clang';ld=tc/'pi32v2/bin/ld';objcopy=tc/'common/bin/objcopy';objdump=tc/'common/bin/objdump'
 if not cc.exists():p.error('Native compiler not found')
 out=ROOT/'build/native'/a.board;out.mkdir(parents=True,exist_ok=True)
-version='test14' if a.campaign else 'test04'
+version='test15' if a.campaign else 'test04'
 engine=prepare(out/'engine',campaign=a.campaign);native=ROOT/'src/native';common=ROOT/'src/common'
 # The native display frontend consumes the indexed framebuffer directly.
 path=engine/'i_video.c';text=path.read_text();start=text.index('void I_FinishUpdate (void)');end=text.index('\n}',start)+2

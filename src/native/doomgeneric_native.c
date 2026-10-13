@@ -7,6 +7,8 @@
 #include "campaign.h"
 #endif
 #include "platform.h"
+#include "splash.h"
+#include <string.h>
 extern struct color colors[256];
 static uint16_t palette[256];
 int dp_native_hud(const unsigned short *,dp_row_sink,void *);
@@ -25,7 +27,7 @@ void DG_DrawFrame(void){
     dp_menu_view menu;
 #ifdef DP_CAMPAIGN
     int active=dp_menu_snapshot(&menu)||dp_campaign_overlay(&menu);
-    int ok=active?dp_menu_present(&menu,dp_lcd_row,0):dp_campaign_present(I_VideoBuffer,palette,scene_row,0);
+    int ok=active?(!menu.message&&!strcmp(menu.title,"DOOM")?dp_title_present(&menu,dp_lcd_row,0):dp_menu_present(&menu,dp_lcd_row,0)):dp_campaign_present(I_VideoBuffer,palette,scene_row,0);
 #ifdef DP_NATIVE_ART
     if(ok&&!active)ok=dp_native_hud(palette,dp_lcd_row,0);
 #endif

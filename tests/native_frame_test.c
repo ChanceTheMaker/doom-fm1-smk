@@ -10,9 +10,9 @@
 struct color colors[256];
 byte *I_VideoBuffer;
 static unsigned writes[240],next_row,frames,hud_calls;
-static int menu_on,overlay_on,fail_row=-1;
+static int menu_on,overlay_on,fail_row=-1,title_calls;
 static jmp_buf panic_target;
-int dp_menu_snapshot(dp_menu_view *v){(void)v;return menu_on;}
+int dp_menu_snapshot(dp_menu_view *v){memset(v,0,sizeof *v);strcpy(v->title,menu_on==2?"DOOM":"OPTIONS");return menu_on;}
 int dp_campaign_overlay(dp_menu_view *v){(void)v;return overlay_on;}
 static int emit(unsigned first,unsigned end,unsigned value,dp_row_sink sink,void *ctx){
     uint16_t row[240];for(unsigned x=0;x<240;x++)row[x]=value;
@@ -25,6 +25,7 @@ int dp_campaign_present(const unsigned char *p,const unsigned short *pal,dp_row_
 int dp_menu_present(const dp_menu_view *v,dp_row_sink sink,void *ctx){
     (void)v;return emit(0,240,3,sink,ctx);
 }
+int dp_title_present(const dp_menu_view *v,dp_row_sink sink,void *ctx){(void)v;title_calls++;return emit(0,240,3,sink,ctx);}
 int dp_native_hud(const unsigned short *pal,dp_row_sink sink,void *ctx){
     (void)pal;hud_calls++;return emit(210,240,2,sink,ctx);
 }
@@ -42,10 +43,11 @@ int dp_key(int *d,unsigned char *k){(void)d;(void)k;return 0;}
 void dp_message(const char *s){(void)s;}
 static void reset(void){memset(writes,0,sizeof(writes));next_row=frames=hud_calls=0;}
 int main(void){
-    for(int mode=0;mode<3;mode++){
-        menu_on=mode==1;overlay_on=mode==2;reset();DG_DrawFrame();
+    for(int mode=0;mode<4;mode++){
+        menu_on=mode==3?2:mode==1;overlay_on=mode==2;reset();DG_DrawFrame();
         assert(next_row==240&&frames==1&&hud_calls==(unsigned)(mode==0));
     }
+    assert(title_calls==1);
     menu_on=overlay_on=0;
     for(int row=100;row<=220;row+=120){
         reset();fail_row=row;

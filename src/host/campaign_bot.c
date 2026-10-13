@@ -12,8 +12,8 @@ extern int detailLevel;
 static int observed;
 static int desired[256],held[256],lastmap,waypoint,visited,completions,deaths;
 static int was_intermission,was_dead,peak_score,total_kills,lastkills;
-static const int routes[DP_CAMPAIGN_LEVELS][6][2]={
- {{704,192},{704,704},{704,864},{704,864}},
+static const int routes[DP_CAMPAIGN_LEVELS][8][2]={
+ {{704,192},{704,704},{192,704},{192,192},{704,192},{704,704},{704,864}},
  {{1216,192},{1216,352},{1216,352},{1216,352}},
  {{704,192},{704,704},{1216,704},{1216,864}},
  {{704,192},{704,704},{192,704},{192,864}},
@@ -22,7 +22,7 @@ static const int routes[DP_CAMPAIGN_LEVELS][6][2]={
  {{704,192},{1216,192},{1728,192},{1728,352}},
  {{192,192},{192,704},{-320,704},{-320,1216},{-320,1376}},
  {{704,192},{704,704},{1216,704},{1216,192},{1216,704},{1216,864}}};
-static const int route_len[DP_CAMPAIGN_LEVELS]={3,2,4,4,5,4,4,5,6};
+static const int route_len[DP_CAMPAIGN_LEVELS]={7,2,4,4,5,4,4,5,6};
 void dp_bot_observe(int final){
  if(!getenv("DOOM_CAMPAIGN_BOT"))return;
  player_t *p=&players[consoleplayer];memset(desired,0,sizeof(desired));
@@ -55,7 +55,7 @@ void dp_bot_observe(int final){
    double error=atan2(dy,dx)-angle;while(error>3.14159265)error-=6.283185307;while(error< -3.14159265)error+=6.283185307;
    if(error>0.035)desired[KEY_LEFTARROW]=1;else if(error< -0.035)desired[KEY_RIGHTARROW]=1;
    if(enemy){if(fabs(error)<0.09)desired[KEY_FIRE]=1;}
-   else if(fabs(error)<0.15&&!desired[KEY_USE])desired[KEY_UPARROW]=1;
+   else if(fabs(error)<0.15){desired[KEY_UPARROW]=1;desired[KEY_USE]=gametic%140==0;}
   }
  }else if(inter)desired[KEY_FIRE]=(gametic/20)%2;
  if(getenv("DOOM_BOT_LOW_DETAIL") && observed++==0)desired[KEY_F5]=1;

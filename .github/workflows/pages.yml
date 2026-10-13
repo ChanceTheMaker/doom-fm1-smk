@@ -28,6 +28,10 @@ jobs:
       - run: node tests/site_installer_test.mjs
       - run: node tests/midi_discovery_test.mjs
       - run: node tests/verify_boot_test.mjs
+      - run: node tests/browser_input_test.mjs
+      - run: node tests/browser_audio_test.mjs
+      - run: node tests/browser_engine_test.mjs
+      - run: node tests/browser_worker_test.mjs
       - run: cc -std=c11 -O2 -DCMAP256 -DDP_CAMPAIGN -DDP_NATIVE_ART -Ithird_party/doomgeneric/doomgeneric -Isrc/common -Isrc/native tests/native_frame_test.c src/native/doomgeneric_native.c -o /tmp/native-frame-test && /tmp/native-frame-test
       - run: cc -std=c11 -O2 -Wall -Wextra -Werror -Isrc/common tests/music_test.c src/common/music.c src/common/sfx.c -o /tmp/music-test && /tmp/music-test
       - run: cc -std=c11 -O2 -Isrc/common tests/sfx_test.c src/common/music.c src/common/sfx.c -o /tmp/sfx-test && /tmp/sfx-test
