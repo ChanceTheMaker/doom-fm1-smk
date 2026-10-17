@@ -121,3 +121,25 @@ The live site uses the shared GA4 property `G-JVF09MZEGD` for visits, firmware b
 New code: GPL-3.0-only, [LICENSE](LICENSE). DoomGeneric retains upstream Doom notices. Miniwad/Freedoom content retains its BSD-style license; mpaland/printf retains its MIT license. Hardware and updater work derives from Felucca by Leo Kuroshita / Hugelton Instruments and the Felucca, Sloop and Melodee SMK ports. See [THIRD_PARTY.md](THIRD_PARTY.md), [web credits](site/credits.html) and per-file provenance.
 
 Independent community project; not affiliated with id Software, Bethesda or M-VAVE. Product names belong to their respective owners.
+
+## Windows USB installation
+
+SMK-37 Pro installation and original-firmware restore use a local USB helper
+on Windows, so Chrome does not own MIDI during the device restart. The same
+Install and Restore buttons remain on the website. Other platforms and Elite
+retain their existing browser installer; the native path is Pro-only.
+
+With Python 3 and Node.js 22+ installed, run from this checkout:
+
+```powershell
+python tools/setup_native_smk.py
+python tools/serve_native_smk.py --allow-hosted
+```
+
+Then use the Doom website, or `http://localhost:8895/`. Allow local-network
+access when prompted. The setup command verifies the official Pro 016 package
+and the published Doom app; it never accesses MIDI or installs firmware.
+Close connected Studio/Simulator tabs and other MIDI apps before installing.
+If Chrome is already frozen, restart it first to release its previous session.
+Keep the helper running until the installer confirms the returned identity.
+No browser flags or alternative browser profile are required.

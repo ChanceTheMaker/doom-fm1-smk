@@ -71,3 +71,21 @@ Release 15 passed its FM-1 hardware check and is prepared for publication. Earli
 - [x] Physically validate Release 15 on FM-1 through normal USB.
 - [x] Prepare the exact verified artifacts and website for Release 15 publication.
 - [ ] Physically validate Release 15 on Pro and Elite.
+
+## Windows SMK Pro USB isolation (2026-10-16)
+
+Ports Sloop 0a51b35's native Windows helper and disposable MIDI sessions.
+Installation and original-firmware restore require the matching helper on Windows
+Pro; errors never fall back to browser MIDI. Package construction uses this
+project's own verified builders and pins the existing app. Expected boot identity:
+Doom-SMK-37_016. No firmware, protected storage or protocol changes. Elite retains
+its existing browser path. No upstream contribution was submitted.
+
+Validation includes mocked native stages, cross-process exclusion, HTTP boundary
+checks, package verification and browser install/restore routing. Hardware checks
+passed on the connected SMK-37 Pro: original Pro 016 to Doom runtime
+Doom-SMK-37_016, then original Pro 016. Both restart identities were verified.
+The real installer page made zero Web MIDI requests and stayed responsive
+(270 ticks at 100 ms during installation). Baseline: 25c1965; Test16 firmware
+unchanged. Automatic FM-1 V15 preparation remains available and was checked
+in the browser regression.

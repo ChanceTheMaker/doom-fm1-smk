@@ -23,6 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node tests/native_smk_client.mjs && python3 tests/native_smk.py && python3 tests/native_smk_http.py
       - run: node site/test_update_progress.mjs
       - run: node site/restore-stock/test_restore.mjs
       - run: node tests/site_installer_test.mjs
