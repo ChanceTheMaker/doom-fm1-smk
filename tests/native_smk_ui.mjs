@@ -34,14 +34,14 @@ try{
   const req=route.request(),url=new URL(req.url());
   if(url.pathname.endsWith('/capabilities')){
    probes++;if(mode==='absent')return route.abort('connectionrefused');
-   return route.fulfill({json:{available:true,models:['smk-pro'],protocol:1,token,app:mode==='wrong'?'other-app':'doom-fm1-smk',firmware:'Doom-SMK-37_016'}});
+   return route.fulfill({json:{available:true,models:['smk-pro'],protocol:1,token,app:mode==='wrong'?'other-app':'doom-fm1-smk',firmware:'Doom-SMK-37_017'}});
   }
   if(req.method()==='POST'){
    assert.equal(req.headers()['x-doom-token'],token);
    const body=req.postDataJSON();assert.deepEqual(body,{action:body.action,model:'smk-pro',app:'doom-fm1-smk'});
    actions.push(body.action);return route.fulfill({json:{id:'test-job'}});
   }
-  return route.fulfill({json:{state:mode==='error'?'error':'done',error:'Simulated USB interruption',phase:'reboot',logs:['Simulated restart verification'],identity:actions.at(-1)==='restore'?'SMK-37 Pro_016':'Doom-SMK-37_016'}});
+  return route.fulfill({json:{state:mode==='error'?'error':'done',error:'Simulated USB interruption',phase:'reboot',logs:['Simulated restart verification'],identity:actions.at(-1)==='restore'?'SMK-37 Pro_016':'Doom-SMK-37_017'}});
  });
  await page.goto(base);await page.locator('.device[data-device="smk37-pro"]').click();await page.locator('#build').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Firmware built and verified'));
  assert.equal(probes,0,'No helper access during page loading');

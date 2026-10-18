@@ -45,6 +45,9 @@ jobs:
       - run: cc -std=c11 -O2 -Isrc/native/hal -DT_CDC=0 -DT_UAC=0 -DT_LAYOUT=0 -DT_ON=0 tests/usb_desc_test.c -o /tmp/usb-desc-test && /tmp/usb-desc-test
       - run: node tests/analytics_test.mjs
       - run: python3 tools/check_site.py
+      - run: node tests/smk_diagnostics.mjs && python3 tests/smk_diagnostics.py
+      - run: cc -O1 -UNDEBUG -DTEST_PUBLIC -Isrc/native/hal tests/usb_smk37_update_test.c -o /tmp/smk-compat && /tmp/smk-compat
+      - run: cc -O1 -UNDEBUG -Isrc/native/hal tests/smk37_flash_profile_test.c -o /tmp/smk-profile && /tmp/smk-profile
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

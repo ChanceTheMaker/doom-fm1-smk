@@ -14,22 +14,22 @@
     "id": "smk37-pro",
     "board": "SMK-37 Pro",
     "public": true,
-    "version": "DOOM SMK TEST16",
+    "version": "DOOM SMK TEST17",
     "product": "SMK-37_999",
-    "app": "doom-smk37-pro-16.bin",
-    "bytes": 578160,
-    "sha256": "6c0c0cb7172b7ef7257cc2e2195c4c169d3264f73c5527f9fec19a8f694c6840",
-    "hardware": "Compiled and package-checked; detailed hardware validation pending"
+    "app": "doom-smk37-pro-17.bin",
+    "bytes": 578352,
+    "sha256": "2ca59ad2c2e080d3c2fbecc128ddd74e9a03ca162c8b0e03d9625ffa9a016071",
+    "hardware": "SMK Pro: installed and restarted as Doom-SMK-37_017, then restored original Pro 016 with successful transfer/readback completion and exact restart identity. EB6014 and Elite hardware confirmation remain pending; UI, sound and long-run validation are not claimed."
   },
   {
     "id": "smk37-elite",
     "board": "SMK-37 Elite",
     "public": true,
-    "version": "DOOM SMK TEST16",
+    "version": "DOOM SMK TEST17",
     "product": "SMK-37_999",
-    "app": "doom-smk37-elite-16.bin",
-    "bytes": 578160,
-    "sha256": "fffc0911e17d893066e51c0e387f462a3670c4c9c0d1aa281a9cbd58a8d943aa",
-    "hardware": "Compiled and package-checked; detailed hardware validation pending"
+    "app": "doom-smk37-elite-17.bin",
+    "bytes": 578352,
+    "sha256": "30887652430f969138e0399dcfe8427492d538049339754c94d7255cc4329a52",
+    "hardware": "Compiled and package-checked; Elite and EB6014 hardware validation pending."
   }
 ]
