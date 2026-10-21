@@ -1,0 +1,55 @@
+{
+  "source_repository": "https://github.com/ChanceTheMaker/gamedude-fm1-smk.git",
+  "source_commit": "a11e0f7ead970684ee80b5aa98a77aa968c017e6",
+  "files": [
+    {
+      "source": "vendor/felucca/firmware/hal/smk37_adc.h",
+      "destination": "src/native/hal/smk37_adc.h",
+      "source_sha256": "6723b1be43620efc8d5d788b77b962f4152547ca7fc6647bfc30a81452e4aacb",
+      "destination_sha256": "6723b1be43620efc8d5d788b77b962f4152547ca7fc6647bfc30a81452e4aacb"
+    },
+    {
+      "source": "vendor/felucca/firmware/hal/smk37_analog_scan.h",
+      "destination": "src/native/hal/smk37_analog_scan.h",
+      "source_sha256": "95d63bd99113015cbc2bfeb15b558419bef9f415f61afd92a6353bb511a1260c",
+      "destination_sha256": "95d63bd99113015cbc2bfeb15b558419bef9f415f61afd92a6353bb511a1260c"
+    },
+    {
+      "source": "vendor/felucca/firmware/hal/smk37_analog_controls.h",
+      "destination": "src/native/hal/smk37_analog_controls.h",
+      "source_sha256": "898fe82af3db9baf97ab1952ce1a791aac52617fd54eff3a17a99a76ecabb7fa",
+      "destination_sha256": "898fe82af3db9baf97ab1952ce1a791aac52617fd54eff3a17a99a76ecabb7fa"
+    },
+    {
+      "source": "vendor/felucca/firmware/hal/smk37_lights.h",
+      "destination": "src/native/hal/smk37_lights.h",
+      "source_sha256": "faabe1d661b51b4467b1c2173d33b94e972c824a6e1cb902252c01386417a6b8",
+      "destination_sha256": "faabe1d661b51b4467b1c2173d33b94e972c824a6e1cb902252c01386417a6b8"
+    },
+    {
+      "source": "vendor/felucca/firmware/hal/smk37_lights_hw.h",
+      "destination": "src/native/hal/smk37_lights_hw.h",
+      "source_sha256": "e852eba23d671a45e7533639e3ac7c8abc1ccf351c2b525cb593756f132618b5",
+      "destination_sha256": "e852eba23d671a45e7533639e3ac7c8abc1ccf351c2b525cb593756f132618b5"
+    },
+    {
+      "source": "vendor/felucca/firmware/hal/smk37_scanner.h",
+      "destination": "src/native/hal/smk37_scanner.h",
+      "source_sha256": "0c1c52ec5154b09785d4985ac534982aeff7f5edb273d21721ed36c309b47782",
+      "destination_sha256": "0c1c52ec5154b09785d4985ac534982aeff7f5edb273d21721ed36c309b47782"
+    },
+    {
+      "source": "firmware/smk37_brightness.h",
+      "destination": "src/native/smk37_brightness.h",
+      "source_sha256": "bfc0667a59d1272a2c0f6d93bbc94131f7053dd9e05a15903ee42c4408dbf591",
+      "destination_sha256": "9bfc3026c9e1f1e2d7c41747aaed161f3fdac8adca71cbef57cdb6fbc0d0f52e"
+    },
+    {
+      "source": "tests/smk37_light_transport.c",
+      "destination": "tests/smk37_light_transport.c",
+      "source_sha256": "03bdcb1c9099e12c4b6effa0c4911fcee92645fa73ebd5cf0c6e9200179e038e",
+      "destination_sha256": "4b169c728e9f54f6fd7e9189189e1d77288a6b6a573530a9c8730dbfbc709424"
+    }
+  ],
+  "adaptations": "Brightness and transport-test include paths changed for Doom. Other imported files unchanged. Doom pad mapping and event consumption are in smk_doom_pads.h and board.c."
+}

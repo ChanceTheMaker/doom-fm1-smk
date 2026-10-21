@@ -32,7 +32,7 @@ replace={'i_system.c':native/'system.c','w_file_stdc.c':native/'w_file_flash.c',
          'doomgeneric.c':common/'doomgeneric_create.c','f_wipe.c':common/'wipe_disabled.c'}
 sources=[replace.get(s.name,s) for s in sources]
 sources += [common/'lcd_frame.c',common/'menu_view.c',common/'wad_view.c',native/'doomgeneric_native.c',native/'libc_support.c',ROOT/'third_party/printf/printf.c',
-            native/'syscalls.c',native/'board.c',native/'crt0.S',native/'hal/fm1_vec.S',asset]
+            native/'syscalls.c',native/'board.c',native/'crt0.S',native/'scan_isr.S',native/'hal/fm1_vec.S',asset]
 flags=['-target','pi32v2','-mcpu=r3','-mfprev1','-Os','-ffunction-sections','-fdata-sections',
        '-isystem',str(tc/'pi32v2/include'),
        '-fno-builtin','-std=gnu11','-DDOOMGENERIC_RESX=320','-DDOOMGENERIC_RESY=200',

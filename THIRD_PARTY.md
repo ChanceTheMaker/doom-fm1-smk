@@ -30,6 +30,13 @@ Existing hardware adapter files carry GPL-3.0-only notices. Retain their exact n
 
 ## Imported native HAL and updater tools
 
+The SMK drum-pad development branch imports ADC/mux, scanner, and RGB drivers
+from GameDude commit `a11e0f7`, plus its Fader 2 brightness logic and light
+transport regression. Their retained GPL-3.0-only OR MPL-2.0 notices permit
+their use here under GPL-3.0-only. No Bluetooth library or vendor radio archive
+is imported. Exact source hashes and adaptations are recorded in
+`src/native/hal/DOOM_PADS_PROVENANCE.json`.
+
 The selected HAL headers/assembly are copied from local `melodee-smk/public-dev1`, revision `5859bc4d07e7f51a3ee8702464a8d777384da801`. Exact paths and hashes are recorded in `src/native/hal/PROVENANCE.json`. Original Felucca and SMK contributor notices remain intact.
 
 Local package/backup helpers and browser update transport are copied from `felucca-smk` revision `cc13e146f11d93328b4fc13ec92c4d69f6bc6e76`. See `docs/UPDATER_PROVENANCE.json`. No stock firmware, calibration or private backup is tracked.
