@@ -30,6 +30,11 @@ def prepare(out,campaign=False):
     for part in ('ceilingclip','floorclip'):
         old='\tmemcpy (lastopening, '+part+'+start, 2*(rw_stopx-start));'
         change('r_segs.c',old,'\tDP_CheckOpenings(rw_stopx-start);\n'+old)
+    # Keep the bounds check, but fit exact sprite/frame/count on the LCD.
+    change('r_things.c', 'I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",\n\t\t thing->sprite, thing->frame);',
+           'I_Error ("OBJ S%d F%d N%d T%d", thing->sprite, thing->frame, sprdef->numframes, (int)(thing->state-states));')
+    change('r_things.c', 'I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",\n\t\t psp->state->sprite, psp->state->frame);',
+           'I_Error ("GUN S%d F%d N%d", psp->state->sprite, psp->state->frame, sprdef->numframes);')
     # A display-only snapshot lets the physical 240px LCD render readable menus.
     with (out/'m_menu.c').open('a') as f:
         f.write('\n'+(ROOT/'src/common/menu_engine.inc').read_text())

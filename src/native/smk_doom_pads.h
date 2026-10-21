@@ -35,7 +35,8 @@ static inline void dp_pad_colors(uint32_t rgb[16],uint16_t held,unsigned level){
         uint32_t color=0;
         if((DP_PAD_MASK&(1u<<p))&&!(held&(1u<<p))){
             if(p==0||p==2)color=(level<<16)|((level/2)<<8); /* amber strafe */
-            else if(p>=14)color=(level<<16)|level; /* magenta Use / Fire */
+            else if(p==14)color=level<<8; /* green Use */
+            else if(p==15)color=level<<16; /* red Fire */
             else color=((level*2/3)<<8)|level; /* cyan movement */
         }
         rgb[p]=color;

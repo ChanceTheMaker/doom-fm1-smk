@@ -61,7 +61,7 @@ Experimental firmware is provided without warranty. Power loss, an incompatible 
 The `feat/smk-drum-controls` development build adds illuminated SMK pads:
 top row 1/2/3 = strafe left / forward / strafe right; bottom row 1/2/3 =
 turn left / back / turn right; bottom row 7/8 = Use / Fire. Strafe pads are
-amber, movement cyan, and action pads magenta. Pads go dark while held.
+amber, movement cyan, Use green, and Fire red. Pads go dark while held.
 Fader 2 changes brightness (startup level 150 until moved). REC opens the
 menu and PLAY selects; PATCH/PARA and the existing keyboard controls remain.
 This candidate is not the published release. See [test status](docs/SMK_DRUM_CONTROLS.md).

@@ -51,22 +51,45 @@ int main(void){
         memset(wire,0xff,sizeof wire);
         dp_pad_colors(rgb,held<16?(uint16_t)(1u<<held):0,level);
         smk37_light_encode_rgb(wire,rgb);
-        for(unsigned i=0;i<36;i++)assert(!wire[i]);
+        for(unsigned i=0;i<SMK37_LIGHT_RESET_BYTES;i++)assert(!wire[i]);
+        for(unsigned i=SMK37_LIGHT_RESET_BYTES+SMK37_LIGHT_COLOR_BYTES;i<SMK37_LIGHT_BYTES;i++)assert(!wire[i]);
         for(unsigned p=0;p<16;p++){
             unsigned c=rgb[p];
             if(!(DP_PAD_MASK&(1u<<p))||held==p)assert(!c);
             else if(p==0||p==2)assert(c==((level<<16)|((level/2)<<8)));
-            else if(p>=14)assert(c==((level<<16)|level));
+            else if(p==14)assert(c==(level<<8));
+            else if(p==15)assert(c==(level<<16));
             else assert(c==(((level*2/3)<<8)|level));
-            assert(decode(wire+36+24*smk37_pad_light_order[p])==(((c>>8)&255)<<16|((c>>16)&255)<<8|(c&255)));
+            assert(decode(wire+SMK37_LIGHT_RESET_BYTES+24*smk37_pad_light_order[p])==(((c>>8)&255)<<16|((c>>16)&255)<<8|(c&255)));
         }
     }
     smk_brightness_t f={0};unsigned level=150;
     for(unsigned i=0;i<24;i++)if(i!=18)assert(smk_brightness_sample(&f,150,i,1023)==150&&!f.ready);
     assert(smk_brightness_sample(&f,150,18,500)==150);
     assert(smk_brightness_sample(&f,150,18,507)==150&&!f.active);
-    level=smk_brightness_sample(&f,150,18,508);assert(f.active);
-    assert(!smk_brightness_sample(&f,level,18,0));
-    assert(smk_brightness_sample(&f,0,18,1023)==255);
+    for(unsigned n=0;n<100;n++)assert(smk_brightness_sample(&f,150,18,508)==150&&!f.active);
+    for(unsigned n=0;n<24;n++)level=smk_brightness_sample(&f,level,18,560);
+    assert(f.active&&level>130&&level<145);
+    for(unsigned n=0;n<32;n++)level=smk_brightness_sample(&f,level,18,0);
+    assert(level==0);
+    for(unsigned n=0;n<32;n++)level=smk_brightness_sample(&f,level,18,1023);
+    assert(level==255);
+    /* Replay measured idle jitter and short dips: no takeover from 150. */
+    f=(smk_brightness_t){0};level=150;
+    const unsigned noise[]={222,224,219,222,215,222,223,222,219,224,222};
+    for(unsigned n=0;n<2000;n++){
+        level=smk_brightness_sample(&f,level,18,noise[n%11]);
+        assert(level==150&&!f.active);
+    }
+    /* Deliberate movement still takes over; the same noise stays steady
+     * once the fader has settled at its approximately 54/255 position. */
+    for(unsigned n=0;n<32;n++)level=smk_brightness_sample(&f,level,18,400);
+    assert(f.active);
+    for(unsigned n=0;n<32;n++)level=smk_brightness_sample(&f,level,18,222);
+    unsigned settled=level;
+    for(unsigned n=0;n<2000;n++){
+        level=smk_brightness_sample(&f,level,18,noise[n%11]);
+        assert(level==settled);
+    }
     puts("PASS: physical Doom pads, chords, retained short taps, releases, all LED colors/positions/brightness and F2 isolation");
 }

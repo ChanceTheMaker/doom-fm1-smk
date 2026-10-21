@@ -36,6 +36,8 @@ static smk37_adc_t pad_adc;
 static dp_pads_t pads;
 static smk_brightness_t brightness_fader;
 static volatile uint32_t brightness=150;
+static volatile uint32_t brightness_changes,fader_min=1023,fader_max;
+static uint32_t light_writes,light_errors,light_state;
 static uint32_t pad_events;
 static uint8_t pad_lights[SMK37_LIGHT_BYTES] __attribute__((aligned(4)));
 extern void dp_scan_isr(void);
@@ -105,6 +107,8 @@ static uint8_t display_ready,input_ready;
 static uint32_t millis,last_tick,remainder,scan_at,buttons,returned;
 static uint16_t wire_row[240] __attribute__((aligned(4)));
 static uint32_t actions;
+static char stop_reason[32];
+void dp_stop_stats(uint32_t words[8]){memcpy(words,stop_reason,sizeof stop_reason);}
 #if DP_SMK
 /* SPI2 owns the analog mux and digital contacts. Keep its cadence independent
  * of Doom render time; take short pad attacks through to dp_key below. */
@@ -113,7 +117,14 @@ void dp_scan_irq(void){
     unsigned index=pad_adc.scan.index;
     int result=smk37_adc_spi_done(&pad_adc);
     if(result>0){
-        brightness=smk_brightness_sample(&brightness_fader,brightness,index,pad_adc.scan.raw[index]);
+        unsigned raw=pad_adc.scan.raw[index];
+        if(index==smk37_fader_input[1]){
+            if(raw<fader_min)fader_min=raw;
+            if(raw>fader_max)fader_max=raw;
+        }
+        unsigned next=smk_brightness_sample(&brightness_fader,brightness,index,raw);
+        if(next!=brightness)brightness_changes++;
+        brightness=next;
         for(unsigned p=0;p<16;p++)if(index==smk37_pad_input[p])
             dp_pad_sample(&pads,p,pad_adc.scan.raw[index]);
     }
@@ -142,7 +153,18 @@ static void pad_feedback(uint16_t held){
     if((state&0xffffu)==(previous&0xffffu)&&now-last<480000u)return;
     uint32_t rgb[16];dp_pad_colors(rgb,held,level);
     smk37_light_encode_rgb(pad_lights,rgb);
-    if(smk37_lights_send(pad_lights,4000000)){previous=state;last=now;}
+    if(smk37_lights_send(pad_lights,4000000)){
+        previous=light_state=state;last=now;light_writes++;
+    }else light_errors++;
+}
+void dp_pad_stats(uint32_t words[8]){
+    fm1_irq_off();
+    words[0]=brightness;words[1]=pad_adc.scan.raw[smk37_fader_input[1]];
+    words[2]=pads.held|((uint32_t)pads.pressed<<16);words[3]=light_state;
+    words[4]=light_writes;words[5]=brightness_changes;
+    words[6]=fader_min|(fader_max<<16);words[7]=light_errors;
+    fader_min=1023;fader_max=0;
+    fm1_irq_on();
 }
 #endif
 static void input_stop(void){
@@ -285,6 +307,8 @@ static void dp_clear_display(void){
     diagnostic_row=30;
 }
 void dp_panic(const char *text){
+    unsigned i=0;for(;i<sizeof stop_reason-1&&text[i];i++)stop_reason[i]=text[i];
+    stop_reason[i]=0;
     audio_stop();
     dp_clear_display();
     dp_message("DOOM STOPPED");dp_message(text);
