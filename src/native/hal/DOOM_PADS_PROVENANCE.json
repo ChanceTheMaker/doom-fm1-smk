@@ -24,7 +24,7 @@
       "source": "vendor/felucca/firmware/hal/smk37_lights.h",
       "destination": "src/native/hal/smk37_lights.h",
       "source_sha256": "faabe1d661b51b4467b1c2173d33b94e972c824a6e1cb902252c01386417a6b8",
-      "destination_sha256": "faabe1d661b51b4467b1c2173d33b94e972c824a6e1cb902252c01386417a6b8"
+      "destination_sha256": "00e74ae02eaddaf080df04636046738ac76efee4e9bc992a768025f39a43570a"
     },
     {
       "source": "vendor/felucca/firmware/hal/smk37_lights_hw.h",
@@ -42,14 +42,14 @@
       "source": "firmware/smk37_brightness.h",
       "destination": "src/native/smk37_brightness.h",
       "source_sha256": "bfc0667a59d1272a2c0f6d93bbc94131f7053dd9e05a15903ee42c4408dbf591",
-      "destination_sha256": "9bfc3026c9e1f1e2d7c41747aaed161f3fdac8adca71cbef57cdb6fbc0d0f52e"
+      "destination_sha256": "089e15e36ca3d462771fe9d84022f29693cbc6c9d771129a9cacb96df156293d"
     },
     {
       "source": "tests/smk37_light_transport.c",
       "destination": "tests/smk37_light_transport.c",
       "source_sha256": "03bdcb1c9099e12c4b6effa0c4911fcee92645fa73ebd5cf0c6e9200179e038e",
-      "destination_sha256": "4b169c728e9f54f6fd7e9189189e1d77288a6b6a573530a9c8730dbfbc709424"
+      "destination_sha256": "dfcb57ebc772103515bc409795afaf55735895bf17e554fff0813e940f5d8cb7"
     }
   ],
-  "adaptations": "Brightness and transport-test include paths changed for Doom. Other imported files unchanged. Doom pad mapping and event consumption are in smk_doom_pads.h and board.c."
+  "adaptations": "Include paths changed for Doom. Revision 22 extends smk37_lights.h with 512-byte zero reset spans before and after GRB colors inside each SPI DMA packet; transport tests verify those spans. Revision 23 adds smoothing and sustained movement detection to smk37_brightness.h based on measured idle noise. Other imported HAL files unchanged. Doom pad mapping and event consumption are in smk_doom_pads.h and board.c."
 }
