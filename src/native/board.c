@@ -11,6 +11,8 @@
 #include "smk37_time.h"
 #include "smk37_boot.h"
 #if DP_SMK
+#define SMK37_LIGHT_MAX_LEVEL 255u
+#define SMK37_SCAN_BAUD 95u
 #include "smk37_audio.h"
 #include "smk37_lcd_hw.h"
 #include "smk37_panel.h"
@@ -18,10 +20,25 @@
 #include "smk37_contacts.h"
 #include "smk37_keyscan.h"
 #include "smk37_controls.h"
+#include "smk37_adc.h"
+#define SMK37_LIGHT_RESET() fm1_delay_us(350)
+#define SMK37_LIGHT_DMA_BARRIER() __asm__ volatile("csync" ::: "memory")
+#include "smk37_lights_hw.h"
+#include "smk_doom_pads.h"
+#include "smk37_brightness.h"
+_Static_assert(SMK37_LIGHT_COMPILED_MAX_LEVEL==255u,"Pad brightness cap must precede scanner include");
 static smk37_keyscan_t keys[37];
 static smk37_controls_t controls;
-static uint64_t notes;
-static void no_attach(uint32_t n,void(*f)(void),uint32_t p){(void)n;(void)f;(void)p;}
+static volatile uint64_t notes;
+static volatile uint32_t panel_buttons;
+static volatile int32_t encoder_steps[2];
+static smk37_adc_t pad_adc;
+static dp_pads_t pads;
+static smk_brightness_t brightness_fader;
+static volatile uint32_t brightness=150;
+static uint32_t pad_events;
+static uint8_t pad_lights[SMK37_LIGHT_BYTES] __attribute__((aligned(4)));
+extern void dp_scan_isr(void);
 static int cmd(uint8_t c){return smk37_lcd_command(c,4000000);}
 static int data(const void *p,uint32_t n){return smk37_lcd_data(p,n,4000000);}
 static const smk37_panel_io_t panel={cmd,data,fm1_delay_ms};
@@ -88,6 +105,54 @@ static uint8_t display_ready,input_ready;
 static uint32_t millis,last_tick,remainder,scan_at,buttons,returned;
 static uint16_t wire_row[240] __attribute__((aligned(4)));
 static uint32_t actions;
+#if DP_SMK
+/* SPI2 owns the analog mux and digital contacts. Keep its cadence independent
+ * of Doom render time; take short pad attacks through to dp_key below. */
+void dp_scan_irq(void){
+    if(!(SMK37_SCAN_CON&0x8000u))return;
+    unsigned index=pad_adc.scan.index;
+    int result=smk37_adc_spi_done(&pad_adc);
+    if(result>0){
+        brightness=smk_brightness_sample(&brightness_fader,brightness,index,pad_adc.scan.raw[index]);
+        for(unsigned p=0;p<16;p++)if(index==smk37_pad_input[p])
+            dp_pad_sample(&pads,p,pad_adc.scan.raw[index]);
+    }
+    if(result<0)pads.held=pads.pressed=0;
+    smk37_scan_set_analog(smk37_analog_mask(&pad_adc.scan));
+    if(!smk37_scan_tick())return;
+    smk37_control_changes_t changes=smk37_controls_tick(&controls,smk37_scan_frame);
+    panel_buttons=controls.buttons;
+    for(unsigned e=0;e<2;e++)encoder_steps[e]+=changes.encoder[e];
+    for(unsigned k=0;k<37;k++){
+        unsigned raw=smk37_contact_closed(smk37_scan_frame,smk37_key_contacts[k][0])|
+            (smk37_contact_closed(smk37_scan_frame,smk37_key_contacts[k][1])<<1);
+        uint32_t duration;
+        if(smk37_keyscan_tick(&keys[k],raw,&duration)){
+            if(duration)notes|=(uint64_t)1<<k;else notes&=~((uint64_t)1<<k);
+        }
+    }
+}
+/* Synchronous LCD rows have finished before this main-loop-only call.
+ * Always send all 16 pads, so another firmware's latched colors cannot leak. */
+static void pad_feedback(uint16_t held){
+    static uint32_t previous=UINT32_MAX,last;
+    uint32_t level=brightness,state=(DP_PAD_MASK&~held)|(level<<16);
+    if(!display_ready||state==previous)return;
+    uint32_t now=fm1_ticks();
+    if((state&0xffffu)==(previous&0xffffu)&&now-last<480000u)return;
+    uint32_t rgb[16];dp_pad_colors(rgb,held,level);
+    smk37_light_encode_rgb(pad_lights,rgb);
+    if(smk37_lights_send(pad_lights,4000000)){previous=state;last=now;}
+}
+#endif
+static void input_stop(void){
+#if DP_SMK
+    input_ready=0;
+    fm1_irq_mask(37);smk37_scan_stop();smk37_adc_stop(&pad_adc);
+    uint32_t rgb[16]={0};smk37_light_encode_rgb(pad_lights,rgb);
+    (void)smk37_lights_send(pad_lights,4000000);
+#endif
+}
 static void guards_init(void){
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c74000;p<(volatile uint32_t *)0x01c74100;p++)*p=0x5aa55aa5;
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c7a000;p<(volatile uint32_t *)0x01c7a100;p++)*p=0x5aa55aa5;
@@ -112,7 +177,7 @@ void dp_service(void){
 #ifdef DP_USB_UPDATE
     int request=dp_usb_service();
     if(request){
-        dp_boot.pending=0;audio_stop();
+        dp_boot.pending=0;input_stop();audio_stop();
         if(request==1)dp_usb_enter();
         fm1_enter_uboot();
     }
@@ -120,25 +185,17 @@ void dp_service(void){
     if(!input_ready || now-scan_at<2)return;
     scan_at=now;
 #if DP_SMK
-    for(unsigned i=0;i<16;i++){
-        if(smk37_scan_tick()){
-            smk37_control_changes_t changes=smk37_controls_tick(&controls,smk37_scan_frame);buttons=controls.buttons;
+    fm1_irq_off();
+    uint64_t held=notes;buttons=panel_buttons;
+    int32_t enc0=encoder_steps[0],enc1=encoder_steps[1];
+    encoder_steps[0]=encoder_steps[1]=0;
+    uint16_t pad_held=pads.held;
+    fm1_irq_on();
 #ifdef DP_CAMPAIGN
-            if(dp_knob_turn(&knobs,0,changes.encoder[0],4))dp_sfx_trim(knobs.volume);
-            dp_knob_turn(&knobs,1,changes.encoder[1],4);
+    if(dp_knob_turn(&knobs,0,enc0,4))dp_sfx_trim(knobs.volume);
+    dp_knob_turn(&knobs,1,enc1,4);
 #endif
-            for(unsigned k=0;k<37;k++){
-                unsigned raw=smk37_contact_closed(smk37_scan_frame,smk37_key_contacts[k][0]) |
-                    (smk37_contact_closed(smk37_scan_frame,smk37_key_contacts[k][1])<<1);
-                uint32_t duration;
-                if(smk37_keyscan_tick(&keys[k],raw,&duration)){
-                    if(duration)notes|=(uint64_t)1<<k;else notes&=~((uint64_t)1<<k);
-                }
-            }
-        }
-        fm1_delay_us(4);
-    }
-    uint64_t held=notes;
+    pad_feedback(pad_held);
 #else
     fm1_input_scan();
 #ifdef DP_CAMPAIGN
@@ -152,23 +209,32 @@ void dp_service(void){
     actions=0;
     for(unsigned i=0;i<sizeof(note_keys);i++)if(held&((uint64_t)1<<note_keys[i]))actions|=1u<<i;
 #if DP_SMK
-    if(buttons&(1u<<12))actions|=1u<<6; /* PATCH */
-    if(buttons&(1u<<13))actions|=1u<<7; /* PARA */
+    if(buttons&((1u<<12)|(1u<<16)))actions|=1u<<6; /* PATCH / REC: menu */
+    if(buttons&((1u<<13)|(1u<<17)))actions|=1u<<7; /* PARA / PLAY: select */
     const uint32_t recovery=(1u<<4)|(1u<<5);
 #else
     const uint32_t recovery=3;
 #endif
     static uint32_t recovery_since;
-    if((buttons&recovery)==recovery){if(!recovery_since)recovery_since=now?now:1;if(now-recovery_since>2000){dp_boot.pending=0;audio_stop();fm1_enter_uboot();}}
+    if((buttons&recovery)==recovery){if(!recovery_since)recovery_since=now?now:1;if(now-recovery_since>2000){dp_boot.pending=0;input_stop();audio_stop();fm1_enter_uboot();}}
     else recovery_since=0;
 }
 int dp_key(int *down,unsigned char *key){
-    dp_service();uint32_t changed=actions^returned;
+    dp_service();uint32_t current=actions;
+#if DP_SMK
+    fm1_irq_off();
+    uint16_t pad_held=pads.held,pressed=pads.pressed;pads.pressed=0;
+    fm1_irq_on();
+    /* Keep every short attack until its key-down has reached Doom, even when
+     * several pads arrive together and dp_key emits only one event at a time. */
+    current|=dp_pad_merge(&pad_events,returned,pad_held,pressed);
+#endif
+    uint32_t changed=current^returned;
 #ifdef DP_CAMPAIGN
     if(knobs.menu){int steps=knobs.menu;knobs.menu=0;dp_menu_scroll(steps);}
 #endif
     for(unsigned i=0;i<sizeof(action_keys);i++)if(changed&(1u<<i)){
-        *down=!!(actions&(1u<<i));*key=action_keys[i];returned^=1u<<i;return 1;
+        *down=!!(current&(1u<<i));*key=action_keys[i];returned^=1u<<i;return 1;
     }
     return 0;
 }
@@ -237,6 +303,11 @@ void dp_cstart(const uint32_t *parameters){
     /* Stop inherited audio DMA before reusing synth buffers. */
 #if DP_SMK
     smk37_audio_stop();smk37_audio_pc_out(6,0);
+    /* Stop inherited DMA before clearing the buffers it might still use. */
+    SMK37_SCAN_CON=0x4000;SMK37_ADC_CON=0;
+    SMK37_LIGHT_REG(0x11d00u)=0x4000;
+    SMK37_LIGHT_REG(0x50080u)&=~(1u<<10);
+    SMK37_LIGHT_REG(0x50088u)&=~(1u<<10);
 #else
     fm1_audio_stop();
 #endif
@@ -254,7 +325,11 @@ void dp_cstart(const uint32_t *parameters){
     guards_init();
 #if DP_SMK
     smk37_lcd_hw_init(4);display_ready=smk37_panel_init(&panel);
-    smk37_scan_init(no_attach,0);
+    smk37_adc_init(&pad_adc);
+    smk37_scan_set_analog(smk37_analog_mask(&pad_adc.scan));
+    smk37_scan_indicator_bits=(1u<<16)|(1u<<18); /* PLAY green / REC red. */
+    smk37_scan_init(fm1_irq_attach,dp_scan_isr);
+    pad_feedback(0);
 #else
     fm1_lcd_hw_init();cmd(0x01);fm1_delay_ms(150);cmd(0x11);fm1_delay_ms(120);
     uint8_t mode=0x55;cmd(0x3a);data(&mode,1);mode=0;cmd(0x36);data(&mode,1);cmd(0x21);cmd(0x13);cmd(0x29);

@@ -23,6 +23,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: cc -std=c11 -O1 -g -fsanitize=address,undefined tests/smk_doom_pads.c -o /tmp/doom-pads && /tmp/doom-pads
+      - run: cc -std=c11 -O1 -g -fsanitize=address,undefined tests/smk_doom_scan.c -o /tmp/doom-scan && /tmp/doom-scan
+      - run: cc -std=c11 -O1 -g -fsanitize=address,undefined tests/smk37_light_transport.c -o /tmp/doom-lights && /tmp/doom-lights
       - run: node tests/native_smk_client.mjs && python3 tests/native_smk.py && python3 tests/native_smk_http.py
       - run: node site/test_update_progress.mjs
       - run: node site/restore-stock/test_restore.mjs
