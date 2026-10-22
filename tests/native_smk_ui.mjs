@@ -5,6 +5,7 @@ import path from 'node:path';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
 const base='https://chancethemaker.github.io/doom-fm1-smk/';
 const helper='http://127.0.0.1:8895',token='t'.repeat(43);
+const appHash="2ca59ad2c2e080d3c2fbecc128ddd74e9a03ca162c8b0e03d9625ffa9a016071";
 const types={'.js':'text/javascript','.html':'text/html','.css':'text/css','.json':'application/json','.svg':'image/svg+xml'};
 const browser=await chromium.launch({channel:'chrome',headless:true});
 try{
@@ -34,7 +35,7 @@ try{
   const req=route.request(),url=new URL(req.url());
   if(url.pathname.endsWith('/capabilities')){
    probes++;if(mode==='absent')return route.abort('connectionrefused');
-   return route.fulfill({json:{available:true,models:['smk-pro'],protocol:1,token,app:mode==='wrong'?'other-app':'doom-fm1-smk',firmware:'Doom-SMK-37_017'}});
+   return route.fulfill({json:{available:true,models:['smk-pro'],protocol:1,token,application_sha256:mode==='legacy'?undefined:appHash,app:mode==='wrong'?'other-app':'doom-fm1-smk',firmware:'Doom-SMK-37_017'}});
   }
   if(req.method()==='POST'){
    assert.equal(req.headers()['x-doom-token'],token);
@@ -46,7 +47,7 @@ try{
  await page.goto(base);await page.locator('.device[data-device="smk37-pro"]').click();await page.locator('#build').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Firmware built and verified'));
  assert.equal(probes,0,'No helper access during page loading');
  await page.locator('#ack').check();
- for(const failure of ['absent','wrong']){
+ for(const failure of ['absent','wrong','legacy']){
   mode=failure;await page.locator('#install-button').click();
   await page.waitForFunction(()=>!document.querySelector('#install-button').disabled);
   assert.match(await page.locator('#status').textContent(),/browser MIDI updater was not started/);
@@ -71,7 +72,7 @@ try{
  });
  assert.equal(await page.locator('iframe[data-midi-session]').count(),0);
  assert.equal(await page.evaluate(()=>closedPorts),2);
- await page.goto(base+'restore-stock/');await page.locator('#model').selectOption('SMK-37 Pro');
+ mode='legacy';await page.goto(base+'restore-stock/');await page.locator('#model').selectOption('SMK-37 Pro');
  await page.locator('#prepare').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('verified.'));
  await page.locator('#ack').check();await page.locator('#restore').click();
  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('restored and USB identity confirmed'));
