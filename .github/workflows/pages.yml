@@ -32,6 +32,9 @@ jobs:
       - run: node tests/site_installer_test.mjs
       - run: node tests/midi_discovery_test.mjs
       - run: node tests/verify_boot_test.mjs
+      - run: cc -std=c11 -O1 -g -fsanitize=address,undefined tests/fm1_doom_controls.c -o /tmp/fm1-controls && /tmp/fm1-controls
+      - run: node tests/fm1_controls_test.mjs
+      - run: python3 tests/fm1_scan_timer.py
       - run: node tests/browser_input_test.mjs
       - run: node tests/browser_audio_test.mjs
       - run: node tests/browser_engine_test.mjs

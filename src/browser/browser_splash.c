@@ -24,7 +24,13 @@ int dp_title_present(const dp_menu_view *menu,dp_row_sink sink,void *ctx){
    dp_text_row(row,y,selected?26:32,yy,selected?">":"",2,0xfd20);
    dp_text_row(row,y,48,yy,menu->rows[i],2,selected?0xffb0:0xbdd7);
   }
-  dp_text_row(row,y,18,221,"2/4 MOVE  8 SELECT  7 BACK",1,0x9cf3);
+  dp_text_row(row,y,18,221,
+#if defined(DP_SMK) && !DP_SMK
+"BLACK 2/3 UP  3 DOWN  8 OK"
+#else
+"2/4 MOVE  8 SELECT  7 BACK"
+#endif
+,1,0x9cf3);
   if(!sink(ctx,y,row,240))return 0;
  }
  return 1;

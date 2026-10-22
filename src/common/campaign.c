@@ -18,7 +18,13 @@ int dp_campaign_overlay(dp_menu_view *v){
  snprintf(v->rows[v->count++],20,"SCORE %u",dp_score);
  snprintf(v->rows[v->count++],20,"KILLS %d / %d",players[consoleplayer].killcount,totalkills);
  if(gamestate==GS_INTERMISSION){snprintf(v->rows[v->count++],20,"TIME %d SECONDS",(leveltime/35)%100000);snprintf(v->rows[v->count++],20,"%s",gamemap==DP_CAMPAIGN_LEVELS?"NINE LEVELS CLEAR":"NEXT SECTOR AHEAD");}
- snprintf(v->footer,sizeof(v->footer),"%s",gamestate==GS_LEVEL?"6 USE TO RETRY / 7 MENU":"5 FIRE OR 6 USE TO CONTINUE");
+ snprintf(v->footer,sizeof(v->footer),"%s",
+#if defined(DP_SMK) && !DP_SMK
+gamestate==GS_LEVEL?"15 USE TO RETRY / 7 MENU":"16 FIRE OR 15 USE TO CONTINUE"
+#else
+gamestate==GS_LEVEL?"6 USE TO RETRY / 7 MENU":"5 FIRE OR 6 USE TO CONTINUE"
+#endif
+);
  return 1;
 }
 typedef struct {dp_row_sink sink;void *ctx;char score[20],level[12],status[32];} hud_context;

@@ -14,3 +14,6 @@ void dp_audio_stats(uint32_t words[8]); /* read-only core/audio diagnostics */
 void dp_pad_stats(uint32_t words[8]); /* read-only SMK pad/light diagnostics */
 void dp_stop_stats(uint32_t words[8]); /* first 31 error-text bytes, or empty */
 void dp_panic(const char *text) __attribute__((noreturn));
+
+void dp_input_tick(void); /* FM-1 incremental input/LED scan */
+void dp_fm1_stats(uint32_t words[8]); /* read-only FM-1 frame/scan counters */
