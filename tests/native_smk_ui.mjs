@@ -5,7 +5,7 @@ import path from 'node:path';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
 const base='https://chancethemaker.github.io/doom-fm1-smk/';
 const helper='http://127.0.0.1:8895',token='t'.repeat(43);
-const appHash="2ca59ad2c2e080d3c2fbecc128ddd74e9a03ca162c8b0e03d9625ffa9a016071";
+const appHash="136b0185818cfaa786a92fd961bedd254443d048e13800dd50829d29d315030f";
 const types={'.js':'text/javascript','.html':'text/html','.css':'text/css','.json':'application/json','.svg':'image/svg+xml'};
 const browser=await chromium.launch({channel:'chrome',headless:true});
 try{
@@ -35,14 +35,14 @@ try{
   const req=route.request(),url=new URL(req.url());
   if(url.pathname.endsWith('/capabilities')){
    probes++;if(mode==='absent')return route.abort('connectionrefused');
-   return route.fulfill({json:{available:true,models:['smk-pro'],protocol:1,token,application_sha256:mode==='legacy'?undefined:appHash,app:mode==='wrong'?'other-app':'doom-fm1-smk',firmware:'Doom-SMK-37_017'}});
+   return route.fulfill({json:{available:true,models:['smk-pro'],protocol:1,token,application_sha256:mode==='legacy'?undefined:appHash,app:mode==='wrong'?'other-app':'doom-fm1-smk',firmware:'Doom-SMK-37_024'}});
   }
   if(req.method()==='POST'){
    assert.equal(req.headers()['x-doom-token'],token);
    const body=req.postDataJSON();assert.deepEqual(body,{action:body.action,model:'smk-pro',app:'doom-fm1-smk'});
    actions.push(body.action);return route.fulfill({json:{id:'test-job'}});
   }
-  return route.fulfill({json:{state:mode==='error'?'error':'done',error:'Simulated USB interruption',phase:'reboot',logs:['Simulated restart verification'],identity:actions.at(-1)==='restore'?'SMK-37 Pro_016':'Doom-SMK-37_017'}});
+  return route.fulfill({json:{state:mode==='error'?'error':'done',error:'Simulated USB interruption',phase:'reboot',logs:['Simulated restart verification'],identity:actions.at(-1)==='restore'?'SMK-37 Pro_016':'Doom-SMK-37_024'}});
  });
  await page.goto(base);await page.locator('.device[data-device="smk37-pro"]').click();await page.locator('#build').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Firmware built and verified'));
  assert.equal(probes,0,'No helper access during page loading');

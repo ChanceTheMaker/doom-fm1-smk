@@ -1,9 +1,7 @@
-# SMK Doom drum controls — development build 23
+# SMK Doom drum controls ? release 24
 
-Branch: `feat/smk-drum-controls`, based on tested release `94e1ec1`.
-This branch retains the known-flash updater policy; it does not incorporate
-the separate experimental SFDP branch. The published site and binaries are
-unchanged. No FM-1 firmware is installed or promoted by this work.
+Release 24 publishes the tested pad controls for Pro and Elite. FM-1 stays on
+release 16. The current universal restore and protected-region checks are retained.
 
 ## Physical layout
 
@@ -41,6 +39,39 @@ Short pad taps remain queued until Doom consumes their key-down event, including
 multiple simultaneous taps; keys and pads can be used together.
 
 ## Validation
+
+### Build 24: release acceptance (2026-10-21)
+
+The owner confirmed movement, strafing, Fire, Use, steady colors, smooth Fader 2
+brightness and sound on SMK-37 Pro. A separate three-minute gameplay monitor
+captured 6,347 pad samples, 161 total LED writes, and multiple held-pad combinations.
+Both audio cores stayed active: zero missed deadlines, worker faults, rejected
+requests or LED errors. All stop-message queries were empty. Brightness stayed
+150 during this capture; physical Fader 2 travel is covered by owner confirmation.
+
+The public Pro package matches the hardware-tested packet byte-for-byte.
+Doom 24 ? original firmware completed through the normal USB helper; the final
+identity was `SMK-37 Pro_016`. The instrument was left on original firmware.
+A physical Chrome cable-disconnect test was not repeated in this release.
+
+Pro and Elite apps are each 580,292 bytes. Pro SHA-256:
+`136b0185818cfaa786a92fd961bedd254443d048e13800dd50829d29d315030f`.
+Elite SHA-256:
+`ef1cc34be742beee0d2dac49e3046a52c733c732fe50682690ec04198b8180fc`.
+Exact-packet updater simulations preserve protected boot/tail regions for both.
+Elite hardware is not tested. USB product labels are `Doom SMK-37` and
+`Doom SMK-37 Update`; runtime updater identity is `Doom-SMK-37_024`.
+
+Host checks include pad/scan/LED transport sanitizers, 211-state sprite coverage,
+66 real renderer states including overkill, and 70,000 campaign frames across
+normal and hard/low-detail runs (72 level completions). Site, installer, native
+helper, browser engine/audio/input and boot verification checks pass.
+
+The earlier reported sprite-frame stop did not recur in these runs. No specific
+renderer fix is claimed; compact stop reporting remains available if it recurs.
+
+The existing animated hero retains its camera movement, alternating devices,
+all shell finishes and screens. Only the eight mapped SMK pads gain illumination.
 
 ### Build 23: reject measured Fader 2 noise
 

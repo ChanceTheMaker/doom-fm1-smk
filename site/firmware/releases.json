@@ -14,22 +14,26 @@
     "id": "smk37-pro",
     "board": "SMK-37 Pro",
     "public": true,
-    "version": "DOOM SMK TEST17",
+    "version": "DOOM SMK TEST24",
     "product": "SMK-37_999",
-    "app": "doom-smk37-pro-17.bin",
-    "bytes": 578352,
-    "sha256": "2ca59ad2c2e080d3c2fbecc128ddd74e9a03ca162c8b0e03d9625ffa9a016071",
-    "hardware": "SMK Pro: installed and restarted as Doom-SMK-37_017, then restored original Pro 016 with successful transfer/readback completion and exact restart identity. EB6014 and Elite hardware confirmation remain pending; UI, sound and long-run validation are not claimed."
+    "app": "doom-smk37-pro-24.bin",
+    "bytes": 580292,
+    "sha256": "136b0185818cfaa786a92fd961bedd254443d048e13800dd50829d29d315030f",
+    "hardware": "SMK Pro: installed and restarted as Doom-SMK-37_024; owner confirmed movement, strafe, Fire/Use pad colors, Fader 2 and sound. Runtime monitor showed both cores active without audio or LED errors. Original-firmware return validation is recorded in docs/SMK_DRUM_CONTROLS.md. The earlier sprite-stop report was not reproduced; no specific renderer fix is claimed.",
+    "source": "https://github.com/ChanceTheMaker/doom-fm1-smk/tree/smk-pads-24",
+    "source_archive": "https://github.com/ChanceTheMaker/doom-fm1-smk/releases/download/smk-pads-24/doom-smk-pads-24-source.zip"
   },
   {
     "id": "smk37-elite",
     "board": "SMK-37 Elite",
     "public": true,
-    "version": "DOOM SMK TEST17",
+    "version": "DOOM SMK TEST24",
     "product": "SMK-37_999",
-    "app": "doom-smk37-elite-17.bin",
-    "bytes": 578352,
-    "sha256": "30887652430f969138e0399dcfe8427492d538049339754c94d7255cc4329a52",
-    "hardware": "Compiled and package-checked; Elite and EB6014 hardware validation pending."
+    "app": "doom-smk37-elite-24.bin",
+    "bytes": 580292,
+    "sha256": "ef1cc34be742beee0d2dac49e3046a52c733c732fe50682690ec04198b8180fc",
+    "hardware": "Compiled and exact-package tested against simulated flash; Elite hardware validation remains pending. Shares the owner-tested Pro pad implementation.",
+    "source": "https://github.com/ChanceTheMaker/doom-fm1-smk/tree/smk-pads-24",
+    "source_archive": "https://github.com/ChanceTheMaker/doom-fm1-smk/releases/download/smk-pads-24/doom-smk-pads-24-source.zip"
   }
 ]

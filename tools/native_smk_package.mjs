@@ -17,11 +17,11 @@ if(action==='restore'){
 }else{
   const releases=JSON.parse(await fs.readFile(path.join(root,'site/firmware/releases.json'),'utf8'));
   const release=releases.find(r=>r.id==='smk37-pro');
-  if(release?.product!=='SMK-37_999'||release.app!=='doom-smk37-pro-17.bin'||release.sha256!=='2ca59ad2c2e080d3c2fbecc128ddd74e9a03ca162c8b0e03d9625ffa9a016071')throw Error('Unrecognized Doom public release');
+  if(release?.product!=='SMK-37_999'||release.app!=='doom-smk37-pro-24.bin'||release.sha256!=='136b0185818cfaa786a92fd961bedd254443d048e13800dd50829d29d315030f')throw Error('Unrecognized Doom public release');
   const app=new Uint8Array(await fs.readFile(path.join(root,'site/firmware',release.app)));
   const built=await buildSmkPublicPackage(stock,app,release);
   if(built.stockModel!=='SMK-37 Pro')throw Error('Incorrect physical model');
-  image=built.image;packet=built.bytes;expected='Doom-SMK-37_017';
+  image=built.image;packet=built.bytes;expected='Doom-SMK-37_024';
 }
 await fs.mkdir(out,{recursive:true});
 await fs.writeFile(path.join(out,'image.bin'),image);

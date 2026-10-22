@@ -1,0 +1,32 @@
+[
+  {
+    "source": "src/native/update/usb.c",
+    "defines": {
+      "DP_USB_SMK": 0
+    },
+    "name": "Doom FM-1"
+  },
+  {
+    "source": "src/native/update/usb.c",
+    "defines": {
+      "DP_USB_SMK": 0,
+      "FELUCCA_LOADER": 1
+    },
+    "name": "Doom FM-1 Update"
+  },
+  {
+    "source": "src/native/update/usb.c",
+    "defines": {
+      "DP_USB_SMK": 1
+    },
+    "name": "Doom SMK-37"
+  },
+  {
+    "source": "src/native/update/usb.c",
+    "defines": {
+      "DP_USB_SMK": 1,
+      "FELUCCA_LOADER": 1
+    },
+    "name": "Doom SMK-37 Update"
+  }
+]
