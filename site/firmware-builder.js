@@ -20,7 +20,7 @@ export async function buildFirmware(release,app,base){
 }
 export function sourceFor(release){return release.id==='fm1'?FM1_BASE:STOCK_SOURCES[release.board];}
 export async function installFm1(access,pkg,log,{confirmGeneric}={}){
- const up=new Updater(access,log,/fm-1|felucca|sloop|melodee|ota|composite|sinco|usb-midi/i);let link;
+ const up=new Updater(access,log,/fm-?1|felucca|sloop|melodee|doom|gamedude|nesynth|ota|composite|sinco|usb-midi/i);let link;
  try{
   let dev=await up.findAny(id=>['FM-1','ota-FM-1','Doom-FM-1','ota-Doom-FM-1'].includes(id.model));
   if(!dev)throw Error('No updater-enabled FM-1 found. Doom needs its USB updater enabled; older builds require a one-time recovery-adapter update.');
