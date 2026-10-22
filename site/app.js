@@ -1,4 +1,4 @@
-import {hasNativeSmk,runNativeSmk} from './native-smk.js?v=native1';
+import {hasNativeSmk,runNativeSmk} from './native-smk.js?v=universal-restore1';
 import {requestMidiSession,releaseMidiSession} from './midi-session.js?v=session1';
 import {createProgress} from './update-progress.js?v=release16';
 import {verifyDoomBoot} from './verify-boot.js?v=release16';
