@@ -20,7 +20,7 @@ header .brand{font-size:48px;gap:15px}header .sigil{width:55px;height:55px;font-
 [data-hardware=fm1][data-finish=red]{--body:#eee9df;--rubber:#8b493a;--button:#a45c49;--ink:#453b32;--control-ink:#3d2923}
 [data-hardware=fm1][data-finish=cream]{--body:#ddd7cc;--rubber:#363e3d;--button:#48514f;--ink:#3e4441;--control-ink:#d0d7d4}
 [data-hardware=fm1][data-finish=black]{--body:#383a39;--rubber:#242a29;--button:#323837;--ink:#d8d9d4;--control-ink:#d8d9d4}
-.hero-product{color:var(--ink)}.product-body{fill:var(--body);stroke:#292c2b}.product-rubber{fill:var(--rubber);stroke:#0005}.product-button{fill:var(--button);stroke:#0005}.product-detail{opacity:.22}.product-bezel{fill:#0c1011;stroke:#000}.product-screen{fill:#080909;stroke:#000}.product-labels{font-family:Arial,sans-serif;letter-spacing:.4px}.product-control-ink{color:var(--control-ink)}
+.hero-product{color:var(--ink)}.product-body{fill:var(--body);stroke:#292c2b}.product-rubber{fill:var(--rubber);stroke:#0005}.product-button{fill:var(--fm1-key-light,var(--button));stroke:#0005}.product-detail{opacity:.22}.product-bezel{fill:#0c1011;stroke:#000}.product-screen{fill:#080909;stroke:#000}.product-labels{font-family:Arial,sans-serif;letter-spacing:.4px}.product-control-ink{color:var(--control-ink)}
 [data-hardware=smk]{--smk-body:#d9dbd5;--smk-control:#262c2d;--smk-ink:#333c3d;--smk-key:#252b2c;--smk-control-ink:#ddd}
 [data-hardware=smk][data-finish=red]{--smk-body:#9f1e25;--smk-ink:#f2e3d8}
 [data-hardware=smk][data-finish=elite]{--smk-body:#687481;--smk-control:#e76522;--smk-ink:#f1f1e9;--smk-key:#df5923;--smk-control-ink:#402b23;--smk-pad-top:#fff5da;--smk-pad-bottom:#fff5da}
@@ -43,3 +43,6 @@ header .brand{font-size:48px;gap:15px}header .sigil{width:55px;height:55px;font-
 .smk-pad-lit.smk-pad-green{--doom-pad-light:#43e578}
 .smk-pad-lit.smk-pad-red{--doom-pad-light:#ff4141}
 .smk-pad.smk-pad-lit{fill:var(--doom-pad-light);stroke:var(--doom-pad-light);stroke-width:1;filter:drop-shadow(0 0 4px var(--doom-pad-light))}
+
+/* FM-1 white keys 1-12 match the existing Doom control map. */
+.fm1-key-lit{filter:drop-shadow(0 0 3px var(--fm1-key-light))}
