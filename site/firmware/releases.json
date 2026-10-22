@@ -3,12 +3,14 @@
     "id": "fm1",
     "board": "FM-1",
     "public": true,
-    "version": "DOOM FM1 TEST16",
+    "version": "DOOM FM1 TEST26",
     "product": "FM-1_999",
-    "app": "doom-fm1-16.bin",
-    "bytes": 577820,
-    "sha256": "e890ca2efa216f763a8ae10037d979fc08c0803bd4fff30285a82f2317959610",
-    "hardware": "Compiled and package-checked; detailed hardware validation pending"
+    "app": "doom-fm1-26.bin",
+    "bytes": 578648,
+    "sha256": "853d7aa5c3200226c516e1edb9bbe9f521e90eec063bb8bee8c18978c206f780",
+    "hardware": "Installed and restarted as Doom-FM-1_026. Owner confirmed GameDude-style controls, key lights and sound, then confirmed improved responsiveness. Incremental input scanning; both audio cores active with no observed audio faults or LCD timeouts. See docs/FM1_GAMEDUDE_CONTROLS.md for validation limits.",
+    "source": "https://github.com/ChanceTheMaker/doom-fm1-smk/tree/fm1-controls-26",
+    "source_archive": "https://github.com/ChanceTheMaker/doom-fm1-smk/releases/download/fm1-controls-26/doom-fm1-controls-26-source.zip"
   },
   {
     "id": "smk37-pro",

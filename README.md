@@ -4,7 +4,7 @@
 
 **[SMK release 24: illuminated drum-pad controls](https://chancethemaker.github.io/doom-fm1-smk/)**
 
-SMK release 24 adds cyan movement pads, amber strafing, green Use and red Fire. Only a pressed pad goes dark. Fader 2 controls brightness with idle-noise rejection; REC opens the menu and PLAY selects. The owner confirmed controls, colors, brightness and sound on SMK Pro. The FM-1 release remains 16. See [pad mapping and validation](docs/SMK_DRUM_CONTROLS.md).
+SMK release 24 adds cyan movement pads, amber strafing, green Use and red Fire. Only a pressed pad goes dark. Fader 2 controls brightness with idle-noise rejection; REC opens the menu and PLAY selects. The owner confirmed controls, colors, brightness and sound on SMK Pro. FM-1 release 26 adds GameDude-style controls and incremental input scanning, with owner-confirmed improvement in responsiveness. See [pad mapping and validation](docs/SMK_DRUM_CONTROLS.md).
 
 **[Play in your browser](https://chancethemaker.github.io/doom-fm1-smk/simulator.html)**
 with FM-1, SMK-37 Pro or Elite device controls. The browser shares the game engine
@@ -47,7 +47,7 @@ The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom
 2. Open the installer in desktop Chrome or Edge. Choose **FM-1**, **SMK-37 Pro** or **SMK-37 Elite**.
 3. Click **Build firmware**. The browser downloads the reviewed app and checksum-pinned base, validates the model/layout, preserves protected bytes and prepares the package locally. A local base-file fallback is available; no file upload is needed normally.
 4. Connect only that instrument by normal USB, running Doom Test07 or later, or compatible synth firmware. SMKs support official matching **016** firmware or the portable Felucca/Sloop/Melodee SMK updater (identity version 922 or newer).
-5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the selected Doom identity (SMK 24 or FM-1 16); check the physical game too. A missing identity is reported as unconfirmed boot, not success.
+5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the selected Doom identity (SMK 24 or FM-1 26); check the physical game too. A missing identity is reported as unconfirmed boot, not success.
 
 **Doom replaces the synth application and has no persistent saves.** Release 07 added normal-USB updating through an embedded RAM loader; Release 06 and earlier need the recovery adapter first. Earlier SMK loaders also reject a fully blank calibration sector before programming; those devices need a one-time recovery update to Release 14. The new loader preserves either valid calibration or a completely blank sector, and still rejects corrupt partial records. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Release 14 checks](docs/TEST14.md), [USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
 
@@ -55,12 +55,12 @@ The Elite's official RAM loader can identify itself as `ota-FM-1`; the installer
 
 Experimental firmware is provided without warranty. Power loss, an incompatible device or a software defect can require hardware recovery. FM-1 testing does not establish SMK hardware compatibility. No USB audio, multiplayer or synth functions are included.
 
-## FM-1 candidate controls
+## FM-1 release 26 controls
 
-Candidate 26 matches GameDude: left-hand direction cluster, middle Menu/Select,
+Release 26 matches GameDude: left-hand direction cluster, middle Menu/Select,
 Use/Fire on the last two piano keys, and illuminated control keys.
 See [the full mapping and validation](docs/FM1_GAMEDUDE_CONTROLS.md).
-The public FM-1 installer remains on release 16 pending hardware acceptance.
+The public FM-1 installer uses the owner-tested release 26. Its incremental key scan removes the blocking full-matrix scan from the gameplay loop; no numerical gameplay speedup or SMK speed parity is claimed.
 
 ## Controls
 
