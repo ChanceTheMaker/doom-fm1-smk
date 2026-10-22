@@ -12,3 +12,5 @@
 .family-nav a:hover{color:var(--fire)}
 .family-nav a:focus-visible{outline:2px solid var(--fire);outline-offset:4px}
 @media(max-width:580px){.family-nav{gap:14px 18px}.family-nav span{width:100%}}
+
+.smk-pads{margin-top:28px}.smk-pads p{color:var(--muted)}.pad-scroll{overflow-x:auto;padding:8px 0}.pad-grid{display:grid;grid-template-columns:repeat(8,minmax(54px,1fr));gap:8px;min-width:488px;margin:8px 0}.pad-grid span{display:flex;min-height:70px;align-items:center;justify-content:center;text-align:center;border:1px solid #484848;border-radius:8px;background:#171717;color:#777;font-size:13px;line-height:1.5}.pad-grid .pad-amber{background:#442d0d;color:#ffc55c;border-color:#c18b31}.pad-grid .pad-cyan{background:#07313d;color:#7be5ff;border-color:#298fa7}.pad-grid .pad-green{background:#133821;color:#86f0a4;border-color:#3b9857}.pad-grid .pad-red{background:#421b1b;color:#ff9999;border-color:#b65151}

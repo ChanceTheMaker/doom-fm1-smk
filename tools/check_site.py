@@ -6,15 +6,15 @@ root=Path(__file__).resolve().parents[1]/'site'
 releases=json.loads((root/'firmware/releases.json').read_text())
 assert {r['id'] for r in releases}=={'fm1','smk37-pro','smk37-elite'}
 archived=sum((json.loads((root/'firmware'/name).read_text()) for name in
-              ['archive-test07.json','archive-test08.json','archive-release10.json','archive-release14.json','archive-release15.json','archive-release16.json']),[])
+              ['archive-test07.json','archive-test08.json','archive-release10.json','archive-release14.json','archive-release15.json','archive-release16.json','archive-release17.json']),[])
 apps=set()
 for r in releases+archived:
     p=root/'firmware'/r['app'];b=p.read_bytes();apps.add(p)
     assert len(b)==r['bytes'] and hashlib.sha256(b).hexdigest()==r['sha256'],p
     assert b[:4]==bytes.fromhex('04818000') and r['public'] is True,p
     number=int(re.search(r'TEST(\d+)$',r['version'])[1])
-    assert number==(16 if r['id']=='fm1' else 17) if r in releases else number in (7,8,10,14,15,16),p
-    version,product=f'TEST{number:02d}',{7:'_996',8:'_997',10:'_999',14:'_999',15:'_999',16:'_999',17:'_999'}[number]
+    assert number==(16 if r['id']=='fm1' else 24) if r in releases else number in (7,8,10,14,15,16,17),p
+    version,product=f'TEST{number:02d}',{7:'_996',8:'_997',10:'_999',14:'_999',15:'_999',16:'_999',17:'_999',24:'_999'}[number]
     assert r['version'].endswith(version) and r['product'].endswith(product),p
     suffix=str(number) if number>=10 else version.lower()
     assert r['app']==f"doom-{r['id']}-{suffix}.bin",p

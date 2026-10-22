@@ -2,17 +2,14 @@
 
 **Your synth. Their Doom.** A real Doom-engine port for the M-VAVE FM-1 and SMK-37 Pro / Elite, by Chance Roth (@ChanceTheMaker).
 
-**[Release 16: splash branding, knob controls and sprite fix](https://chancethemaker.github.io/doom-fm1-smk/)**
+**[SMK release 24: illuminated drum-pad controls](https://chancethemaker.github.io/doom-fm1-smk/)**
 
-Release 16 adds `FM-1/SMK` beneath the classic DOOM logo, centers the HUD face,
-and gives K1 master volume and K2 menu navigation. It fixes missing enemy
-overkill-death sprite frames. The nine original maps, three weapons, dual-core
-music/effects and normal-USB updater remain. See [release evidence](docs/RELEASE16.md).
+SMK release 24 adds cyan movement pads, amber strafing, green Use and red Fire. Only a pressed pad goes dark. Fader 2 controls brightness with idle-noise rejection; REC opens the menu and PLAY selects. The owner confirmed controls, colors, brightness and sound on SMK Pro. The FM-1 release remains 16. See [pad mapping and validation](docs/SMK_DRUM_CONTROLS.md).
 
 **[Play in your browser](https://chancethemaker.github.io/doom-fm1-smk/simulator.html)**
 with FM-1, SMK-37 Pro or Elite device controls. The browser shares the game engine
 and LCD assets; its performance is not a measurement of physical hardware.
-Release 15 passed the FM-1 normal-USB update and owner gameplay check. The owner also confirmed Sloop → Doom → Felucca USB transitions on SMK-37 Pro. The detailed Pro gameplay checklist and Elite hardware validation remain pending; see [release evidence](docs/RELEASE15.md).
+Release 15 passed the FM-1 normal-USB update and owner gameplay check. The owner also confirmed Sloop → Doom → Felucca USB transitions on SMK-37 Pro. The older release evidence is retained in [Release 15](docs/RELEASE15.md); current Pro acceptance is recorded in [release 24](docs/SMK_DRUM_CONTROLS.md).
 
 Test06 cannot receive this update over normal USB because it has no runtime USB driver. It needs a model-specific recovery installation first. Keep power connected during any active flash transfer; do not repeatedly retry a failed install. Other synth installers must explicitly recognize Doom before they can restore synth firmware over USB.
 
@@ -34,13 +31,15 @@ Screenshots are actual engine output at the device's 240 x 240 resolution; they 
 - Separate FM-1, SMK-37 Pro and SMK-37 Elite builds, all available in the website builder.
 - Animated hardware hero: alternating FM-1/SMK screen zooms, seven FM-1 finishes and six SMK finishes, with pause and reduced-motion support.
 
+Historical release 15 sizes and acceptance:
+
 | Model | Release 15 application | Physical status |
 | --- | ---: | --- |
 | FM-1 | 576,660 bytes | Normal USB, title/menu, door, weapons, HUD, gameplay and audio accepted |
 | SMK-37 Pro | 576,968 bytes | Sloop → Doom → Felucca USB transitions confirmed; detailed gameplay checklist pending |
 | SMK-37 Elite | 576,968 bytes | Compiled and package-checked; Release 15 hardware validation pending |
 
-The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. CPU1 uses private 8 KiB stacks and a 1 KiB audio block; a worker fault or missed deadline returns audio to one core. Pro has 3,404 bytes left in the common application limit. See [release checks](docs/RELEASE16.md) and [release hashes](site/firmware/releases.json).
+The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom zone and 24 KiB C heap keep it within the native memory budget. CPU1 uses private 8 KiB stacks and a 1 KiB audio block; a worker fault or missed deadline returns audio to one core. SMK release 24 has 1,272 bytes left in the common application limit. See [release checks](docs/RELEASE16.md) and [release hashes](site/firmware/releases.json).
 
 ## Install
 
@@ -48,7 +47,7 @@ The game uses a 240 x 180 viewport with LCD-resolution menus/HUD. A 256 KiB Doom
 2. Open the installer in desktop Chrome or Edge. Choose **FM-1**, **SMK-37 Pro** or **SMK-37 Elite**.
 3. Click **Build firmware**. The browser downloads the reviewed app and checksum-pinned base, validates the model/layout, preserves protected bytes and prepares the package locally. A local base-file fallback is available; no file upload is needed normally.
 4. Connect only that instrument by normal USB, running Doom Test07 or later, or compatible synth firmware. SMKs support official matching **016** firmware or the portable Felucca/Sloop/Melodee SMK updater (identity version 922 or newer).
-5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the Doom release 16 USB identity; check the physical game too. A missing identity is reported as unconfirmed boot, not success.
+5. Close other MIDI apps, acknowledge the notice, then **Install / resume**. Keep USB and power connected until completion. The installer checks for the selected Doom identity (SMK 24 or FM-1 16); check the physical game too. A missing identity is reported as unconfirmed boot, not success.
 
 **Doom replaces the synth application and has no persistent saves.** Release 07 added normal-USB updating through an embedded RAM loader; Release 06 and earlier need the recovery adapter first. Earlier SMK loaders also reject a fully blank calibration sector before programming; those devices need a one-time recovery update to Release 14. The new loader preserves either valid calibration or a completely blank sector, and still rejects corrupt partial records. FM-1 and SMK recovery write ranges differ; never use one model's image or write bounds for another. See [Release 14 checks](docs/TEST14.md), [USB details](docs/TEST07.md), [recovery notes](docs/FM1_TEST01.md) and [FM-1 transporter](https://github.com/kurogedelic/FM-1-transporter).
 
@@ -58,13 +57,13 @@ Experimental firmware is provided without warranty. Power loss, an incompatible 
 
 ## Controls
 
-The `feat/smk-drum-controls` development build adds illuminated SMK pads:
+SMK release 24 includes illuminated pads:
 top row 1/2/3 = strafe left / forward / strafe right; bottom row 1/2/3 =
 turn left / back / turn right; bottom row 7/8 = Use / Fire. Strafe pads are
 amber, movement cyan, Use green, and Fire red. Pads go dark while held.
 Fader 2 changes brightness (startup level 150 until moved). REC opens the
 menu and PLAY selects; PATCH/PARA and the existing keyboard controls remain.
-This candidate is not the published release. See [test status](docs/SMK_DRUM_CONTROLS.md).
+See [release validation](docs/SMK_DRUM_CONTROLS.md).
 
 Count white keys from the far left (FM-1 starts at F; SMK starts at C).
 

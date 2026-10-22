@@ -36,3 +36,10 @@ header .brand{font-size:48px;gap:15px}header .sigil{width:55px;height:55px;font-
 /* Static instances of the hero artwork; selection never follows its animation. */
 .device-illustration{display:block;width:100%;max-width:240px;height:105px;margin:4px 0 10px;pointer-events:none;filter:drop-shadow(0 5px 3px #0006)}
 @media(max-width:580px){.device-illustration{height:62px;margin:2px 0 6px}}
+
+/* Doom's eight control pads; shell finishes and the hero camera stay unchanged. */
+.smk-pad-lit.smk-pad-amber{--doom-pad-light:#ffb52e}
+.smk-pad-lit.smk-pad-cyan{--doom-pad-light:#36d9ee}
+.smk-pad-lit.smk-pad-green{--doom-pad-light:#43e578}
+.smk-pad-lit.smk-pad-red{--doom-pad-light:#ff4141}
+.smk-pad.smk-pad-lit{fill:var(--doom-pad-light);stroke:var(--doom-pad-light);stroke-width:1;filter:drop-shadow(0 0 4px var(--doom-pad-light))}

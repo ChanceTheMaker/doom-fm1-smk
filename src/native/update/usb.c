@@ -357,10 +357,18 @@ static const uint8_t STR0[4] = {4, 3, 0x09, 0x04};
 static const uint8_t STR1[] = {42, 3, 'H', 0, 0xFC, 0, 'g', 0, 'e', 0, 'l', 0, 't', 0, 'o', 0, 'n', 0, ' ', 0, 'I', 0,
                                'n', 0, 's', 0, 't', 0, 'r', 0, 'u', 0, 'm', 0, 'e', 0, 'n', 0, 't', 0, 's', 0};
 /* Doom port name; the SysEx identity still distinguishes each model/loader. */
+#if DP_USB_SMK
 #ifdef FELUCCA_LOADER
-static const uint8_t STR2[] = {24,3,'D',0,'o',0,'o',0,'m',0,' ',0,'U',0,'p',0,'d',0,'a',0,'t',0,'e',0};
+static const uint8_t STR2[] = {38,3,68,0,111,0,111,0,109,0,32,0,83,0,77,0,75,0,45,0,51,0,55,0,32,0,85,0,112,0,100,0,97,0,116,0,101,0};
 #else
-static const uint8_t STR2[] = {10,3,'D',0,'o',0,'o',0,'m',0};
+static const uint8_t STR2[] = {24,3,68,0,111,0,111,0,109,0,32,0,83,0,77,0,75,0,45,0,51,0,55,0};
+#endif
+#else
+#ifdef FELUCCA_LOADER
+static const uint8_t STR2[] = {34,3,68,0,111,0,111,0,109,0,32,0,70,0,77,0,45,0,49,0,32,0,85,0,112,0,100,0,97,0,116,0,101,0};
+#else
+static const uint8_t STR2[] = {20,3,68,0,111,0,111,0,109,0,32,0,70,0,77,0,45,0,49,0};
+#endif
 #endif
 
 static int get_desc(uint32_t wvalue, const uint8_t **d, uint16_t *l)

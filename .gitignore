@@ -45,3 +45,7 @@ __pycache__/
 # Reviewed SMK flash-compatibility applications; FM-1 stays on release 16.
 !site/firmware/doom-smk37-pro-17.bin
 !site/firmware/doom-smk37-elite-17.bin
+
+# Reviewed SMK pad-control applications.
+!site/firmware/doom-smk37-pro-24.bin
+!site/firmware/doom-smk37-elite-24.bin

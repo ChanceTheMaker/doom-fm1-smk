@@ -26,7 +26,7 @@ for hosted in [False,True]:
   assert request('OPTIONS',headers={'Origin':origin,'Access-Control-Request-Method':'POST','Access-Control-Request-Headers':'content-type,x-doom-token'}).status==204
   for headers in [{'Origin':origin},{'Origin':origin,'X-Doom-Token':'wrong'},{'Origin':'null','X-Doom-Token':cap['token']}]:
    assert request('POST','/api/smk/jobs',headers,b'{}').status==403
-  assert cap['app']=='doom-fm1-smk' and cap['firmware']=='Doom-SMK-37_017'
+  assert cap['app']=='doom-fm1-smk' and cap['firmware']=='Doom-SMK-37_024'
   h={'Origin':origin,'X-Doom-Token':cap['token'],'Content-Type':'application/json'}
   assert request('POST','/api/smk/jobs',h,b'{"action":"shell","model":"smk-pro","app":"doom-fm1-smk"}').status==400
   assert request('POST','/api/smk/jobs',h,b'{"action":"install","model":"fm1","app":"doom-fm1-smk"}').status==400
