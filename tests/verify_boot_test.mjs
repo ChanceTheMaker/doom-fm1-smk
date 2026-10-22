@@ -5,13 +5,13 @@ const old=Updater.prototype.waitForAny;let identity,closed=0;
 Updater.prototype.waitForAny=async function(filter){return identity&&filter(identity)?{id:identity,link:{close(){closed++;}}}:null;};
 try{
  for(const target of ['fm1','smk37-pro','smk37-elite']){
-   const revision=target==='fm1'?16:24;
+   const revision=target==='fm1'?26:24;
    const expected=target==='fm1'?'Doom-FM-1':'Doom-SMK-37';
    for(const model of ['ota-'+expected,expected==='Doom-FM-1'?'Doom-SMK-37':'Doom-FM-1','SMK-37','FM-1']){
      identity={model,version:16};assert.equal(await verifyDoomBoot({},target),false);
    }
    identity=null;assert.equal(await verifyDoomBoot({},target),false);
-   for(const version of [7,10,13,14,15,...(target==='fm1'?[17]:[16])]){
+   for(const version of [7,10,13,14,15,...(target==='fm1'?[16,17,24,25]:[16,26])]){
      identity={model:expected,version};assert.equal(await verifyDoomBoot({},target),false);
    }
    identity={model:expected,version:revision,text:expected+'_'+String(revision).padStart(3,'0')};assert.equal(await verifyDoomBoot({},target),true);
