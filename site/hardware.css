@@ -44,5 +44,5 @@ header .brand{font-size:48px;gap:15px}header .sigil{width:55px;height:55px;font-
 .smk-pad-lit.smk-pad-red{--doom-pad-light:#ff4141}
 .smk-pad.smk-pad-lit{fill:var(--doom-pad-light);stroke:var(--doom-pad-light);stroke-width:1;filter:drop-shadow(0 0 4px var(--doom-pad-light))}
 
-/* FM-1 white keys 1-12 match the existing Doom control map. */
+/* FM-1 lit keys follow the GameDude-style Doom control map. */
 .fm1-key-lit{filter:drop-shadow(0 0 3px var(--fm1-key-light))}

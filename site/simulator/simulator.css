@@ -17,3 +17,7 @@
 
 /* Keep the character face visible while paused. */
 #screen-overlay{padding-bottom:16%;background:transparent}
+
+/* Match the illuminated GameDude-style FM-1 controls. */
+.touch-key[data-action]{background:var(--control-light);color:#152126}
+.touch-key[data-action][aria-pressed=true]{background:var(--key);color:var(--key-ink)}

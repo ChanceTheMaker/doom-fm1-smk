@@ -36,3 +36,14 @@ for message in (b'', b'OBJ S29 F8 N0 T188', b'GUN S9 F32768 N0'):
     except ValueError:pass
     else:raise AssertionError('Corrupt stop reason accepted')
 print('PASS stop reason decoding: healthy empty response, exact text, isolated type and checksum refusal; no device I/O')
+
+perf_values=[1234,35,10000,1234567,300,0,1,0]
+wire=[0xf0,0x7d,0x44,0x50,4]+[(v>>s)&127 for v in perf_values for s in range(0,35,7)]
+wire += [(-sum(wire[1:]))&127,0xf7]
+assert list(decode(wire,performance=True).values())==perf_values
+assert decode(wire) is None and decode(wire,pads=True) is None
+wire[8]^=1
+try:decode(wire,performance=True)
+except ValueError:pass
+else:raise AssertionError('Corrupt performance diagnostic accepted')
+print('PASS FM-1 performance counters: isolated type and checksum refusal')

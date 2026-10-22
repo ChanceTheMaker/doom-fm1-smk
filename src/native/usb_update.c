@@ -18,12 +18,26 @@ static uint8_t ready;
 static uint32_t ota_now_ms(void){return dp_millis();}
 static void ota_idle(void){fm1_wdt_feed();}
 extern void dp_usb_isr(void);
-void dp_usb_irq(void){fm1_timer5_ack();usb_poll();}
+#if DP_SMK
+#define DP_USB_TIMER_PERIOD 3000u
+#else
+#define DP_USB_TIMER_PERIOD 600u
+#endif
+void dp_usb_irq(void){
+ fm1_timer5_ack();
+#if !DP_SMK
+ static unsigned divider;
+ dp_input_tick();
+ if(++divider<5)return;
+ divider=0;
+#endif
+ usb_poll();
+}
 void dp_usb_init(void){
     usb_start();
-    FM1_T5_CON=0x4000u;FM1_T5_CNT=0;FM1_T5_PRD=3000u;
+    FM1_T5_CON=0x4000u;FM1_T5_CNT=0;FM1_T5_PRD=DP_USB_TIMER_PERIOD;
     fm1_irq_attach(FM1_IRQ_TIMER5,dp_usb_isr,2);
-    ready=1;FM1_T5_CON=0x4019u; /* 6 MHz / 3000 = 2 kHz, below audio */
+    ready=1;FM1_T5_CON=0x4019u; /* USB stays at 2 kHz; FM-1 scans one matrix column at 10 kHz. */
 }
 int dp_usb_service(void){
     if(!ready)return 0;
@@ -40,7 +54,10 @@ int dp_usb_service(void){
     if(ota_frame_get(&p,&n)){
         int identity=n==sizeof query&&!memcmp(p,query,n);
         int stats=n==sizeof stats_query&&!memcmp(p,stats_query,n);
-#if DP_SMK
+        if(n==4&&p[0]==0x7d&&p[1]==0x44&&p[2]==0x50&&p[3]==3)stats=3;
+#if !DP_SMK
+        if(n==4&&p[0]==0x7d&&p[1]==0x44&&p[2]==0x50&&p[3]==4)stats=4;
+#else
         if(n==4&&p[0]==0x7d&&p[1]==0x44&&p[2]==0x50&&(p[3]==2||p[3]==3))stats=p[3];
 #endif
         ota_frame_done();
@@ -48,8 +65,10 @@ int dp_usb_service(void){
 #if DP_DUAL_CORE
         if(stats){
             uint32_t words[8];uint8_t reply[47]={0xf0,0x7d,0x44,0x50,1};
-#if DP_SMK
             if(stats==3){dp_stop_stats(words);reply[4]=3;}else
+#if !DP_SMK
+            if(stats==4){dp_fm1_stats(words);reply[4]=4;}else
+#else
             if(stats==2){dp_pad_stats(words);reply[4]=2;}else
 #endif
             dp_audio_stats(words);

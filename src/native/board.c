@@ -48,6 +48,7 @@ static const smk37_panel_io_t panel={cmd,data,fm1_delay_ms};
 #include "fm1_audio.h"
 #include "fm1_adc.h"
 #include "fm1_input.h"
+#include "fm1_doom_controls.h"
 #include "fm1_lcd_hw.h"
 #include "smk37_panel.h" /* window protocol only; FM-1 uses its own init sequence */
 static int cmd(uint8_t c){uint32_t before=fm1_lcd_timeouts;fm1_lcd_send_cmd(c);fm1_lcd_wait();fm1_lcd_deselect();return before==fm1_lcd_timeouts;}
@@ -103,7 +104,8 @@ static void audio_stop(void){
  fm1_audio_stop();
 #endif
 }
-static uint8_t display_ready,input_ready;
+static uint8_t display_ready;
+static volatile uint8_t input_ready;
 static uint32_t millis,last_tick,remainder,scan_at,buttons,returned;
 static uint16_t wire_row[240] __attribute__((aligned(4)));
 static uint32_t actions;
@@ -167,12 +169,34 @@ void dp_pad_stats(uint32_t words[8]){
     fm1_irq_on();
 }
 #endif
+#if !DP_SMK
+static uint32_t fm1_frames,fm1_light_updates;
+void dp_input_tick(void){if(input_ready)fm1_input_tick();}
+void dp_fm1_stats(uint32_t words[8]){
+ fm1_irq_off();
+ words[0]=dp_millis();words[1]=fm1_frames;words[2]=fm1_in_stat.ticks;
+ words[3]=fm1_in_stat.cost_sum;words[4]=fm1_in_stat.cost_max;
+ words[5]=actions;words[6]=fm1_light_updates;words[7]=fm1_lcd_timeouts;
+ fm1_irq_on();
+}
+static void piano_feedback(uint32_t held){
+ static uint32_t previous=UINT32_MAX;
+ if(held==previous)return;
+ previous=held;fm1_light_updates++;
+ uint32_t lights=dp_fm1_lights(held);
+ for(unsigned n=0;n<27;n++)fm1_led_key(14+n,!!(lights&(1u<<n)));
+ fm1_led_key(12,!(held&(1u<<6)));fm1_led_key(13,!(held&(1u<<7)));
+}
+#endif
 static void input_stop(void){
-#if DP_SMK
     input_ready=0;
+#if DP_SMK
     fm1_irq_mask(37);smk37_scan_stop();smk37_adc_stop(&pad_adc);
     uint32_t rgb[16]={0};smk37_light_encode_rgb(pad_lights,rgb);
     (void)smk37_lights_send(pad_lights,4000000);
+#else
+    for(unsigned n=0;n<41;n++)fm1_led_key(n,0);
+    fm1__led_lines(0);
 #endif
 }
 static void guards_init(void){
@@ -180,18 +204,19 @@ static void guards_init(void){
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c7a000;p<(volatile uint32_t *)0x01c7a100;p++)*p=0x5aa55aa5;
 }
 void dp_frame_done(void){
+#if !DP_SMK
+    fm1_frames++;
+#endif
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c74000;p<(volatile uint32_t *)0x01c74100;p++)if(*p!=0x5aa55aa5)dp_panic("USER STACK GUARD");
     for(volatile uint32_t *p=(volatile uint32_t *)0x01c7a000;p<(volatile uint32_t *)0x01c7a100;p++)if(*p!=0x5aa55aa5)dp_panic("IRQ STACK GUARD");
     if(dp_millis()>30000){dp_boot.pending=0;dp_boot.failures=0;}
 }
-/* Lowest seven white keys: left, forward, right, back, fire, use, menu.
- * Next five: enter, run, strafe left, strafe right, cycle weapon. */
+/* Shared action order; SMK uses white keys, FM-1 uses its GameDude-style map. */
 static const unsigned char action_keys[]={KEY_LEFTARROW,KEY_UPARROW,KEY_RIGHTARROW,
     KEY_DOWNARROW,KEY_FIRE,KEY_USE,KEY_ESCAPE,KEY_ENTER,KEY_RSHIFT,KEY_STRAFE_L,KEY_STRAFE_R,']'};
 #if DP_SMK
 static const uint8_t note_keys[]={0,2,4,5,7,9,11,12,14,16,17,19};
-#else
-static const uint8_t note_keys[]={0,2,4,6,7,9,11,12,14,16,18,19};
+
 #endif
 uint32_t dp_millis(void){uint32_t t=fm1_ticks();remainder+=t-last_tick;last_tick=t;millis+=remainder/24000u;remainder%=24000u;return millis;}
 void dp_service(void){
@@ -219,7 +244,7 @@ void dp_service(void){
 #endif
     pad_feedback(pad_held);
 #else
-    fm1_input_scan();
+    /* Matrix scan and LED dwell run incrementally from the shared timer IRQ. */
 #ifdef DP_CAMPAIGN
     if(dp_knob_turn(&knobs,0,fm1_enc_take(2),1))dp_sfx_trim(knobs.volume);
     dp_knob_turn(&knobs,1,fm1_enc_take(3),1);
@@ -228,13 +253,14 @@ void dp_service(void){
 #endif
     uint32_t held=fm1_in.notes;buttons=fm1_in.buttons;
 #endif
+#if DP_SMK
     actions=0;
     for(unsigned i=0;i<sizeof(note_keys);i++)if(held&((uint64_t)1<<note_keys[i]))actions|=1u<<i;
-#if DP_SMK
     if(buttons&((1u<<12)|(1u<<16)))actions|=1u<<6; /* PATCH / REC: menu */
     if(buttons&((1u<<13)|(1u<<17)))actions|=1u<<7; /* PARA / PLAY: select */
     const uint32_t recovery=(1u<<4)|(1u<<5);
 #else
+    actions=dp_fm1_actions(held,buttons);piano_feedback(actions);
     const uint32_t recovery=3;
 #endif
     static uint32_t recovery_since;
@@ -357,7 +383,7 @@ void dp_cstart(const uint32_t *parameters){
 #else
     fm1_lcd_hw_init();cmd(0x01);fm1_delay_ms(150);cmd(0x11);fm1_delay_ms(120);
     uint8_t mode=0x55;cmd(0x3a);data(&mode,1);mode=0;cmd(0x36);data(&mode,1);cmd(0x21);cmd(0x13);cmd(0x29);
-    display_ready=!fm1_lcd_timeouts;fm1_input_init();
+    display_ready=!fm1_lcd_timeouts;fm1_input_init();piano_feedback(0);
 #endif
     input_ready=1;
 #ifdef DP_CAMPAIGN

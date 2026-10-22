@@ -55,6 +55,13 @@ The Elite's official RAM loader can identify itself as `ota-FM-1`; the installer
 
 Experimental firmware is provided without warranty. Power loss, an incompatible device or a software defect can require hardware recovery. FM-1 testing does not establish SMK hardware compatibility. No USB audio, multiplayer or synth functions are included.
 
+## FM-1 candidate controls
+
+Candidate 26 matches GameDude: left-hand direction cluster, middle Menu/Select,
+Use/Fire on the last two piano keys, and illuminated control keys.
+See [the full mapping and validation](docs/FM1_GAMEDUDE_CONTROLS.md).
+The public FM-1 installer remains on release 16 pending hardware acceptance.
+
 ## Controls
 
 SMK release 24 includes illuminated pads:
